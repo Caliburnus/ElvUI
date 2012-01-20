@@ -10,62 +10,62 @@ assert(ElvUF, "ElvUI was unable to locate oUF.")
 local function GetInfoText(frame, unit, r, g, b, min, max, reverse, type)
 	local value
 	local db = frame.db
-	
+
 	if not db then return '' end
-	
+
 	if db[type].text_format == 'blank' then
 		return '';
 	end
-	
+
 	if reverse then
 		if type == 'health' then
 			if db[type].text_format == 'current-percent' then
 				if min ~= max then
 					value = format("|cff%02x%02x%02x%d%%|r |cffD7BEA5-|r |cffAF5050%s|r", r * 255, g * 255, b * 255, floor(min / max * 100), E:ShortValue(min))
 				else
-					value = format("|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(max))	
+					value = format("|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(max))
 				end
 			elseif db[type].text_format == 'current-max' then
 				if min == max then
-					value = format("|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(max))	
+					value = format("|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(max))
 				else
 					value = format("|cff%02x%02x%02x%s|r |cffD7BEA5-|r |cffAF5050%s|r", r * 255, g * 255, b * 255, E:ShortValue(max), E:ShortValue(min))
 				end
 			elseif db[type].text_format == 'current' then
-				value = format("|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(min))	
+				value = format("|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(min))
 			elseif db[type].text_format == 'percent' then
 				value = format("|cff%02x%02x%02x%d%%|r", r * 255, g * 255, b * 255, floor(min / max * 100))
 			elseif db[type].text_format == 'deficit' then
 				if min == max then
 					value = ""
-				else			
+				else
 					value = format("|cffAF5050-|r|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(max - min))
 				end
-			end	
+			end
 		else
 			if db[type].text_format == 'current-percent' then
 				if min ~= max then
 					value = format("%d%% |cffD7BEA5-|r %s", floor(min / max * 100), E:ShortValue(min))
 				else
-					value = format("%s", E:ShortValue(max))	
+					value = format("%s", E:ShortValue(max))
 				end
 			elseif db[type].text_format == 'current-max' then
 				if min == max then
-					value = format("%s", E:ShortValue(max))	
+					value = format("%s", E:ShortValue(max))
 				else
 					value = format("%s |cffD7BEA5-|r %s", E:ShortValue(max), E:ShortValue(min))
 				end
 			elseif db[type].text_format == 'current' then
-				value = format("%s", E:ShortValue(min))	
+				value = format("%s", E:ShortValue(min))
 			elseif db[type].text_format == 'percent' then
 				value = format("%d%%", floor(min / max * 100))
 			elseif db[type].text_format == 'deficit' then
 				if min == max then
 					value = ""
-				else			
+				else
 					value = format("|cffAF5050-|r%s", E:ShortValue(max - min))
 				end
-			end			
+			end
 		end
 	else
 		if type == 'health' then
@@ -77,18 +77,18 @@ local function GetInfoText(frame, unit, r, g, b, min, max, reverse, type)
 				end
 			elseif db[type].text_format == 'current-max' then
 				if min == max then
-					value = format("|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(max))	
+					value = format("|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(max))
 				else
 					value = format("|cffAF5050%s|r |cffD7BEA5-|r |cff%02x%02x%02x%s|r", E:ShortValue(min), r * 255, g * 255, b * 255, E:ShortValue(max))
 				end
 			elseif db[type].text_format == 'current' then
-				value = format("|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(min))	
+				value = format("|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(min))
 			elseif db[type].text_format == 'percent' then
 				value = format("|cff%02x%02x%02x%d%%|r", r * 255, g * 255, b * 255, floor(min / max * 100))
 			elseif db[type].text_format == 'deficit' then
 				if min == max then
 					value = ""
-				else			
+				else
 					value = format("|cffAF5050-|r|cff%02x%02x%02x%s|r", r * 255, g * 255, b * 255, E:ShortValue(max - min))
 				end
 			end
@@ -101,31 +101,31 @@ local function GetInfoText(frame, unit, r, g, b, min, max, reverse, type)
 				end
 			elseif db[type].text_format == 'current-max' then
 				if min == max then
-					value = format("%s", E:ShortValue(max))	
+					value = format("%s", E:ShortValue(max))
 				else
 					value = format("%s |cffD7BEA5-|r %s", E:ShortValue(min), E:ShortValue(max))
 				end
 			elseif db[type].text_format == 'current' then
-				value = format("%s", E:ShortValue(min))	
+				value = format("%s", E:ShortValue(min))
 			elseif db[type].text_format == 'percent' then
 				value = format("%d%%", floor(min / max * 100))
 			elseif db[type].text_format == 'deficit' then
 				if min == max then
 					value = ""
-				else			
+				else
 					value = format("|cffAF5050-|r%s", E:ShortValue(max - min))
 				end
-			end		
+			end
 		end
 	end
-	
+
 	return value
 end
 
 function UF:PostUpdateHealth(unit, min, max)
 	local r, g, b = self:GetStatusBarColor()
 	self.defaultColor = {r, g, b}
-	
+
 	if E.db['unitframe']['colors'].healthclass == true and E.db['unitframe']['colors'].colorhealthbyvalue == true and not (UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit)) then
 		local newr, newg, newb = ElvUF.ColorGradient(min, max, 1, 0, 0, 1, 1, 0, r, g, b)
 
@@ -149,15 +149,15 @@ function UF:PostUpdateHealth(unit, min, max)
 			self.bg:SetVertexColor(t[1], t[2], t[3])
 		end
 	end
-	
+
 	--Backdrop
 	if E.db['unitframe']['colors'].customhealthbackdrop then
 		local backdrop = E.db['unitframe']['colors'].health_backdrop
-		self.bg:SetVertexColor(backdrop.r, backdrop.g, backdrop.b)		
-	end	
-	
+		self.bg:SetVertexColor(backdrop.r, backdrop.g, backdrop.b)
+	end
+
 	if not self.value or self.value and not self.value:IsShown() then return end
-	
+
 	local connected, dead, ghost = UnitIsConnected(unit), UnitIsDead(unit), UnitIsGhost(unit)
 	if not connected or dead or ghost then
 		if not connected then
@@ -173,7 +173,7 @@ function UF:PostUpdateHealth(unit, min, max)
 		if unit == "target" then
 			reverse = true
 		end
-				
+
 		self.value:SetText(GetInfoText(self:GetParent(), unit, r, g, b, min, max, reverse, 'health'))
 	end
 end
@@ -181,16 +181,16 @@ end
 function UF:PostNamePosition(frame, unit)
 	if frame.Power.value:GetText() and UnitIsPlayer(unit) and frame.Power.value:IsShown() then
 		local db = frame.db
-		
+
 		local position = db.name.position
 		local x, y = self:GetPositionOffset(position)
 		frame.Power.value:SetAlpha(1)
-		
+
 		frame.Name:ClearAllPoints()
-		frame.Name:Point(position, frame.Health, position, x, y)	
+		frame.Name:Point(position, frame.Health, position, x, y)
 	elseif frame.Power.value:IsShown() then
 		frame.Power.value:SetAlpha(0)
-		
+
 		frame.Name:ClearAllPoints()
 		frame.Name:SetPoint(frame.Power.value:GetPoint())
 	end
@@ -205,18 +205,18 @@ function UF:PostUpdatePower(unit, min, max)
 	else
 		perc = floor(min / max * 100)
 	end
-	
-	if not self.value or self.value and not self.value:IsShown() then return end		
+
+	if not self.value or self.value and not self.value:IsShown() then return end
 
 	if color then
 		self.value:SetTextColor(color[1], color[2], color[3])
 	else
 		self.value:SetTextColor(altR, altG, altB, 1)
-	end	
-	
+	end
+
 	local dead, ghost = UnitIsDead(unit), UnitIsGhost(unit)
-	if min == 0 then 
-		self.value:SetText() 
+	if min == 0 then
+		self.value:SetText()
 	else
 		if (not UnitIsPlayer(unit) and not UnitPlayerControlled(unit) or not UnitIsConnected(unit)) and not (unit and unit:find("boss%d")) then
 			self.value:SetText()
@@ -228,7 +228,7 @@ function UF:PostUpdatePower(unit, min, max)
 				if unit == "player" then
 					reverse = true
 				end
-				
+
 				self.value:SetText(GetInfoText(self:GetParent(), unit, nil, nil, nil, min, max, reverse, 'power'))
 			else
 				self.value:SetText(max - (max - min))
@@ -237,7 +237,7 @@ function UF:PostUpdatePower(unit, min, max)
 	end
 
 	local db = self:GetParent().db
-	
+
 	if self.LowManaText then
 		if pToken == 'MANA' then
 			if perc <= db.lowmana and not dead and not ghost then
@@ -252,56 +252,30 @@ function UF:PostUpdatePower(unit, min, max)
 			E:StopFlash(self.LowManaText)
 		end
 	end
-	
+
 	if db and db['power'].hideonnpc then
 		UF:PostNamePosition(self:GetParent(), unit)
-	end	
+	end
 end
 
 function UF:PortraitUpdate(unit)
 	local db = self:GetParent().db
-	
+
 	if not db then return end
-	
+
 	if db['portrait'].enable and db['portrait'].overlay then
-		self:SetAlpha(0) self:SetAlpha(0.35) 
+		self:SetAlpha(0) self:SetAlpha(0.35)
 	else
 		self:SetAlpha(1)
 	end
-	
+
 	if self:GetModel() and self:GetModel().find and self:GetModel():find("worgenmale") then
 		self:SetCamera(1)
-	end	
+	end
 
 	self:SetCamDistanceScale(db['portrait'].camDistanceScale - 0.01 >= 0.01 and db['portrait'].camDistanceScale - 0.01 or 0.01) --Blizzard bug fix
 	self:SetCamDistanceScale(db['portrait'].camDistanceScale)
 end
-
---[[if E:IsFoolsDay() then
-	function UF:PortraitUpdate(unit)
-		local db = self:GetParent().db
-		
-		if not db then return end
-		
-		if db['portrait'].enable and db['portrait'].overlay then
-			self:SetAlpha(0) self:SetAlpha(0.35) 
-		else
-			self:SetAlpha(1)
-		end
-		
-		if self:GetModel() and self:GetModel().find and self:GetModel():find("worgenmale") then
-			self:SetCamera(1)
-		end	
-		
-		if self:GetModel() and unit == 'player'	then
-			self:SetModel('Creature\\Therazane\\therazane.m2')
-			self:SetCamera(1)
-		end
-
-		self:SetCamDistanceScale(db['portrait'].camDistanceScale - 0.01 >= 0.01 and db['portrait'].camDistanceScale - 0.01 or 0.01) --Blizzard bug fix
-		self:SetCamDistanceScale(db['portrait'].camDistanceScale)
-	end
-end--]]
 
 local day, hour, minute, second = 86400, 3600, 60, 1
 function UF:FormatTime(s, reverse)
@@ -314,15 +288,15 @@ function UF:FormatTime(s, reverse)
 	elseif s >= minute / 12 then
 		return floor(s)
 	end
-	
+
 	if reverse and reverse == true and s >= second then
 		return floor(s)
-	else	
+	else
 		return format("%.1f", s)
 	end
 end
 
-function UF:UpdateAuraTimer(elapsed)	
+function UF:UpdateAuraTimer(elapsed)
 	if self.timeLeft then
 		self.elapsed = (self.elapsed or 0) + elapsed
 		if self.elapsed >= 0.1 then
@@ -358,11 +332,11 @@ function UF:PostUpdateAura(unit, button, index, offset, filter, isDebuff, durati
 	local name, _, _, _, dtype, duration, expirationTime, unitCaster, _, _, spellID = UnitAura(unit, index, button.filter)
 
 	local db = self:GetParent().db
-	
+
 	button.text:Show()
 	button.text:FontTemplate(LSM:Fetch("font", E.db['unitframe'].font), db[self.type].fontsize, 'OUTLINE')
 	button.count:FontTemplate(LSM:Fetch("font", E.db['unitframe'].font), db[self.type].fontsize, 'OUTLINE')
-	
+
 	if button.isDebuff then
 		if(not UnitIsFriend("player", unit) and button.owner ~= "player" and button.owner ~= "vehicle") --[[and (not E.isDebuffWhiteList[name])]] then
 			button:SetBackdropBorderColor(unpack(E["media"].bordercolor))
@@ -384,34 +358,34 @@ function UF:PostUpdateAura(unit, button, index, offset, filter, isDebuff, durati
 		if (button.isStealable or ((E.myclass == "PRIEST" or E.myclass == "SHAMAN" or E.myclass == "MAGE") and dtype == "Magic")) and not UnitIsFriend("player", unit) then
 			button:SetBackdropBorderColor(237/255, 234/255, 142/255)
 		else
-			button:SetBackdropBorderColor(unpack(E["media"].bordercolor))		
-		end	
+			button:SetBackdropBorderColor(unpack(E["media"].bordercolor))
+		end
 	end
-	
+
 	button.duration = duration
 	button.timeLeft = expirationTime
-	button.first = true	
-	
+	button.first = true
+
 	local size = button:GetParent().size
 	if size then
 		button:Size(size)
 	end
-	
-	--[[if E.ReverseTimer and E.ReverseTimer[spellID] then 
-		button.reverse = true 
+
+	--[[if E.ReverseTimer and E.ReverseTimer[spellID] then
+		button.reverse = true
 	else
 		button.reverse = nil
 	end]]
-	
+
 	button:SetScript('OnUpdate', UF.UpdateAuraTimer)
 end
 
 function UF:CustomCastDelayText(duration)
 	local db = self:GetParent().db
-	
-	
+
+
 	if db then
-		local text		
+		local text
 		if self.channeling then
 			self.Time:SetText(("%.1f |cffaf5050%s %.1f|r"):format(math.abs(duration - self.max), "- ", self.delay))
 		else
@@ -421,7 +395,7 @@ function UF:CustomCastDelayText(duration)
 				self.Time:SetText(("%.1f / %.1f |cffaf5050%s %.1f|r"):format(duration, self.max, "+ ", self.delay))
 			elseif db.castbar.format == 'REMAINING' then
 				self.Time:SetText(("%.1f |cffaf5050%s %.1f|r"):format(math.abs(duration - self.max), "+ ", self.delay))
-			end		
+			end
 		end
 	end
 end
@@ -429,7 +403,7 @@ end
 function UF:CustomTimeText(duration)
 	local db = self:GetParent().db
 	if not db then return end
-	
+
 	local text
 	if self.channeling then
 		self.Time:SetText(("%.1f"):format(math.abs(duration - self.max)))
@@ -440,7 +414,7 @@ function UF:CustomTimeText(duration)
 			self.Time:SetText(("%.1f / %.1f"):format(duration, self.max))
 		elseif db.castbar.format == 'REMAINING' then
 			self.Time:SetText(("%.1f"):format(math.abs(duration - self.max)))
-		end		
+		end
 	end
 end
 
@@ -448,7 +422,7 @@ local ticks = {}
 function UF:HideTicks()
 	for _, tick in pairs(ticks) do
 		tick:Hide()
-	end		
+	end
 end
 
 function UF:SetCastTicks(frame, numTicks)
@@ -475,9 +449,9 @@ function UF:PostCastStart(unit, name, rank, castid)
 	self.Text:SetText(string.sub(name, 0, math.floor((((32/245) * self:GetWidth()) / E.db['unitframe'].fontsize) * 12)))
 
 	local db = self:GetParent().db
-	local color		
+	local color
 	self.unit = unit
-	
+
 	if db.castbar.ticks and unit == "player" then
 		local baseTicks = UF.db.ChannelTicks[name]
 		if baseTicks and UF.db.HastedChannelTicks[name] then
@@ -488,7 +462,7 @@ function UF:PostCastStart(unit, name, rank, castid)
 			if curHaste >= firstTickInc then
 				bonusTicks = bonusTicks + 1
 			end
-			
+
 			local x = tonumber(E:Round(firstTickInc + tickIncRate, 2))
 			while curHaste >= x do
 				x = tonumber(E:Round(firstTickInc + (tickIncRate * bonusTicks), 2))
@@ -504,9 +478,9 @@ function UF:PostCastStart(unit, name, rank, castid)
 			UF:HideTicks()
 		end
 	else
-		UF:HideTicks()			
-	end	
-	
+		UF:HideTicks()
+	end
+
 	if self.interrupt and unit ~= "player" then
 		if UnitCanAttack("player", unit) then
 			color = db['castbar']['interruptcolor']
@@ -523,9 +497,9 @@ end
 
 function UF:PostCastInterruptible(unit)
 	local db = self:GetParent().db
-	
+
 	if not db then return end
-	
+
 	if unit == "vehicle" then unit = "player" end
 	if unit ~= "player" then
 		local color
@@ -533,14 +507,14 @@ function UF:PostCastInterruptible(unit)
 			color = db['castbar'].interruptcolor
 		else
 			color = db['castbar'].color
-		end		
+		end
 		self:SetStatusBarColor(color.r, color.g, color.b)
 	end
 end
 
 function UF:PostCastNotInterruptible(unit)
 	local db = self:GetParent().db
-	
+
 	local color = db['castbar'].interruptcolor
 	self:SetStatusBarColor(color.r, color.g, color.b)
 end
@@ -552,7 +526,7 @@ function UF:UpdateHoly(event, unit, powerType)
 	for i = 1, MAX_HOLY_POWER do
 		if(i <= num) then
 			self.HolyPower[i]:SetAlpha(1)
-			
+
 			if i == 3 and db.classbar.fill == 'spaced' then
 				for h = 1, MAX_HOLY_POWER do
 					self.HolyPower[h].backdrop.shadow:Show()
@@ -571,10 +545,10 @@ function UF:UpdateHoly(event, unit, powerType)
 			for h = 1, MAX_HOLY_POWER do
 				self.HolyPower[h].backdrop.shadow:Hide()
 				self.HolyPower[h]:SetScript('OnUpdate', nil)
-			end		
+			end
 		end
 	end
-end	
+end
 
 function UF:UpdateShards(event, unit, powerType)
 	if(self.unit ~= unit or (powerType and powerType ~= 'SOUL_SHARDS')) then return end
@@ -616,23 +590,23 @@ function UF:DruidResourceBarVisibilityUpdate(unit)
 	local USE_POWERBAR = db.power.enable
 	local USE_MINI_POWERBAR = db.power.width ~= 'fill' and USE_POWERBAR
 	local USE_POWERBAR_OFFSET = db.power.offset ~= 0 and USE_POWERBAR
-	
+
 	if USE_PORTRAIT_OVERLAY or not USE_PORTRAIT then
 		PORTRAIT_WIDTH = 0
 	end
-	
+
 	if USE_MINI_CLASSBAR then
 		CLASSBAR_HEIGHT = CLASSBAR_HEIGHT / 2
 	end
-	
+
 	if eclipseBar:IsShown() or druidAltMana:IsShown() then
 		if db.power.offset ~= 0 then
 			health:Point("TOPRIGHT", frame, "TOPRIGHT", -(2+db.power.offset), -(2 + CLASSBAR_HEIGHT + 1))
 		else
 			health:Point("TOPRIGHT", frame, "TOPRIGHT", -2, -(2 + CLASSBAR_HEIGHT + 1))
 		end
-		health:Point("TOPLEFT", frame, "TOPLEFT", PORTRAIT_WIDTH + 2, -(2 + CLASSBAR_HEIGHT + 1))	
-		
+		health:Point("TOPLEFT", frame, "TOPLEFT", PORTRAIT_WIDTH + 2, -(2 + CLASSBAR_HEIGHT + 1))
+
 		if db.portrait.enable and not db.portrait.overlay then
 			local portrait = self:GetParent().Portrait
 			portrait.backdrop:ClearAllPoints()
@@ -640,13 +614,13 @@ function UF:DruidResourceBarVisibilityUpdate(unit)
 				portrait.backdrop:Point("TOPLEFT", frame, "TOPLEFT", 0, -(CLASSBAR_HEIGHT + 1))
 			else
 				portrait.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT")
-			end		
-			
+			end
+
 			if USE_MINI_POWERBAR or USE_POWERBAR_OFFSET then
 				portrait.backdrop:Point("BOTTOMRIGHT", frame.Health.backdrop, "BOTTOMLEFT", -1, 0)
 			else
 				portrait.backdrop:Point("BOTTOMRIGHT", frame.Power.backdrop, "BOTTOMLEFT", -1, 0)
-			end				
+			end
 		end
 	else
 		if db.power.offset ~= 0 then
@@ -654,34 +628,34 @@ function UF:DruidResourceBarVisibilityUpdate(unit)
 		else
 			health:Point("TOPRIGHT", frame, "TOPRIGHT", -2, -2)
 		end
-		health:Point("TOPLEFT", frame, "TOPLEFT", PORTRAIT_WIDTH + 2, -2)	
+		health:Point("TOPLEFT", frame, "TOPLEFT", PORTRAIT_WIDTH + 2, -2)
 
 		if db.portrait.enable and not db.portrait.overlay then
 			local portrait = self:GetParent().Portrait
 			portrait.backdrop:ClearAllPoints()
 			portrait.backdrop:Point("TOPLEFT", frame, "TOPLEFT")
-			
+
 			if USE_MINI_POWERBAR or USE_POWERBAR_OFFSET then
 				portrait.backdrop:Point("BOTTOMRIGHT", frame.Health.backdrop, "BOTTOMLEFT", -1, 0)
 			else
 				portrait.backdrop:Point("BOTTOMRIGHT", frame.Power.backdrop, "BOTTOMLEFT", -1, 0)
-			end				
-		end		
+			end
+		end
 	end
 end
 
 function UF:DruidPostUpdateAltPower(unit, min, max)
 	local powerText = self:GetParent().Power.value
-	
+
 	if min ~= max then
 		local color = ElvUF['colors'].power['MANA']
 		color = E:RGBToHex(color[1], color[2], color[3])
-		
+
 		self.Text:ClearAllPoints()
 		if powerText:GetText() then
 			if select(4, powerText:GetPoint()) < 0 then
 				self.Text:SetPoint("RIGHT", powerText, "LEFT", 3, 0)
-				self.Text:SetFormattedText(color.."%d%%|r |cffD7BEA5- |r", floor(min / max * 100))			
+				self.Text:SetFormattedText(color.."%d%%|r |cffD7BEA5- |r", floor(min / max * 100))
 			else
 				self.Text:SetPoint("LEFT", powerText, "RIGHT", -3, 0)
 				self.Text:SetFormattedText("|cffD7BEA5-|r"..color.." %d%%|r", floor(min / max * 100))
@@ -689,7 +663,7 @@ function UF:DruidPostUpdateAltPower(unit, min, max)
 		else
 			self.Text:SetPoint(powerText:GetPoint())
 			self.Text:SetFormattedText(color.."%d%%|r", floor(min / max * 100))
-		end	
+		end
 	else
 		self.Text:SetText()
 	end
@@ -699,15 +673,15 @@ function UF:UpdatePvPText(frame)
 	local unit = frame.unit
 	local PvPText = frame.PvPText
 	local LowManaText = frame.Power.LowManaText
-	
+
 	if PvPText and frame:IsMouseOver() then
 		PvPText:Show()
 		if LowManaText and LowManaText:IsShown() then LowManaText:Hide() end
-		
+
 		local time = GetPVPTimer()
 		local min = format("%01.f", floor((time / 1000) / 60))
-		local sec = format("%02.f", floor((time / 1000) - min * 60)) 
-		
+		local sec = format("%02.f", floor((time / 1000) - min * 60))
+
 		if(UnitIsPVPFreeForAll(unit)) then
 			if time ~= 301000 and time ~= -1 then
 				PvPText:SetText(PVP.." ".."("..min..":"..sec..")")
@@ -732,7 +706,7 @@ end
 function UF:UpdateThreat(event, unit)
 	if (self.unit ~= unit) or not unit then return end
 	local status = UnitThreatSituation(unit)
-	
+
 	if status and status > 1 then
 		local r, g, b = GetThreatStatusColor(status)
 		if self.Threat and self.Threat:GetBackdrop() then
@@ -740,7 +714,7 @@ function UF:UpdateThreat(event, unit)
 			self.Threat:SetBackdropBorderColor(r, g, b)
 		elseif self.Health.backdrop then
 			self.Health.backdrop:SetBackdropBorderColor(r, g, b)
-			
+
 			if self.Power and self.Power.backdrop then
 				self.Power.backdrop:SetBackdropBorderColor(r, g, b)
 			end
@@ -750,17 +724,17 @@ function UF:UpdateThreat(event, unit)
 			self.Threat:Hide()
 		elseif self.Health.backdrop then
 			self.Health.backdrop:SetTemplate("Default")
-			
+
 			if self.Power and self.Power.backdrop then
 				self.Power.backdrop:SetTemplate("Default")
 			end
-		end	
+		end
 	end
 end
 
 function UF:AltPowerBarPostUpdate(min, cur, max)
 	local perc = math.floor((cur/max)*100)
-	
+
 	if perc < 35 then
 		self:SetStatusBarColor(0, 1, 0)
 	elseif perc < 70 then
@@ -768,12 +742,12 @@ function UF:AltPowerBarPostUpdate(min, cur, max)
 	else
 		self:SetStatusBarColor(1, 0, 0)
 	end
-	
+
 	local unit = self:GetParent().unit
-	
-	if unit == "player" and self.text then 
+
+	if unit == "player" and self.text then
 		local type = select(10, UnitAlternatePowerInfo(unit))
-				
+
 		if perc > 0 then
 			self.text:SetText(type..": "..format("%d%%", perc))
 		else
@@ -784,7 +758,7 @@ function UF:AltPowerBarPostUpdate(min, cur, max)
 		if not self:GetParent().Power.value:GetText() or self:GetParent().Power.value:GetText() == "" then
 			self.text:Point("BOTTOMRIGHT", self:GetParent().Health, "BOTTOMRIGHT")
 		else
-			self.text:Point("RIGHT", self:GetParent().Power.value.value, "LEFT", 2, E.mult)	
+			self.text:Point("RIGHT", self:GetParent().Power.value.value, "LEFT", 2, E.mult)
 		end
 		if perc > 0 then
 			self.text:SetText("|cffD7BEA5[|r"..format("%d%%", perc).."|cffD7BEA5]|r")
@@ -796,7 +770,7 @@ end
 
 function UF:UpdateComboDisplay(event, unit)
 	if(unit == 'pet') then return end
-	
+
 	local cpoints = self.CPoints
 	local cp
 	if (UnitHasVehicleUI("player") or UnitHasVehicleUI("vehicle")) then
@@ -812,7 +786,7 @@ function UF:UpdateComboDisplay(event, unit)
 			cpoints[i]:SetAlpha(0.15)
 		end
 	end
-	
+
 	local BORDER = E:Scale(2)
 	local SPACING = E:Scale(1)
 	local db = E.db['unitframe']['layouts'][UF.ActiveLayout].target
@@ -820,14 +794,14 @@ function UF:UpdateComboDisplay(event, unit)
 	local USE_MINI_COMBOBAR = db.combobar.fill == "spaced" and USE_COMBOBAR
 	local COMBOBAR_HEIGHT = db.combobar.height
 	local USE_PORTRAIT = db.portrait.enable
-	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT	
+	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT
 	local PORTRAIT_WIDTH = db.portrait.width
-	
+
 
 	if USE_PORTRAIT_OVERLAY or not USE_PORTRAIT then
 		PORTRAIT_WIDTH = 0
 	end
-	
+
 	if cpoints[1]:GetAlpha() == 1 then
 		cpoints:Show()
 		if USE_MINI_COMBOBAR then
@@ -836,7 +810,7 @@ function UF:UpdateComboDisplay(event, unit)
 		else
 			self.Portrait.backdrop:SetPoint("TOPRIGHT", self, "TOPRIGHT")
 			self.Health:Point("TOPRIGHT", self, "TOPRIGHT", -(BORDER+PORTRAIT_WIDTH), -(BORDER + SPACING + COMBOBAR_HEIGHT))
-		end		
+		end
 
 	else
 		cpoints:Hide()
@@ -845,7 +819,7 @@ function UF:UpdateComboDisplay(event, unit)
 	end
 end
 
-function UF:AuraFilter(unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)	
+function UF:AuraFilter(unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
 	local isPlayer, isFriend
 
 	local db = self:GetParent().db
@@ -853,43 +827,43 @@ function UF:AuraFilter(unit, icon, name, rank, texture, count, dtype, duration, 
 	if(caster == 'player' or caster == 'vehicle') then
 		isPlayer = true
 	end
-	
+
 	if UnitIsFriend('player', unit) then
 		isFriend = true
 	end
-	
+
 	icon.isPlayer = isPlayer
 	icon.owner = caster
-	
+
 	if db and db[self.type].durationLimit ~= 0 then
 		if duration > db[self.type].durationLimit or duration == 0 then
 			return false
 		end
 	end
-	
+
 	if db and db[self.type].showPlayerOnly and isPlayer then
 		return true
 	elseif db and db[self.type].useFilter and E.db['unitframe']['aurafilters'][db[self.type].useFilter] then
 		local type = E.db['unitframe']['aurafilters'][db[self.type].useFilter].type
 		local spellList = E.db['unitframe']['aurafilters'][db[self.type].useFilter].spells
-		
+
 		--Prevent filtering on friendly target's debuffs.
 		if (unit:find('target') or unit == 'focus') and isFriend and self.type == 'debuffs' and type == 'Whitelist' then
 			return true
 		end
-		
+
 		if type == 'Whitelist' then
 			if spellList[name] then
 				return true
 			else
 				return false
-			end		
+			end
 		elseif type == 'Blacklist' then
 			if spellList[name] then
 				return false
 			else
 				return true
-			end				
+			end
 		end
 	else
 		if db and not db[self.type].showPlayerOnly then
@@ -897,7 +871,7 @@ function UF:AuraFilter(unit, icon, name, rank, texture, count, dtype, duration, 
 		else
 			return false
 		end
-	end	
+	end
 end
 
 local counterOffsets = {
@@ -915,12 +889,12 @@ function UF:UpdateAuraWatch(frame)
 	local buffs = {};
 	local auras = frame.AuraWatch;
 	local db = frame.db.buffIndicator;
-	
+
 	if not E.db['unitframe'].buffwatch[E.myclass] then E.db['unitframe'].buffwatch[E.myclass] = {} end
 	for _, value in pairs(E.db['unitframe'].buffwatch[E.myclass]) do
 		tinsert(buffs, value);
 	end
-	
+
 	for _, spell in pairs(buffs) do
 		local icon;
 		local name, _, image = GetSpellInfo(spell["id"]);
@@ -939,8 +913,8 @@ function UF:UpdateAuraWatch(frame)
 			icon.missingAlpha = 1;
 		else
 			icon.presentAlpha = 1;
-			icon.missingAlpha = 0;		
-		end		
+			icon.missingAlpha = 0;
+		end
 		icon:Width(db.size);
 		icon:Height(db.size);
 		icon:SetPoint(spell["point"], 0, 0);
@@ -949,28 +923,28 @@ function UF:UpdateAuraWatch(frame)
 			icon.icon = icon:CreateTexture(nil, "OVERLAY");
 			icon.icon:SetAllPoints(icon);
 		end
-		
+
 		if db.colorIcons then
 			icon.icon:SetDrawLayer('OVERLAY');
 			icon.icon:SetTexture(E["media"].blankTex);
-			
+
 			if (spell["color"]) then
 				icon.icon:SetVertexColor(spell["color"].r, spell["color"].g, spell["color"].b);
 			else
 				icon.icon:SetVertexColor(0.8, 0.8, 0.8);
-			end			
+			end
 		else
 			icon.icon:SetDrawLayer('ARTWORK');
 			icon.icon:SetTexCoord(.18, .82, .18, .82);
 			icon.icon:SetTexture(icon.image);
 		end
-		
+
 		if not icon.cd then
 			icon.cd = CreateFrame("Cooldown", nil, icon)
 			icon.cd:SetAllPoints(icon)
 			icon.cd:SetReverse(true)
 		end
-		
+
 		if not icon.border then
 			icon.border = icon:CreateTexture(nil, "BACKGROUND");
 			icon.border:Point("TOPLEFT", -E.mult, E.mult);
@@ -978,19 +952,19 @@ function UF:UpdateAuraWatch(frame)
 			icon.border:SetTexture(E["media"].blankTex);
 			icon.border:SetVertexColor(0, 0, 0);
 		end
-		
+
 		if not icon.count then
 			icon.count = icon:CreateFontString(nil, "OVERLAY");
 			icon.count:SetPoint("CENTER", unpack(counterOffsets[spell["point"]]));
 		end
 		icon.count:FontTemplate(LSM:Fetch("font", E.db['unitframe'].font), db.fontsize, 'OUTLINE');
-		
+
 		if spell["enabled"] then
 			auras.icons[spell.id] = icon;
 			if auras.watched then
 				auras.watched[name..image] = icon;
 			end
-		else	
+		else
 			auras.icons[spell.id] = nil;
 			if auras.watched then
 				auras.watched[name..image] = nil;
@@ -999,7 +973,7 @@ function UF:UpdateAuraWatch(frame)
 			icon = nil;
 		end
 	end
-	
+
 	buffs = nil;
 end
 
@@ -1016,9 +990,9 @@ function UF:UpdateRoleIcon()
 		elseif role == 'DAMAGER' then
 			lfdrole:SetTexture([[Interface\AddOns\ElvUI\media\textures\dps.tga]])
 		end
-		
+
 		lfdrole:Show()
 	else
 		lfdrole:Hide()
-	end	
+	end
 end

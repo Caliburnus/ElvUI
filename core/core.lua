@@ -308,15 +308,6 @@ function E:CheckIncompatible()
 	end
 end
 
---[[function E:IsFoolsDay()
-	local date = date()
-	if string.find(date, '04/01/') then
-		return true;
-	else
-		return false;
-	end
-end--]]
-
 function E:SendRecieve(event, prefix, message, channel, sender)
 	if event == "CHAT_MSG_ADDON" then
 		if (prefix ~= "ElvUI") then return end
