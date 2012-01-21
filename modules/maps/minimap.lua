@@ -260,6 +260,7 @@ function M:LoadMinimap()
 		Minimap:SetAlpha(1)
 	end)
 	FarmModeMap:SetScript('OnHide', function() UIFrameFadeIn(Minimap, 0.3) end)
+	
 	Minimap:SetScript('OnShow', function()
 		_G.MinimapZoomIn:Click();
 		_G.MinimapZoomOut:Click();
