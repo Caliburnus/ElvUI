@@ -32,7 +32,8 @@ DF["core"] = {
 	--panels
 	['panelWidth'] = 412,
 	['panelHeight'] = 180,
-	['panelBackdropName'] = '',
+	['panelBackdropNameLeft'] = '',
+	['panelBackdropNameRight'] = '',
 	['panelBackdrop'] = 'SHOWBOTH',
 	['expRepPos'] = 'TOP_SCREEN',
 
