@@ -30,20 +30,20 @@ function A:StyleBuffs(buttonName, index, debuff)
 		icon:SetTexCoord(unpack(E.TexCoords))
 		icon:Point("TOPLEFT", buff, 2, -2)
 		icon:Point("BOTTOMRIGHT", buff, -2, 2)
-		
+
 		buff:Size(30)
-				
+
 		duration:ClearAllPoints()
 		duration:Point("BOTTOM", 0, -13)
 		duration:FontTemplate(nil, nil, 'OUTLINE')
-		
+
 		count:ClearAllPoints()
 		count:Point("TOPLEFT", 1, -2)
 		count:FontTemplate(nil, nil, 'OUTLINE')
-		
+
 		buff:CreateBackdrop('Default')
 		buff.backdrop:SetAllPoints()
-		
+
 		local highlight = buff:CreateTexture(nil, "HIGHLIGHT")
 		highlight:SetTexture(1,1,1,0.45)
 		highlight:SetAllPoints(icon)
@@ -55,7 +55,7 @@ function A:UpdateDebuffAnchors(buttonName, index)
 	local debuff = _G[buttonName..index];
 	if debuff:IsProtected() then return end -- uhh ohhh
 	self:StyleBuffs(buttonName, index, true)
-	local dtype = select(5, UnitDebuff("player",index))      
+	local dtype = select(5, UnitDebuff("player",index))
 	local color
 	if (dtype ~= nil) then
 		color = DebuffTypeColor[dtype]
@@ -75,14 +75,14 @@ function A:UpdateDebuffAnchors(buttonName, index)
 			debuff:SetPoint("BOTTOMLEFT", AurasHolder, "BOTTOMLEFT", 0, 0)
 		else
 			debuff:SetPoint("LEFT", _G[buttonName..(index-1)], "RIGHT", -(btnspace), 0)
-		end	
+		end
 	end
-	
+
 	if index > self.db.perRow then
 		debuff:Hide()
 	else
 		debuff:Show()
-	end	
+	end
 end
 
 function A:UpdateBuffAnchors()
@@ -147,7 +147,7 @@ function A:UpdateBuffAnchors()
 					end
 				else
 					buff:SetPoint("LEFT", previousBuff, "RIGHT", -(btnspace), 0)
-				end			
+				end
 			end
 			previousBuff = buff
 			if i > (self.db.perRow*2) then
@@ -155,7 +155,7 @@ function A:UpdateBuffAnchors()
 			else
 				buff:Show()
 			end
-		end		
+		end
 	end
 end
 
@@ -170,40 +170,41 @@ function A:AurasPostDrag(point)
 		TemporaryEnchantFrame:ClearAllPoints()
 		aurapos = "LEFT"
 		TempEnchant1:SetPoint("TOPLEFT", AurasHolder, "TOPLEFT", 0, 0)
-		TempEnchant2:SetPoint("LEFT", TempEnchant1, "RIGHT", -(btnspace), 0)		
-		TemporaryEnchantFrame:SetPoint("TOPLEFT", AurasHolder, "TOPLEFT", 0, 0)	
+		TempEnchant2:SetPoint("LEFT", TempEnchant1, "RIGHT", -(btnspace), 0)
+		TemporaryEnchantFrame:SetPoint("TOPLEFT", AurasHolder, "TOPLEFT", 0, 0)
 	elseif string.find(point, "RIGHT") then
 		TempEnchant1:ClearAllPoints()
 		TempEnchant2:ClearAllPoints()
 		TemporaryEnchantFrame:ClearAllPoints()
 		aurapos = "RIGHT"
 		TempEnchant1:SetPoint("TOPRIGHT", AurasHolder, "TOPRIGHT", 0, 0)
-		TempEnchant2:SetPoint("RIGHT", TempEnchant1, "LEFT", btnspace, 0)	
-		TemporaryEnchantFrame:SetPoint("TOPRIGHT", AurasHolder, "TOPRIGHT", 0, 0)			
+		TempEnchant2:SetPoint("RIGHT", TempEnchant1, "LEFT", btnspace, 0)
+		TemporaryEnchantFrame:SetPoint("TOPRIGHT", AurasHolder, "TOPRIGHT", 0, 0)
 	end
-	
+
 	A:UpdateBuffAnchors()
 	BuffFrame_UpdateAllBuffAnchors()
 end
 
 function A:Initialize()
 	self.db = E.db.auras
-	if self.db.enable ~= true then 
+	if self.db.enable ~= true then
 		BuffFrame:Kill();
-		return 
+		return
 	end
-	
+
 	ConsolidatedBuffs:ClearAllPoints()
 	ConsolidatedBuffs:Point("LEFT", Minimap, "LEFT", 0, 3)
 	ConsolidatedBuffs:Size(16, 16)
+	ConsolidatedBuffs:SetParent(Minimap)
 	ConsolidatedBuffsIcon:SetTexture(nil)
 	ConsolidatedBuffs.SetPoint = E.noop
-	
+
 	local holder = CreateFrame("Frame", "AurasHolder", E.UIParent)
 	holder:Point("TOPRIGHT", E.UIParent, "TOPRIGHT", -((E.MinimapSize + 4) + E.RBRWidth + 7), -3)
 	holder:Width(456)
 	holder:Height(E.MinimapHeight)
-	
+
 	TemporaryEnchantFrame:ClearAllPoints()
 	TemporaryEnchantFrame:SetPoint("TOPRIGHT", AurasHolder, "TOPRIGHT", 0, 0)
 
@@ -211,7 +212,7 @@ function A:Initialize()
 	TempEnchant2:ClearAllPoints()
 	TempEnchant1:Point("TOPRIGHT", AurasHolder, "TOPRIGHT")
 	TempEnchant2:Point("RIGHT", TempEnchant1, "LEFT", btnspace, 0)
-	
+
 	for i = 1, 3 do
 		_G["TempEnchant"..i]:Size(30)
 		_G["TempEnchant"..i]:CreateBackdrop('Default')
@@ -223,13 +224,13 @@ function A:Initialize()
 		_G["TempEnchant"..i.."Duration"]:ClearAllPoints()
 		_G["TempEnchant"..i.."Duration"]:Point("BOTTOM", 0, -13)
 		_G["TempEnchant"..i.."Duration"]:FontTemplate(nil, nil, 'OUTLINE')
-	end	
-	
+	end
+
 	self:RegisterEvent('UNIT_INVENTORY_CHANGED', 'Update_WeaponEnchantInfo')
 	self:RegisterEvent('PLAYER_EVENTERING_WORLD', 'Update_WeaponEnchantInfo')
 	self:SecureHook("AuraButton_OnUpdate", "UpdateFlash")
 	self:SecureHook("BuffFrame_UpdateAllBuffAnchors", "UpdateBuffAnchors")
-	self:SecureHook("DebuffButton_UpdateAnchors", "UpdateDebuffAnchors")	
+	self:SecureHook("DebuffButton_UpdateAnchors", "UpdateDebuffAnchors")
 	E:CreateMover(AurasHolder, "AurasMover", "Auras Frame", false, A.AurasPostDrag)
 end
 

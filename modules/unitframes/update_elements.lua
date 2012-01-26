@@ -477,7 +477,7 @@ function UF:PostCastStart(unit, name, rank, castid)
 		else
 			UF:HideTicks()
 		end
-	else
+	elseif unit == 'player' then
 		UF:HideTicks()
 	end
 
