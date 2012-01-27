@@ -13,8 +13,6 @@ function B:Initialize()
 	self:SkinBlizzTimers()
 	self:PositionVehicleFrame()
 	self:MoveWatchFrame()
-
-	WorldStateAlwaysUpFrame:SetPoint("TOP", E.UIParent, "TOP", 0, -50)
 end
 
 E:RegisterModule(B:GetName())

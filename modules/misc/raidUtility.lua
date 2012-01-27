@@ -17,7 +17,7 @@ end
 
 --Change border when mouse is inside the button
 local function ButtonEnter(self)
-	self:SetBackdropBorderColor(unpack(E["media"].rgbvaluecolor))
+	self:SetBackdropBorderColor(unpack(E["media"].rgbvaluecolor))	
 end
 
 --Change border back to normal when mouse leaves button
@@ -34,7 +34,7 @@ function RU:CreateUtilButton(name, parent, template, width, height, point, relat
 	b:HookScript("OnEnter", ButtonEnter)
 	b:HookScript("OnLeave", ButtonLeave)
 	b:SetTemplate("Default")
-
+	
 	if text then
 		local t = b:CreateFontString(nil,"OVERLAY",b)
 		t:FontTemplate()
@@ -46,7 +46,7 @@ function RU:CreateUtilButton(name, parent, template, width, height, point, relat
 		local t = b:CreateTexture(nil,"OVERLAY",nil)
 		t:SetTexture(texture)
 		t:SetPoint("TOPLEFT", b, "TOPLEFT", E.mult, -E.mult)
-		t:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", -E.mult, E.mult)
+		t:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", -E.mult, E.mult)	
 	end
 end
 
@@ -55,11 +55,11 @@ function RU:ToggleRaidUtil(event)
 		self:RegisterEvent("PLAYER_REGEN_ENABLED", 'ToggleRaidUtil')
 		return
 	end
-
+	
 	if CheckRaidStatus() then
 		if RaidUtilityPanel.toggled == true then
 			ShowButton:Hide()
-			RaidUtilityPanel:Show()
+			RaidUtilityPanel:Show()		
 		else
 			ShowButton:Show()
 			RaidUtilityPanel:Hide()
@@ -68,7 +68,7 @@ function RU:ToggleRaidUtil(event)
 		ShowButton:Hide()
 		RaidUtilityPanel:Hide()
 	end
-
+	
 	if event == "PLAYER_REGEN_ENABLED" then
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED", 'ToggleRaidUtil')
 	end
@@ -91,21 +91,21 @@ function RU:Initialize()
 	ShowButton:SetAttribute("_onclick", [=[
 		local raidUtil = self:GetFrameRef("RaidUtilityPanel")
 		local closeButton = raidUtil:GetFrameRef("CloseButton")
-		self:Hide();
-		raidUtil:Show();
+		self:Hide(); 
+		raidUtil:Show(); 
 
-		local point = self:GetPoint();
+		local point = self:GetPoint();		
 		local raidUtilPoint, closeButtonPoint, yOffset
 		if string.find(point, "BOTTOM") then
 			raidUtilPoint = "BOTTOM"
 			closeButtonPoint = "TOP"
-			yOffset = 1
+			yOffset = 1						
 		else
 			raidUtilPoint = "TOP"
 			closeButtonPoint = "BOTTOM"
-			yOffset = -1
+			yOffset = -1			
 		end
-
+		
 		raidUtil:ClearAllPoints()
 		closeButton:ClearAllPoints()
 		raidUtil:SetPoint(raidUtilPoint, self, raidUtilPoint)
@@ -117,11 +117,11 @@ function RU:Initialize()
 	ShowButton:SetClampRectInsets(0, 0, -1, 1)
 	ShowButton:RegisterForDrag("RightButton")
 	ShowButton:SetFrameStrata("HIGH")
-	ShowButton:SetScript("OnDragStart", function(self)
+	ShowButton:SetScript("OnDragStart", function(self) 
 		self:StartMoving()
 	end)
-
-	ShowButton:SetScript("OnDragStop", function(self)
+	
+	ShowButton:SetScript("OnDragStop", function(self) 
 		self:StopMovingOrSizing()
 		local point = self:GetPoint()
 		local xOffset = self:GetCenter()
@@ -131,7 +131,7 @@ function RU:Initialize()
 		if string.find(point, "BOTTOM") then
 			self:SetPoint('BOTTOM', E.UIParent, 'BOTTOM', xOffset, -1)
 		else
-			self:SetPoint('TOP', E.UIParent, 'TOP', xOffset, 1)
+			self:SetPoint('TOP', E.UIParent, 'TOP', xOffset, 1)		
 		end
 	end)
 
@@ -141,7 +141,7 @@ function RU:Initialize()
 	CloseButton:SetAttribute("_onclick", [=[self:GetParent():Hide(); self:GetFrameRef("ShowButton"):Show();]=])
 	CloseButton:SetScript("OnMouseUp", function(self) RaidUtilityPanel.toggled = false end)
 	RaidUtilityPanel:SetFrameRef("CloseButton", CloseButton)
-
+	
 	--Disband Raid button
 	self:CreateUtilButton("DisbandRaidButton", RaidUtilityPanel, "UIMenuButtonStretchTemplate", RaidUtilityPanel:GetWidth() * 0.8, 18, "TOP", RaidUtilityPanel, "TOP", 0, -5, L['Disband Group'], nil)
 	DisbandRaidButton:SetScript("OnMouseUp", function(self)
@@ -216,7 +216,7 @@ function RU:Initialize()
 		for i, button in pairs(buttons) do
 			local f = _G[button]
 			_G[button.."Left"]:SetAlpha(0)
-			_G[button.."Middle"]:SetAlpha(0)
+			_G[button.."Middle"]:SetAlpha(0)	
 			_G[button.."Right"]:SetAlpha(0)
 			f:SetHighlightTexture("")
 			f:SetDisabledTexture("")

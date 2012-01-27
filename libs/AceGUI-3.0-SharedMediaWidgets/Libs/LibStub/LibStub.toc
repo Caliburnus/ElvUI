@@ -9,5 +9,9 @@
 ## X-Curse-Project-Name: LibStub
 ## X-Curse-Project-ID: libstub
 ## X-Curse-Repository-ID: wow/libstub/mainline
+## X-Curse-Packaged-Version: v3.17-19-g20bd22d
+## X-Curse-Project-Name: ElvUI
+## X-Curse-Project-ID: elvui
+## X-Curse-Repository-ID: wow/elvui/mainline
 
 LibStub.lua

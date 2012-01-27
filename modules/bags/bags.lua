@@ -53,9 +53,11 @@ function B:BagFrameSlotNew(frame, slot)
 	end
 
 	ret.frame:HookScript("OnEnter", function()
+		local bag
 		for ind, val in ipairs(B.buttons) do
 			if val.bagOwner == ret.slot then
 				val.frame:SetAlpha(1)
+				--E:Print('Matched Bag Slot: '..val.bagOwner..' to button: '..ind)
 			else
 				val.frame:SetAlpha(0.2)
 			end
@@ -239,30 +241,15 @@ function B:Layout(isBank)
 	local rows = 0
 	local offset = 26
 	local cols, f, bs, bSize
-	local bagWidth
 
 	if not isBank then
 		bs = BAGS_BACKPACK
-		if E.db.bags.bagcols == 0 then
-			cols = floor((E.db.core.panelWidth - 10)/370 * 10)
-			bagWidth = E.db.core.panelWidth - 10
-		else
-			cols = E.db.bags.bagcols
-			bagWidth = 35 * cols
-		end
-
+		cols = (floor((E.db.core.panelWidth - 10)/370 * 10))
 		f = bagFrame
 		bSize = 30
 	else
 		bs = BAGS_BANK
-		if E.db.bags.bankcols == 0 then
-			cols = floor((E.db.core.panelWidth - 10)/370 * 10)
-			bagWidth = E.db.core.panelWidth - 10
-		else
-			cols = E.db.bags.bankcols
-			bagWidth = 35 * cols
-		end
-
+		cols = (floor((E.db.core.panelWidth - 10)/370 * 10))
 		f = bankFrame
 		bSize = 30
 	end
@@ -320,7 +307,7 @@ function B:Layout(isBank)
 		rows = rows + 1
 	end
 
-	f:Width(bagWidth)
+	f:Width((E.db.core.panelWidth - 10))
 	f:Height(rows * 31 + (rows - 1) * 4 + offset + 24)
 
 	f.HolderFrame:SetWidth(33.5 * cols)
@@ -345,7 +332,7 @@ function B:Layout(isBank)
 
 				if isnew then
 					table.insert(self.buttons, idx + 1, b)
-
+					
 					if not isBank then
 						b.bagOwner = i - 1
 					else
@@ -363,7 +350,7 @@ function B:Layout(isBank)
 				b.frame:Size(bSize)
 				b.frame.lock = false
 				b.frame:SetAlpha(1)
-
+				
 				local clink = GetContainerItemLink
 				if (clink and b.rarity and b.rarity > 1) then
 					b.frame:SetBackdropBorderColor(GetItemQualityColor(b.rarity))
@@ -448,6 +435,7 @@ local function OpenEditbox(self)
 	self:GetParent().editBox:HighlightText()
 end
 
+
 local function Tooltip_Hide(self)
 	if self.backdropTexture then
 		self:SetBackdropBorderColor(unpack(E.media.bordercolor))
@@ -480,9 +468,9 @@ function B:CreateBagFrame(type)
 	f:SetFrameStrata("DIALOG")
 
 	if type == 'Bags' then
-		f:Point('BOTTOMRIGHT', RightChatPanel, 'TOPRIGHT', 0, 4)
+		f:Point('BOTTOMRIGHT', RightChatToggleButton, 'TOPRIGHT', 0, 4)
 	else
-		f:Point('BOTTOMLEFT', LeftChatPanel, 'TOPLEFT', 0, 4)
+		f:Point('BOTTOMLEFT', LeftChatToggleButton, 'TOPLEFT', 0, 4)
 	end
 
 	f.HolderFrame = CreateFrame("Frame", name.."HolderFrame", f)
@@ -897,11 +885,10 @@ local function BagToUse(item, bags)
 	end
 
 	local idx
-	for i, b in ipairs(bags) do
-		if not b.full then
+	for i = #bags, 1, -1 do
+		if not bags[i].full then
 			-- Get the bag's family
-			local bagFamily = select(2, GetContainerNumFreeSlots(b.bag))
-
+			local bagFamily = select(2, GetContainerNumFreeSlots(bags[i].bag))
 			if bagFamily == 0 or bit.band(itemFamily, bagFamily) > 0 then
 				idx = i
 				break
@@ -1088,8 +1075,7 @@ function B:SortBags(frame)
 			table.insert(bs, {
 				full = false,
 				bag = v,
-				slot = 1,
-				maxSlots = GetContainerNumSlots(v),
+				slot = GetContainerNumSlots(v),
 			})
 		end
 	end
@@ -1124,7 +1110,10 @@ function B:SortBags(frame)
 					srcSlot = v,
 					sslot = v.slot,
 					sbag = v.bag,
+					--sort = q .. iL .. c1 .. c2 .. rL .. Sl .. n .. i,
+					--sort = q .. iL .. c1 .. c2 .. rL .. Sl .. n .. (#self.buttons - i),
 					sort = itemFamily .. q .. c1 .. c2 .. rL .. n .. iL .. Sl .. (#self.buttons - i),
+					--sort = q .. (#self.buttons - i) .. n,
 				})
 			end
 		end
@@ -1135,58 +1124,52 @@ function B:SortBags(frame)
 	end)
 
 	if not specialSort then
-		local st_idx = 1
+		local st_idx = #bs
 		local dbag = bs[st_idx]
-		local dslot = 1
-		local max_dslot = GetContainerNumSlots(dbag)
+		local dslot = GetContainerNumSlots(dbag)
 
 		for i, v in ipairs (st) do
 			v.dbag = dbag
 			v.dslot = dslot
 			v.dstSlot = self:SlotNew(dbag, dslot)
 
-			dslot = dslot + 1
+			dslot = dslot - 1
 
-			if dslot > max_dslot then
-				dslot = 1
-
+			if dslot == 0 then
 				while true do
-					st_idx = st_idx + 1
+					st_idx = st_idx - 1
 
-					if st_idx > #bs then
+					if st_idx < 0 then
 						break
 					end
 
 					dbag = bs[st_idx]
 
-					if dbag and (B:BagType(dbag) == ST_NORMAL or B:BagType(dbag) == ST_SPECIAL or dbag > 4) then
+					if dbag and (B:BagType(dbag) == ST_NORMAL or B:BagType(dbag) == ST_SPECIAL or dbag < 1) then
 						break
 					end
 				end
 
 				if dbag then
-					max_dslot = GetContainerNumSlots(dbag)
+					dslot = GetContainerNumSlots(dbag)
 				else
-					max_dslot = 8
+					dslot = 8
 				end
 			end
 		end
 	else -- Special sort
 		local b
-
 		for i, v in ipairs (st) do
 			-- We need to determine the bag we'll place the item into. This is to prevent an endless cycle
 			-- when there are different special bags in the backpack or the bank.
 			b = BagToUse(GetContainerItemID(v.sbag, v.sslot), bs)
-			if b then -- An available bag was found.
-				v.dbag = bs[b].bag
-				v.dslot = bs[b].slot
-				v.dstSlot = self:SlotNew(bs[b].bag, bs[b].slot)
+			v.dbag = bs[b].bag
+			v.dslot = bs[b].slot
+			v.dstSlot = self:SlotNew(bs[b].bag, bs[b].slot)
 
-				bs[b].slot = bs[b].slot + 1
-				if bs[b].slot > bs[b].maxSlots then
-					bs[b].full = true
-				end
+			bs[b].slot = bs[b].slot - 1
+			if bs[b].slot == 0 then
+				bs[b].full = true
 			end
 		end
 	end

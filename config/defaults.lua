@@ -11,24 +11,22 @@ DF["core"] = {
 	['loginmessage'] = true,
 	["interruptAnnounce"] = "NONE",
 	["autoRepair"] = "NONE",
-
+	
 	-- fonts
 	["fontsize"] = 12,
 	["font"] = "ElvUI Font",
 	["dmgfont"] = "ElvUI Combat",
-	["pixelfont"] = "ElvUI Pixel",
-	["kbfont"] = "ElvUI Pixel 2",
-
+		
 	-- textures
 	["normTex"] = "ElvUI Norm",
 	["glossTex"] = "ElvUI Gloss",
-
+	
 	--colors
 	["bordercolor"] = { r = .23,g = .23,b = .23 },
 	["backdropcolor"] = { r = .07,g = .07,b = .07 },
 	["backdropfadecolor"] = { r = .07,g = .07,b = .07, a = 0.9 },
 	["valuecolor"] = {r = 23/255,g = 132/255,b = 209/255},
-
+	
 	--panels
 	['panelWidth'] = 412,
 	['panelHeight'] = 180,
@@ -36,13 +34,12 @@ DF["core"] = {
 	['panelBackdropNameRight'] = '',
 	['panelBackdrop'] = 'SHOWBOTH',
 	['expRepPos'] = 'TOP_SCREEN',
-
+	
 	--misc
 	['bags'] = true,
 	['loot'] = true,
 	['lootRoll'] = true,
 	['mapTransparency'] = 0.5,
-	['whispersound'] = 'ElvUI Whisper',
 };
 
 --NamePlate
@@ -63,11 +60,11 @@ DF["nameplate"] = {
 	["goodcolor"] = {r = 75/255,  g = 175/255, b = 76/255},
 	["badcolor"] = {r = 0.78, g = 0.25, b = 0.25},
 	["goodtransitioncolor"] = {r = 218/255, g = 197/255, b = 92/255},
-	["badtransitioncolor"] = {r = 240/255, g = 154/255, b = 17/255},
+	["badtransitioncolor"] = {r = 240/255, g = 154/255, b = 17/255}, 	
 	["friendlynpc"] = {r = 0.31, g = 0.45, b = 0.63},
 	["friendlyplayer"] = {r = 75/255,  g = 175/255, b = 76/255},
 	["neutral"] = { r = 218/255, g = 197/255, b = 92/255 },
-	["enemy"] = { r = 0.78, g = 0.25, b = 0.25 },
+	["enemy"] = { r = 0.78, g = 0.25, b = 0.25 },	
 };
 
 --Auras
@@ -90,18 +87,18 @@ DF['classtimer'] = {
 		['enable'] = true,
 		['anchor'] = 'PLAYERDEBUFFS',
 		["buffcolor"] = DF.core.bordercolor,
-		["debuffcolor"] = {r = 0.78, g = 0.25, b = 0.25},
+		["debuffcolor"] = {r = 0.78, g = 0.25, b = 0.25},		
 	},
 	['target'] = {
 		['enable'] = true,
 		['anchor'] = 'TARGETDEBUFFS',
 		["buffcolor"] = DF.core.bordercolor,
-		["debuffcolor"] = {r = 0.78, g = 0.25, b = 0.25},
-	},
+		["debuffcolor"] = {r = 0.78, g = 0.25, b = 0.25},			
+	},	
 	['trinket'] = {
 		['enable'] = true,
 		['anchor'] = 'PLAYERANCHOR',
-		["color"] = {r = 0.84, g = 0.75, b = 0.65},
+		["color"] = {r = 0.84, g = 0.75, b = 0.65},			
 	},
 }
 
@@ -116,19 +113,19 @@ DF['skins'] = {
 	},
 	['recount'] = {
 		['enable'] = true,
-	},
+	},	
 	['dbm'] = {
 		['enable'] = true,
-	},
+	},		
 	['dxe'] = {
 		['enable'] = true,
-	},
+	},	
 	['omen'] = {
 		['enable'] = true,
 	},
 	['skada'] = {
 		['enable'] = true,
-	},
+	},		
 	['blizzard'] = {
 		['enable'] = true,
 		["bags"] = true,
@@ -193,7 +190,7 @@ DF['datatexts'] = {
 			},
 			['RightChatDataPanel'] = {
 				['left'] = 'System',
-				['middle'] = 'Time',
+				['middle'] = 'Time',	
 				['right'] = 'Gold',
 			},
 			['LeftMiniPanel'] = 'Guild',
@@ -207,15 +204,15 @@ DF['datatexts'] = {
 			},
 			['RightChatDataPanel'] = {
 				['left'] = 'System',
-				['middle'] = 'Time',
+				['middle'] = 'Time',	
 				['right'] = 'Gold',
 			},
 			['LeftMiniPanel'] = 'Guild',
-			['RightMiniPanel'] = 'Friends',
+			['RightMiniPanel'] = 'Friends',	
 		},
 	},
 	['localtime'] = true,
-	['time24'] = true,
+	['time24'] = false,
 	['specswap'] = true,
 }
 
@@ -251,7 +248,7 @@ DF['unitframe'] = {
 		['colorhealthbyvalue'] = true,
 		['customhealthbackdrop'] = false,
 		['classbackdrop'] = false,
-
+	
 		['health'] = DF.core.bordercolor,
 		['health_backdrop'] = { r = .8,g = .01,b = .01 },
 		['tapped'] = { r = 0.55, g = 0.57, b = 0.61},
@@ -287,7 +284,7 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = true,
 					['text'] = true,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 10,
 					['offset'] = 0,
@@ -331,10 +328,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'UP',
 					['initialAnchor'] = 'BOTTOMRIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'TOPRIGHT',
+					['anchorPoint'] = 'TOPRIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = 'DebuffBlacklist',
+					['useFilter'] = 'DebuffBlacklist',	
 					['durationLimit'] = 0,
 				},
 				['castbar'] = {
@@ -355,7 +352,7 @@ DF['unitframe'] = {
 					['fill'] = 'spaced',
 					['height'] = 9,
 				},
-			},
+			},	
 			['target'] = {
 				['enable'] = true,
 				['width'] = 260,
@@ -369,12 +366,12 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = true,
 					['text'] = true,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 10,
 					['offset'] = 0,
 					['position'] = 'LEFT',
-					['hideonnpc'] = true,
+					['hideonnpc'] = true,					
 				},
 				['name'] = {
 					['enable'] = true,
@@ -394,10 +391,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'UP',
 					['initialAnchor'] = 'BOTTOMRIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'TOPRIGHT',
+					['anchorPoint'] = 'TOPRIGHT',						
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',		
 					['durationLimit'] = 0,
 				},
 				['debuffs'] = {
@@ -408,10 +405,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'UP',
 					['initialAnchor'] = 'BOTTOMRIGHT',
 					['attachTo'] = 'BUFFS',
-					['anchorPoint'] = 'TOPRIGHT',
+					['anchorPoint'] = 'TOPRIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = true,
-					['useFilter'] = 'CCDebuffs',
+					['useFilter'] = 'CCDebuffs',	
 					['durationLimit'] = 0,
 				},
 				['castbar'] = {
@@ -424,12 +421,12 @@ DF['unitframe'] = {
 					['xOffset'] = 0,
 					['yOffset'] = 0,
 					['format'] = 'REMAINING',
-				},
+				},	
 				['combobar'] = {
 					['enable'] = true,
 					['fill'] = 'spaced',
 					['height'] = 9,
-				},
+				},				
 			},
 			['targettarget'] = {
 				['enable'] = true,
@@ -443,12 +440,12 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = true,
 					['text'] = false,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 7,
 					['offset'] = 0,
 					['position'] = 'LEFT',
-					['hideonnpc'] = true,
+					['hideonnpc'] = true,					
 				},
 				['name'] = {
 					['enable'] = true,
@@ -462,10 +459,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'UP',
 					['initialAnchor'] = 'BOTTOMLEFT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'BOTTOMLEFT',
+					['anchorPoint'] = 'BOTTOMLEFT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',		
 					['durationLimit'] = 0,
 				},
 				['debuffs'] = {
@@ -476,12 +473,12 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'TOPRIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'BOTTOMRIGHT',
+					['anchorPoint'] = 'BOTTOMRIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = 'DebuffBlacklist',
+					['useFilter'] = 'DebuffBlacklist',	
 					['durationLimit'] = 0,
-				},
+				},			
 			},
 			['focus'] = {
 				['enable'] = true,
@@ -496,12 +493,12 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = true,
 					['text'] = false,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 7,
 					['offset'] = 0,
 					['position'] = 'LEFT',
-					['hideonnpc'] = true,
+					['hideonnpc'] = true,					
 				},
 				['name'] = {
 					['enable'] = true,
@@ -515,10 +512,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'UP',
 					['initialAnchor'] = 'BOTTOMLEFT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'BOTTOMLEFT',
+					['anchorPoint'] = 'BOTTOMLEFT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',		
 					['durationLimit'] = 0,
 				},
 				['debuffs'] = {
@@ -529,12 +526,12 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'TOPRIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'BOTTOMRIGHT',
+					['anchorPoint'] = 'BOTTOMRIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = 'DebuffBlacklist',
+					['useFilter'] = 'DebuffBlacklist',	
 					['durationLimit'] = 0,
-				},
+				},	
 				['castbar'] = {
 					['enable'] = true,
 					['width'] = 190,
@@ -545,8 +542,8 @@ DF['unitframe'] = {
 					['xOffset'] = 0,
 					['yOffset'] = 0,
 					['format'] = 'REMAINING',
-				},
-			},
+				},					
+			},	
 			['focustarget'] = {
 				['enable'] = false,
 				['width'] = 190,
@@ -559,12 +556,12 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = false,
 					['text'] = false,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 7,
 					['offset'] = 0,
 					['position'] = 'LEFT',
-					['hideonnpc'] = true,
+					['hideonnpc'] = true,					
 				},
 				['name'] = {
 					['enable'] = true,
@@ -578,10 +575,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'UP',
 					['initialAnchor'] = 'BOTTOMLEFT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'BOTTOMLEFT',
+					['anchorPoint'] = 'BOTTOMLEFT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',		
 					['durationLimit'] = 0,
 				},
 				['debuffs'] = {
@@ -592,13 +589,13 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'TOPRIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'BOTTOMRIGHT',
+					['anchorPoint'] = 'BOTTOMRIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = 'DebuffBlacklist',
+					['useFilter'] = 'DebuffBlacklist',	
 					['durationLimit'] = 0,
-				},
-			},
+				},			
+			},				
 			['pet'] = {
 				['enable'] = true,
 				['width'] = 130,
@@ -612,12 +609,12 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = true,
 					['text'] = false,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 7,
 					['offset'] = 0,
 					['position'] = 'LEFT',
-					['hideonnpc'] = true,
+					['hideonnpc'] = true,					
 				},
 				['name'] = {
 					['enable'] = true,
@@ -631,10 +628,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'UP',
 					['initialAnchor'] = 'BOTTOMLEFT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'BOTTOMLEFT',
+					['anchorPoint'] = 'BOTTOMLEFT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',		
 					['durationLimit'] = 0,
 				},
 				['debuffs'] = {
@@ -645,12 +642,12 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'TOPRIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'BOTTOMRIGHT',
+					['anchorPoint'] = 'BOTTOMRIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = 'DebuffBlacklist',
+					['useFilter'] = 'DebuffBlacklist',	
 					['durationLimit'] = 0,
-				},
+				},			
 			},
 			['pettarget'] = {
 				['enable'] = false,
@@ -664,12 +661,12 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = false,
 					['text'] = false,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 7,
 					['offset'] = 0,
 					['position'] = 'LEFT',
-					['hideonnpc'] = true,
+					['hideonnpc'] = true,					
 				},
 				['name'] = {
 					['enable'] = true,
@@ -683,10 +680,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'UP',
 					['initialAnchor'] = 'BOTTOMLEFT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'BOTTOMLEFT',
+					['anchorPoint'] = 'BOTTOMLEFT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',		
 					['durationLimit'] = 0,
 				},
 				['debuffs'] = {
@@ -697,13 +694,13 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'TOPRIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'BOTTOMRIGHT',
+					['anchorPoint'] = 'BOTTOMRIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = 'DebuffBlacklist',
+					['useFilter'] = 'DebuffBlacklist',	
 					['durationLimit'] = 0,
-				},
-			},
+				},			
+			},	
 			['boss'] = {
 				['enable'] = true,
 				['growthDirection'] = 'UP',
@@ -717,19 +714,19 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = true,
 					['text'] = true,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 7,
 					['offset'] = 0,
 					['position'] = 'LEFT',
-					['hideonnpc'] = false,
+					['hideonnpc'] = false,					
 				},
 				['portrait'] = {
 					['enable'] = false,
 					['width'] = 35,
 					['overlay'] = false,
 					['camDistanceScale'] = 1,
-				},
+				},				
 				['name'] = {
 					['enable'] = true,
 					['position'] = 'CENTER',
@@ -742,10 +739,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'RIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'LEFT',
+					['anchorPoint'] = 'LEFT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',		
 					['durationLimit'] = 0,
 				},
 				['debuffs'] = {
@@ -756,12 +753,12 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'LEFT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'RIGHT',
+					['anchorPoint'] = 'RIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = true,
-					['useFilter'] = '',
+					['useFilter'] = '',	
 					['durationLimit'] = 0,
-				},
+				},	
 				['castbar'] = {
 					['enable'] = true,
 					['width'] = 215,
@@ -770,8 +767,8 @@ DF['unitframe'] = {
 					['color'] = DF.core.bordercolor,
 					['interruptcolor'] = { r = 0.78, g = 0.25, b = 0.25 },
 					['format'] = 'REMAINING',
-				},
-			},
+				},					
+			},	
 			['arena'] = {
 				['enable'] = true,
 				['growthDirection'] = 'UP',
@@ -786,13 +783,13 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = true,
 					['text'] = true,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 7,
 					['offset'] = 0,
 					['position'] = 'LEFT',
-					['hideonnpc'] = false,
-				},
+					['hideonnpc'] = false,					
+				},			
 				['name'] = {
 					['enable'] = true,
 					['position'] = 'CENTER',
@@ -805,10 +802,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'RIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'LEFT',
+					['anchorPoint'] = 'LEFT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = 'TurtleBuffs',
+					['useFilter'] = 'TurtleBuffs',		
 					['durationLimit'] = 0,
 				},
 				['debuffs'] = {
@@ -819,12 +816,12 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'LEFT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'RIGHT',
+					['anchorPoint'] = 'RIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = 'CCDebuffs',
+					['useFilter'] = 'CCDebuffs',	
 					['durationLimit'] = 0,
-				},
+				},	
 				['castbar'] = {
 					['enable'] = true,
 					['width'] = 240,
@@ -833,7 +830,7 @@ DF['unitframe'] = {
 					['color'] = DF.core.bordercolor,
 					['interruptcolor'] = { r = 0.78, g = 0.25, b = 0.25 },
 					['format'] = 'REMAINING',
-				},
+				},					
 			},
 			['party'] = {
 				['enable'] = true,
@@ -862,13 +859,13 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = true,
 					['text'] = false,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 7,
 					['offset'] = 0,
 					['position'] = 'BOTTOMRIGHT',
-					['hideonnpc'] = false,
-				},
+					['hideonnpc'] = false,					
+				},			
 				['name'] = {
 					['enable'] = true,
 					['position'] = 'LEFT',
@@ -881,10 +878,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'RIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'LEFT',
+					['anchorPoint'] = 'LEFT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',		
 					['durationLimit'] = 0,
 				},
 				['debuffs'] = {
@@ -895,12 +892,12 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'LEFT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'RIGHT',
+					['anchorPoint'] = 'RIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',	
 					['durationLimit'] = 0,
-				},
+				},	
 				['buffIndicator'] = {
 					['enable'] = true,
 					['size'] = 6,
@@ -910,7 +907,7 @@ DF['unitframe'] = {
 				['roleIcon'] = {
 					['enable'] = true,
 					['position'] = 'CENTER',
-				},
+				},			
 				['petsGroup'] = {
 					['enable'] = false,
 					['width'] = 100,
@@ -948,13 +945,13 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = true,
 					['text'] = false,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 7,
 					['offset'] = 0,
 					['position'] = 'BOTTOMRIGHT',
-					['hideonnpc'] = false,
-				},
+					['hideonnpc'] = false,					
+				},			
 				['name'] = {
 					['enable'] = true,
 					['position'] = 'TOP',
@@ -967,10 +964,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'RIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'LEFT',
+					['anchorPoint'] = 'LEFT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',		
 					['durationLimit'] = 0,
 				},
 				['debuffs'] = {
@@ -981,12 +978,12 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'LEFT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'RIGHT',
+					['anchorPoint'] = 'RIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',	
 					['durationLimit'] = 0,
-				},
+				},	
 				['buffIndicator'] = {
 					['enable'] = true,
 					['size'] = 6,
@@ -1001,8 +998,8 @@ DF['unitframe'] = {
 				['roleIcon'] = {
 					['enable'] = false,
 					['position'] = 'BOTTOM',
-				},
-			},
+				},					
+			},					
 			['raid2640'] = {
 				['enable'] = true,
 				['visibility'] = '[@raid26,noexists] hide;show',
@@ -1030,13 +1027,13 @@ DF['unitframe'] = {
 				['power'] = {
 					['enable'] = false,
 					['text'] = false,
-					['text_format'] = 'current',
+					['text_format'] = 'current',	
 					['width'] = 'fill',
 					['height'] = 7,
 					['offset'] = 0,
 					['position'] = 'BOTTOMRIGHT',
-					['hideonnpc'] = false,
-				},
+					['hideonnpc'] = false,					
+				},			
 				['name'] = {
 					['enable'] = true,
 					['position'] = 'TOP',
@@ -1049,10 +1046,10 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'RIGHT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'LEFT',
+					['anchorPoint'] = 'LEFT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',		
 					['durationLimit'] = 0,
 				},
 				['debuffs'] = {
@@ -1063,42 +1060,42 @@ DF['unitframe'] = {
 					['growth-y'] = 'DOWN',
 					['initialAnchor'] = 'LEFT',
 					['attachTo'] = 'FRAME',
-					['anchorPoint'] = 'RIGHT',
+					['anchorPoint'] = 'RIGHT',					
 					['fontsize'] = 10,
 					['showPlayerOnly'] = false,
-					['useFilter'] = '',
+					['useFilter'] = '',	
 					['durationLimit'] = 0,
-				},
+				},	
 				['buffIndicator'] = {
 					['enable'] = true,
 					['size'] = 6,
 					['fontsize'] = 8,
 					['colorIcons'] = true,
-				},
-			},
+				},			
+			},	
 			['tank'] = {
 				['enable'] = true,
 				['width'] = 120,
 				['height'] = 28,
-			},
+			},	
 			['assist'] = {
 				['enable'] = true,
 				['width'] = 120,
 				['height'] = 28,
-			},
+			},					
 		},
 		['Secondary'] = {
 			['boss'] = {
 				['width'] = 200,
 				['castbar'] = {
 					['width'] = 200,
-				},
+				},				
 			},
 			['arena'] = {
 				['width'] = 200,
 				['castbar'] = {
 					['width'] = 200,
-				},
+				},				
 			},
 			['party'] = {
 				['point'] = 'LEFT',
@@ -1117,7 +1114,7 @@ DF['unitframe'] = {
 				},
 				['debuffs'] = {
 					["anchorPoint"] = "BOTTOMLEFT",
-					["initialAnchor"] = "TOPLEFT",
+					["initialAnchor"] = "TOPLEFT",					
 				},
 				['petsGroup'] = {
 					['enable'] = true,
@@ -1126,7 +1123,7 @@ DF['unitframe'] = {
 					['anchorPoint'] = 'TOP',
 					['xOffset'] = 0,
 					['yOffset'] = 1,
-				},
+				},					
 			},
 			['raid625'] = {
 				['healPrediction'] = true,
@@ -1138,7 +1135,7 @@ DF['unitframe'] = {
 				['healPrediction'] = true,
 				['health'] = {
 					['orientation'] = 'VERTICAL',
-				},
+				},				
 			},
 			["positions"] = {
 				["ElvUF_Player"] = "BOTTOMLEFTUIParent464242",
@@ -1149,8 +1146,8 @@ DF['unitframe'] = {
 				["ElvUF_Focus"] = "RIGHTUIParent-475-143",
 				["ElvUF_Party"] = "BOTTOMUIParent074",
 				["ElvUF_Pet"] = "BOTTOMLEFTUIParent464151",
-			},
-		},
+			},					
+		}
 	},
 }
 
@@ -1169,7 +1166,7 @@ DF["actionbar"] = {
 	["secondscolor"] = { r = 1, g = 1, b = 0 },
 	["minutescolor"] = { r = 1, g = 1, b = 1 },
 	["hourscolor"] = { r = 0.4, g = 1, b = 1 },
-	["dayscolor"] = { r = 0.4, g = 0.4, b = 1 },
+	["dayscolor"] = { r = 0.4, g = 0.4, b = 1 },	
 	['bar1'] = {
 		['enabled'] = true,
 		['buttons'] = 12,
@@ -1183,7 +1180,7 @@ DF["actionbar"] = {
 			["DRUID"] = "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
 			["WARRIOR"] = "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9;",
 			["PRIEST"] = "[bonusbar:1] 7;",
-			["ROGUE"] = "[bonusbar:1] 7; [form:3] 7;",
+			["ROGUE"] = "[bonusbar:1] 7; [form:3] 7;",	
 		},
 		['visibility'] = "",
 	},
@@ -1260,9 +1257,4 @@ DF["actionbar"] = {
 		['enabled'] = true,
 		['mouseover'] = false,
 	},
-};
-
-DF['bags'] = {
-	['bagcols'] = 12,	-- Number of columns (width) of bag use an integer or 0 (zero) to match width of chat panels
-	['bankcols'] = 20,	-- Number of columns (width) of bank use an integer or 0 (zero) to match width of chat panels
 };

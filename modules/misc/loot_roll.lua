@@ -38,13 +38,13 @@ local rollpairs = locale == "deDE" and {
        ["(.*)님이 주사위 굴리기를 포기했습니다: (.+)"] = "pass",
        ["(.*)님이 차비를 선택했습니다: (.+)"] = "greed",
        ["(.*)님이 입찰을 선택했습니다: (.+)"] = "need",
-       ["(.*)님이 마력 추출을 선택했습니다: (.+)"] = "disenchant",
+       ["(.*)님이 마력 추출을 선택했습니다: (.+)"] = "disenchant",	
 } or locale == "esES" or locale == "esMX" and {
 	["^(.*) pasó automáticamente de: (.+) porque no puede despojar este objeto.$"] = "pass",
 	["^(.*) pasó de: (.+|r)$"]  = "pass",
 	["(.*) eligió Codicia para: (.+)"] = "greed",
 	["(.*) eligió Necesidad para: (.+)"]  = "need",
-	["(.*) eligió Desencantar para: (.+)"]  = "disenchant",
+	["(.*) eligió Desencantar para: (.+)"]  = "disenchant",	   
 } or {
 	["^(.*) automatically passed on: (.+) because s?he cannot loot that item.$"] = "pass",
 	["^(.*) passed on: (.+|r)$"]  = "pass",
@@ -105,7 +105,7 @@ local function StatusUpdate(frame)
 	local perc = t / frame.parent.time
 	frame.spark:Point("CENTER", frame, "LEFT", perc * frame:GetWidth(), 0)
 	frame:SetValue(t)
-
+		   
 	if t > 1000000000 then
 		frame:GetParent():Hide()
 	end
@@ -148,11 +148,11 @@ function M:CreateRollFrame()
 	button:SetScript("OnUpdate", ItemOnUpdate)
 	button:SetScript("OnClick", LootClick)
 	frame.button = button
-
+	
 	button.icon = button:CreateTexture(nil, 'OVERLAY')
 	button.icon:SetAllPoints()
 	button.icon:SetTexCoord(unpack(E.TexCoords))
-
+	
 	local tfade = frame:CreateTexture(nil, "BORDER")
 	tfade:Point("TOPLEFT", frame, "TOPLEFT", 4, 0)
 	tfade:Point("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -4, 0)
@@ -248,7 +248,7 @@ function M:START_LOOT_ROLL(event, rollid, time)
 	f.status:SetStatusBarColor(color.r, color.g, color.b, .7)
 	f:SetBackdropBorderColor(color.r, color.g, color.b, .7)
 	f.button.backdrop:SetBackdropBorderColor(color.r, color.g, color.b, .7)
-
+	
 	f.status:SetMinMaxValues(0, time)
 	f.status:SetValue(time)
 
@@ -262,7 +262,7 @@ local function PostMoveLootRoll(frame, point)
 	elseif string.find(point, "BOTTOM") then
 		pos = "BOTTOM"
 	end
-
+	
 	local lastframe
 	for i, frame in pairs(frames) do
 		if i ~= 1 then
@@ -271,7 +271,7 @@ local function PostMoveLootRoll(frame, point)
 				frame:Point("TOP", lastframe, "BOTTOM", 0, -4)
 			else
 				frame:Point("BOTTOM", lastframe, "TOP", 0, 4)
-			end
+			end	
 		else
 			frame:ClearAllPoints()
 			if pos == "TOP" then
@@ -287,11 +287,11 @@ end
 function M:ParseRollChoice(msg)
 	for i,v in pairs(rollpairs) do
 		local _, _, playername, itemname = string.find(msg, i)
-		if locale == "ruRU" and (v == "greed" or v == "need" or v == "disenchant") then
+		if locale == "ruRU" and (v == "greed" or v == "need" or v == "disenchant")  then 
 			local temp = playername
 			playername = itemname
 			itemname = temp
-		end
+		end 
 		if playername and itemname and playername ~= "Everyone" then return playername, itemname, v end
 	end
 end
@@ -310,20 +310,20 @@ function M:CHAT_MSG_LOOT(event, msg)
 	end
 end
 
-function M:LoadLootRoll()
+function M:LoadLootRoll()	
 	if not E.db.core.lootRoll then return end
 	anchor = CreateFrame("Frame", nil, anchorHolder)
 	anchor:Point('TOP', E.UIParent, 'TOP', 0, -200)
 	anchor:Size(300, 22)
-
+	
 	self:RegisterEvent('CHAT_MSG_LOOT')
 	self:RegisterEvent("START_LOOT_ROLL")
 	UIParent:UnregisterEvent("START_LOOT_ROLL")
 	UIParent:UnregisterEvent("CANCEL_LOOT_ROLL")
-
+	
 	E:CreateMover(anchor, "LootRollMover", "LootRoll Frame", nil, PostMoveLootRoll)
-
+	
 	local f = self:CreateRollFrame() -- Create one for good measure
 	f:Point("TOPLEFT", next(frames) and frames[#frames] or anchor, "BOTTOMLEFT", 0, -4)
-	table.insert(frames, f)
+	table.insert(frames, f)	
 end

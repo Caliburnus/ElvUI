@@ -8,7 +8,7 @@ local ACD = LibStub("AceConfigDialog-3.0")
 _, E.myclass = UnitClass("player");
 E.myname, _ = UnitName("player");
 E.myguid = UnitGUID('player');
-E.version = GetAddOnMetadata("ElvUI", "Version");
+E.version = GetAddOnMetadata("ElvUI", "Version"); 
 E.myrealm = GetRealmName();
 _, E.wowbuild = GetBuildInfo(); E.wowbuild = tonumber(E.wowbuild);
 E.noop = function() end;
@@ -40,20 +40,16 @@ function E:Print(msg)
 	print(self["media"].hexvaluecolor..'ElvUI:|r', msg)
 end
 
-function E:UpdateMedia()
+function E:UpdateMedia()	
 	--Fonts
 	self["media"].normFont = LSM:Fetch("font", self.db["core"].font)
 	self["media"].combatFont = LSM:Fetch("font", self.db["core"].dmgfont)
-	self["media"].pixelFont = LSM:Fetch("font", self.db["core"].pixelfont)
-	self["media"].kbFont = LSM:Fetch("font", self.db["core"].kbfont)
+	
 
 	--Textures
 	self["media"].blankTex = LSM:Fetch("background", "ElvUI Blank")
 	self["media"].normTex = LSM:Fetch("statusbar", self.db["core"].normTex)
 	self["media"].glossTex = LSM:Fetch("statusbar", self.db["core"].glossTex)
-
-	--Sound
-	self["media"].whispersound = LSM:Fetch("sound", self.db["core"].whispersound)
 
 	--Border Color
 	local border = self.db["core"].bordercolor
@@ -66,20 +62,20 @@ function E:UpdateMedia()
 	--Backdrop Fade Color
 	backdrop = self.db["core"].backdropfadecolor
 	self["media"].backdropfadecolor = {backdrop.r, backdrop.g, backdrop.b, backdrop.a}
-
+	
 	--Value Color
 	local value = self.db["core"].valuecolor
 	self["media"].hexvaluecolor = self:RGBToHex(value.r, value.g, value.b)
 	self["media"].rgbvaluecolor = {value.r, value.g, value.b}
-
+	
 	if LeftChatPanel and LeftChatPanel.tex and RightChatPanel and RightChatPanel.tex then
 		LeftChatPanel.tex:SetTexture(E.db.core.panelBackdropNameLeft)
-		LeftChatPanel.tex:SetAlpha(E.db.core.backdropfadecolor.a - 0.55 > 0 and E.db.core.backdropfadecolor.a - 0.55 or 0.5)
-
+		LeftChatPanel.tex:SetAlpha(E.db.core.backdropfadecolor.a - 0.55 > 0 and E.db.core.backdropfadecolor.a - 0.55 or 0.5)		
+		
 		RightChatPanel.tex:SetTexture(E.db.core.panelBackdropNameRight)
-		RightChatPanel.tex:SetAlpha(E.db.core.backdropfadecolor.a - 0.55 > 0 and E.db.core.backdropfadecolor.a - 0.55 or 0.5)
+		RightChatPanel.tex:SetAlpha(E.db.core.backdropfadecolor.a - 0.55 > 0 and E.db.core.backdropfadecolor.a - 0.55 or 0.5)		
 	end
-
+	
 	self:ValueFuncCall()
 	self:UpdateBlizzardFonts()
 end
@@ -110,7 +106,7 @@ function E:UpdateBorderColors()
 			self["frames"][frame] = nil;
 		end
 	end
-end
+end	
 
 function E:UpdateBackdropColors()
 	for frame, _ in pairs(self["frames"]) do
@@ -119,7 +115,7 @@ function E:UpdateBackdropColors()
 				if frame.backdropTexture then
 					frame.backdropTexture:SetVertexColor(unpack(self['media'].backdropcolor))
 				else
-					frame:SetBackdropColor(unpack(self['media'].backdropcolor))
+					frame:SetBackdropColor(unpack(self['media'].backdropcolor))				
 				end
 			elseif frame.template == 'Transparent' then
 				frame:SetBackdropColor(unpack(self['media'].backdropfadecolor))
@@ -128,7 +124,7 @@ function E:UpdateBackdropColors()
 			self["frames"][frame] = nil;
 		end
 	end
-end
+end	
 
 function E:UpdateFontTemplates()
 	for text, _ in pairs(self["texts"]) do
@@ -170,8 +166,8 @@ function E:CheckRole()
 	else
 		resilience = false;
 	end
-	if ((self.myclass == "PALADIN" and tree == 2) or
-	(self.myclass == "WARRIOR" and tree == 3) or
+	if ((self.myclass == "PALADIN" and tree == 2) or 
+	(self.myclass == "WARRIOR" and tree == 3) or 
 	(self.myclass == "DEATHKNIGHT" and tree == 1)) and
 	resilience == false or
 	(self.myclass == "DRUID" and tree == 2 and GetBonusBarOffset() == 3) then
@@ -182,7 +178,7 @@ function E:CheckRole()
 		local base, posBuff, negBuff = UnitAttackPower("player");
 		local playerap = base + posBuff + negBuff;
 
-		if (((playerap > playerint) or (playeragi > playerint)) and not (self.myclass == "SHAMAN" and tree ~= 1 and tree ~= 3) and not
+		if (((playerap > playerint) or (playeragi > playerint)) and not (self.myclass == "SHAMAN" and tree ~= 1 and tree ~= 3) and not 
 		(UnitBuff("player", GetSpellInfo(24858)) or UnitBuff("player", GetSpellInfo(65139)))) or self.myclass == "ROGUE" or self.myclass == "HUNTER" or (self.myclass == "SHAMAN" and tree == 2) then
 			self.role = "Melee";
 		else
@@ -200,7 +196,7 @@ function E:RegisterModule(name)
 	end
 end
 
-function E:InitializeModules()
+function E:InitializeModules()	
 	for _, module in pairs(E['RegisteredModules']) do
 		if self:GetModule(module).Initialize then
 			self:GetModule(module):Initialize()
@@ -234,7 +230,7 @@ function E:CreateMoverPopup()
 	title:FontTemplate()
 	title:SetPoint("CENTER", header, "CENTER")
 	title:SetText('ElvUI')
-
+		
 	local desc = f:CreateFontString("ARTWORK")
 	desc:SetFontObject("GameFontHighlight")
 	desc:SetJustifyV("TOP")
@@ -260,16 +256,16 @@ function E:CreateMoverPopup()
 	lock:SetScript("OnClick", function(self)
 		E:MoveUI(false)
 		self:GetParent():Hide()
-		ACD['Open'](ACD, 'ElvUI')
+		ACD['Open'](ACD, 'ElvUI') 
 	end)
 
 	--position buttons
 	snapping:SetPoint("BOTTOMLEFT", 14, 10)
 	lock:SetPoint("BOTTOMRIGHT", -14, 14)
-
+	
 	S:HandleCheckBox(snapping)
 	S:HandleButton(lock)
-
+	
 	f:RegisterEvent('PLAYER_REGEN_DISABLED')
 	f:SetScript('OnEvent', function(self)
 		if self:IsShown() then
@@ -284,19 +280,19 @@ function E:CheckIncompatible()
 	elseif IsAddOnLoaded('Chatter') and E.db.chat.enable then
 		E:Print(format(L['INCOMPATIBLE_ADDON'], 'Chatter', 'Chat'))
 	end
-
+	
 	if IsAddOnLoaded('Bartender4') and E.db.actionbar.enable then
 		E:Print(format(L['INCOMPATIBLE_ADDON'], 'Bartender', 'ActionBar'))
 	elseif IsAddOnLoaded('Dominos') and E.db.actionbar.enable then
 		E:Print(format(L['INCOMPATIBLE_ADDON'], 'Dominos', 'ActionBar'))
-	end
-
+	end	
+	
 	if IsAddOnLoaded('TidyPlates') and E.db.nameplate.enable then
 		E:Print(format(L['INCOMPATIBLE_ADDON'], 'TidyPlates', 'NamePlate'))
 	elseif IsAddOnLoaded('Aloft') and E.db.nameplate.enable then
 		E:Print(format(L['INCOMPATIBLE_ADDON'], 'Aloft', 'NamePlate'))
-	end
-
+	end	
+	
 	if IsAddOnLoaded('ArkInventory') and E.db.core.bags then
 		E:Print(format(L['INCOMPATIBLE_ADDON'], 'ArkInventory', 'Bags'))
 	elseif IsAddOnLoaded('Bagnon') and E.db.core.bags then
@@ -305,6 +301,15 @@ function E:CheckIncompatible()
 		E:Print(format(L['INCOMPATIBLE_ADDON'], 'OneBag3', 'Bags'))
 	elseif IsAddOnLoaded('OneBank3') and E.db.core.bags then
 		E:Print(format(L['INCOMPATIBLE_ADDON'], 'OneBank3', 'Bags'))
+	end
+end
+
+function E:IsFoolsDay()
+	local date = date()
+	if string.find(date, '04/01/') then
+		return true;
+	else
+		return false;
 	end
 end
 
@@ -319,7 +324,7 @@ function E:SendRecieve(event, prefix, message, channel, sender)
 		local numParty, numRaid = GetNumPartyMembers(), GetNumRaidMembers();
 		local inInstance, instanceType = IsInInstance()
 		if inInstance and instanceType == 'pvp' or instanceType == 'arena' then
-			SendAddonMessage("ElvUI", E.version, "BATTLEGROUND")
+			SendAddonMessage("ElvUI", E.version, "BATTLEGROUND")	
 		else
 			if numRaid > 0 then
 				SendAddonMessage("ElvUI", E.version, "RAID")
@@ -340,25 +345,25 @@ function E:Initialize()
 	if self.db.core.loginmessage then
 		print(format(L['LOGIN_MSG'], self["media"].hexvaluecolor, self["media"].hexvaluecolor, self.version))
 	end
-
+	
 	self:CheckIncompatible()
-
+	
 	self:CheckRole()
 	self:UIScale('PLAYER_LOGIN');
-
+	
 	self:LoadConfig(); --Load In-Game Config
 	self:LoadCommands(); --Load Commands
-	self:InitializeModules(); --Load Modules
+	self:InitializeModules(); --Load Modules	
 	self:LoadMovers(); --Load Movers
-
+	
 	self.initialized = true
-
+	
 	if self.db.install_complete == nil or (self.db.install_complete and type(self.db.install_complete) == 'boolean') or (self.db.install_complete and type(tonumber(self.db.install_complete)) == 'number' and tonumber(self.db.install_complete) <= 3.05) then
 		self:Install()
 	end
-
+	
 	RegisterAddonMessagePrefix('ElvUI')
-
+	
 	self:UpdateMedia()
 	self:UpdateFrameTemplates()
 	self:CreateMoverPopup()
@@ -366,7 +371,7 @@ function E:Initialize()
 	self:RegisterEvent("PLAYER_TALENT_UPDATE", "CheckRole");
 	self:RegisterEvent("CHARACTER_POINTS_CHANGED", "CheckRole");
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "CheckRole");
-	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "CheckRole");
+	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "CheckRole");	
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "SendRecieve")
 	self:RegisterEvent("RAID_ROSTER_UPDATE", "SendRecieve")
 	self:RegisterEvent("PARTY_MEMBERS_CHANGED", "SendRecieve")
@@ -377,23 +382,23 @@ end
 local toggle
 function E:MoveUI(override, type)
 	if InCombatLockdown() then E:Print(ERR_NOT_IN_COMBAT) return end
-
+	
 	if toggle ~= nil then
 		toggle = nil
 	else
 		toggle = true
 	end
-
+	
 	if override then toggle = override end
-
+	
 	if toggle then
 		ElvUIMoverPopupWindow:Show()
-		ACD['Close'](ACD, 'ElvUI')
+		ACD['Close'](ACD, 'ElvUI') 
 		GameTooltip:Hide()
 	else
 		ElvUIMoverPopupWindow:Hide()
 	end
-
+	
 	if type == 'unitframes' and self.UnitFrames then
 		ElvUF:MoveUF(toggle)
 		return
@@ -401,46 +406,46 @@ function E:MoveUI(override, type)
 		self.ActionBars:ToggleMovers(toggle)
 		return
 	end
-
+	
 	self:ToggleMovers(toggle)
-
+	
 	if self.UnitFrames then
 		ElvUF:MoveUF(toggle)
 	end
-
+	
 	if self.ActionBars then
 		self.ActionBars:ToggleMovers(toggle)
-	end
+	end	
 end
 
 function E:ResetAllUI()
 	self:ResetMovers()
-
+	
 	if self.UnitFrames then
-		ElvUF:ResetUF()
+		ElvUF:ResetUF()	
 	end
-
+	
 	if self.ActionBars then
 		self.ActionBars:ResetMovers('')
-	end
+	end	
 end
 
 
 function E:ResetUI(...)
 	if InCombatLockdown() then E:Print(ERR_NOT_IN_COMBAT) return end
-
+	
 	if ... == '' or ... == ' ' or ... == nil then
 		StaticPopup_Show('RESETUI_CHECK')
 		return
 	end
-
+	
 	self:ResetMovers(...)
-
+	
 	if self.UnitFrames then
-		ElvUF:ResetUF(...)
+		ElvUF:ResetUF(...)	
 	end
-
+	
 	if self.ActionBars then
 		self.ActionBars:ResetMovers(...)
-	end
+	end	
 end
