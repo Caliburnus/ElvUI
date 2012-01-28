@@ -6,6 +6,10 @@
 ## SavedVariables: ElvData
 ## OptionalDeps: BigWigs, DBM-Core, DXE, SharedMedia
 ## X-oUF: ElvUF
+## X-Curse-Packaged-Version: v3.19-8-gc790ec4
+## X-Curse-Project-Name: ElvUI
+## X-Curse-Project-ID: elvui
+## X-Curse-Repository-ID: wow/elvui/mainline
 
 developer\load_developer.xml
 libs\load_libs.xml
