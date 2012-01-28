@@ -332,7 +332,7 @@ function B:Layout(isBank)
 
 				if isnew then
 					table.insert(self.buttons, idx + 1, b)
-					
+
 					if not isBank then
 						b.bagOwner = i - 1
 					else
@@ -350,7 +350,7 @@ function B:Layout(isBank)
 				b.frame:Size(bSize)
 				b.frame.lock = false
 				b.frame:SetAlpha(1)
-				
+
 				local clink = GetContainerItemLink
 				if (clink and b.rarity and b.rarity > 1) then
 					b.frame:SetBackdropBorderColor(GetItemQualityColor(b.rarity))

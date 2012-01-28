@@ -36,7 +36,7 @@ local function LoadSkin()
 			
 			button.searchOverlay:ClearAllPoints()
 			button.searchOverlay:SetAllPoints(icon)
-			
+
 			if _G[button:GetName().."IconQuestTexture"] then
 				_G[button:GetName().."IconQuestTexture"]:Kill()
 			end
