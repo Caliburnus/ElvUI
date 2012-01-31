@@ -337,10 +337,6 @@ function E:Initialize()
 	self.data.RegisterCallback(self, "OnProfileReset", "OnProfileChanged")
 	self.db = self.data.profile;
 
-	if self.db.core.loginmessage then
-		print(format(L['LOGIN_MSG'], self["media"].hexvaluecolor, self["media"].hexvaluecolor, self.version))
-	end
-
 	self:CheckIncompatible()
 
 	self:CheckRole()
@@ -350,6 +346,10 @@ function E:Initialize()
 	self:LoadCommands(); --Load Commands
 	self:InitializeModules(); --Load Modules
 	self:LoadMovers(); --Load Movers
+
+	if self.db.core.loginmessage then
+		print(select(2, self:GetModule('Chat'):FindURL(nil, format(L['LOGIN_MSG'], self["media"].hexvaluecolor, self["media"].hexvaluecolor, self.version))))
+	end
 
 	self.initialized = true
 
