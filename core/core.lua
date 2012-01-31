@@ -88,7 +88,7 @@ end
 
 function E:UpdateFrameTemplates()
 	for frame, _ in pairs(self["frames"]) do
-		if frame and frame.template then
+		if frame and frame.template  then
 			frame:SetTemplate(frame.template, frame.glossTex);
 		else
 			self["frames"][frame] = nil;
@@ -342,10 +342,6 @@ function E:Initialize()
 	self.data.RegisterCallback(self, "OnProfileReset", "OnProfileChanged")
 	self.db = self.data.profile;
 
-	if self.db.core.loginmessage then
-		print(format(L['LOGIN_MSG'], self["media"].hexvaluecolor, self["media"].hexvaluecolor, self.version))
-	end
-
 	self:CheckIncompatible()
 
 	self:CheckRole()
@@ -355,6 +351,10 @@ function E:Initialize()
 	self:LoadCommands(); --Load Commands
 	self:InitializeModules(); --Load Modules
 	self:LoadMovers(); --Load Movers
+
+	if self.db.core.loginmessage then
+		print(select(2, self:GetModule('Chat'):FindURL(nil, format(L['LOGIN_MSG'], self["media"].hexvaluecolor, self["media"].hexvaluecolor, self.version))))
+	end
 
 	self.initialized = true
 
