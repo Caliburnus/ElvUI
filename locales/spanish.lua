@@ -368,6 +368,7 @@ L["Panel Texture (Right)"] = "Textura del Panel Derecho"
 L["Panel Width"] = "Ancho del Panel"
 L["Party Frames"] = "Cuadros de Grupo"
 L["Party Pets"] = "Mascotas del Grupo"
+L["Party Targets"] = "Objetivos del Grupo" -- Needs review
 L["Percent"] = "Porcentaje"
 L["Per Row"] = "Por fila"
 L["Personal Auras"] = "Auras Personales"
