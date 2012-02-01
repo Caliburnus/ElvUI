@@ -924,6 +924,15 @@ DF['unitframe'] = {
 					['xOffset'] = -1,
 					['yOffset'] = 0,
 				},
+				['targetsGroup'] = {
+					['enable'] = false,
+					['width'] = 100,
+					['height'] = 22,
+					['initialAnchor'] = 'TOPRIGHT',
+					['anchorPoint'] = 'TOPLEFT',
+					['xOffset'] = -1,
+					['yOffset'] = 0,
+				},
 			},
 			['raid625'] = {
 				['enable'] = true,
@@ -1132,6 +1141,14 @@ DF['unitframe'] = {
 					['xOffset'] = 0,
 					['yOffset'] = 1,
 				},
+				['targetsGroup'] = {
+					['enable'] = false,
+					['width'] = 80,
+					['initialAnchor'] = 'BOTTOM',
+					['anchorPoint'] = 'TOP',
+					['xOffset'] = 0,
+					['yOffset'] = 1,
+				},
 			},
 			['raid625'] = {
 				['healPrediction'] = true,
@@ -1182,7 +1199,7 @@ DF["actionbar"] = {
 		['heightMult'] = 1,
 		['widthMult'] = 1,
 		["buttonsize"] = 30,
-		["buttonspacing"] = 4,		
+		["buttonspacing"] = 4,
 		['paging'] = {
 			["DRUID"] = "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
 			["WARRIOR"] = "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9;",
@@ -1201,7 +1218,7 @@ DF["actionbar"] = {
 		['heightMult'] = 1,
 		['widthMult'] = 1,
 		["buttonsize"] = 30,
-		["buttonspacing"] = 4,		
+		["buttonspacing"] = 4,
 		['paging'] = {},
 		['visibility'] = "[vehicleui] hide;show",
 	},
