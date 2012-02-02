@@ -2,6 +2,7 @@
 local L = AceLocale:NewLocale("ElvuiConfig", "esES") or AceLocale:NewLocale("ElvUI", "esMX")
 if not L then return end
 
+L["(Hold Shift) Memory Usage"] = "(Mantén Shift) Uso de Memoria"
 L["24-Hour Time"] = "Tiempo de 24 horas"
 L["Achievement Frame"] = "Cuadro de Logros"
 L["Achievement Popup Frames"] = "Cuadro Emergente de Logros"
@@ -440,6 +441,7 @@ L["Role Icon"] = "Icono de Rol"
 L["Run the installation process."] = "Ejecutar el proceso de instalación"
 L["RW"] = "AB"
 L["Save"] = "Guardar"
+L["Saved Instance(s)"] = "Estancia(s) Guardada(s)"
 L["Saved Raid(s)"] = "Banda(s) Guardada(s):"
 L["says"] = "dice"
 L["Scale"] = "Escala"
@@ -595,6 +597,7 @@ L["Tooltip"] = "Tooltip"
 L["TOOLTIP_DESC"] = "Configura las opciones del Tooltip."
 L["Top Screen"] = "Parte Superior de la pantalla"
 L["Total: "] = "Total: "
+L["Total CPU:"] = "CPU Total:"
 L["Total Memory:"] = "Memoria Total:"
 L["Totem Bar"] = "Barra de Tótems"
 L["Trade"] = "Intercambio"
