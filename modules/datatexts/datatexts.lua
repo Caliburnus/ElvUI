@@ -32,20 +32,20 @@ function DT:RegisterLDB()
 				GameTooltip:Show()
 			end
 		end
-		
+
 		if obj.OnEnter then
 			function OnEnter(self)
 				DT:SetupTooltip(self)
 				obj.OnEnter(self)
 				GameTooltip:Show()
-			end		
+			end
 		end
 
 		if obj.OnLeave then
 			function OnLeave(self)
 				obj.OnLeave(self)
 				GameTooltip:Hide()
-			end		
+			end
 		end
 
 		local function OnClick(self, button)
@@ -59,16 +59,16 @@ function DT:RegisterLDB()
 				curFrame.text:SetText(name..': '..hex..value..'|r')
 			end
 		end
-		
+
 		local function OnEvent(self)
 			curFrame = self
 			LDB:RegisterCallback("LibDataBroker_AttributeChanged_"..name.."_text", textUpdate)
-			LDB:RegisterCallback("LibDataBroker_AttributeChanged_"..name.."_value", textUpdate)					
-			LDB.callbacks:Fire("LibDataBroker_AttributeChanged_"..name.."_text", name, nil, obj.text, obj)	
+			LDB:RegisterCallback("LibDataBroker_AttributeChanged_"..name.."_value", textUpdate)
+			LDB.callbacks:Fire("LibDataBroker_AttributeChanged_"..name.."_text", name, nil, obj.text, obj)
 		end
 
 		self:RegisterDatatext(name, {'PLAYER_ENTER_WORLD'}, OnEvent, nil, OnClick, OnEnter, OnLeave)
-	end	
+	end
 end
 
 local function ValueColorUpdate(newHex)
@@ -169,7 +169,7 @@ function DT:AssignPanelToDataText(panel, data)
 		panel:SetScript('OnLeave', data['onLeave'])
 	else
 		panel:SetScript('OnLeave', DT.Data_OnLeave)
-	end	
+	end
 end
 
 function DT:LoadDataTexts()
@@ -181,8 +181,8 @@ function DT:LoadDataTexts()
 
 	for name, obj in LDB:DataObjectIterator() do
 		LDB:UnregisterAllCallbacks(self)
-	end	
-	
+	end
+
 	for panelName, panel in pairs(DT.RegisteredPanels) do
 		--Restore Panels
 		for i=1, panel.numPoints do
@@ -214,7 +214,7 @@ end
 DT:RegisterEvent('ACTIVE_TALENT_GROUP_CHANGED', 'LoadDataTexts')
 
 --[[
-	DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onEnterFunc)
+	DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onEnterFunc, onLeaveFunc)
 
 	name - name of the datatext (required)
 	events - must be a table with string values of event names to register
@@ -222,6 +222,7 @@ DT:RegisterEvent('ACTIVE_TALENT_GROUP_CHANGED', 'LoadDataTexts')
 	updateFunc - onUpdate script target function
 	click - function to fire when clicking the datatext
 	onEnterFunc - function to fire OnEnter
+	onLeaveFunc - function to fire OnLeave, if not provided one will be set for you that hides the tooltip.
 ]]
 function DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onEnterFunc, onLeaveFunc)
 	if name then
@@ -248,10 +249,10 @@ function DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onE
 	if onEnterFunc and type(onEnterFunc) == 'function' then
 		DT.RegisteredDataTexts[name]['onEnter'] = onEnterFunc
 	end
-	
+
 	if onLeaveFunc and type(onLeaveFunc) == 'function' then
 		DT.RegisteredDataTexts[name]['onLeave'] = onLeaveFunc
-	end	
+	end
 end
 
 E:RegisterModule(DT:GetName())
