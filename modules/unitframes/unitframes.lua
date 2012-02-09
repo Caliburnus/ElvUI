@@ -96,7 +96,7 @@ function UF:GetAuraAnchorFrame(frame, attachTo, isConflict)
 	if isConflict then
 		E:Print(string.format(L['%s frame(s) has a conflicting anchor point, please change either the buff or debuff anchor point so they are not attached to each other. Forcing the debuffs to be attached to the main unitframe until fixed.'], E:StringTitle(frame:GetName())))
 	end
-	
+
 	if isConflict or attachTo == 'FRAME' then
 		return frame
 	elseif attachTo == 'BUFFS' then
@@ -309,10 +309,10 @@ function UF:CreateAndUpdateHeaderGroup(group, groupFilter, template)
 			if _G[child:GetName()..'Pet'] then
 				UF["Update_"..E:StringTitle(group).."Frames"](self, _G[child:GetName()..'Pet'], self.db['layouts'][self.ActiveLayout][group])
 			end
-			
+
 			if _G[child:GetName()..'Target'] then
 				UF["Update_"..E:StringTitle(group).."Frames"](self, _G[child:GetName()..'Target'], self.db['layouts'][self.ActiveLayout][group])
-			end			
+			end
 		end
 	elseif self[group] then
 		self[group]:SetAttribute("showParty", false)
