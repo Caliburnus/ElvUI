@@ -1,4 +1,4 @@
-local E, L, DF = unpack(select(2, ...)); --Engine
+local E, L, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, ProfileDB, GlobalDB
 local UF = E:NewModule('UnitFrames', 'AceTimer-3.0', 'AceEvent-3.0');
 local LSM = LibStub("LibSharedMedia-3.0");
 
@@ -213,7 +213,7 @@ function UF:ChangeVisibility(header, visibility)
 		end
 	end
 end
-
+local UNITFRAMES = UF
 function UF:Update_AllFrames()
 	if InCombatLockdown() then self:RegisterEvent('PLAYER_REGEN_ENABLED'); return end
 	self:UpdateColors()
@@ -223,15 +223,6 @@ function UF:Update_AllFrames()
 			self[unit]:Update()
 		else
 			self[unit]:Disable()
-		end
-	end
-
-	for _, header in pairs(UF['handledheaders']) do
-		for i=1, header:GetNumChildren() do
-			local frame = select(i, header:GetChildren())
-			if frame and frame.unit then
-				frame:Update()
-			end
 		end
 	end
 
