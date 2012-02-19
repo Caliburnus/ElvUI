@@ -1298,7 +1298,7 @@ P["actionbar"] = {
 	},
 };
 
-DF['bags'] = {
+P['bags'] = {
 	['bagcols'] = 12,	-- Number of columns (width) of bag use an integer or 0 (zero) to match width of chat panels
 	['bankcols'] = 20,	-- Number of columns (width) of bank use an integer or 0 (zero) to match width of chat panels
 };
