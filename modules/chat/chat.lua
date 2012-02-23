@@ -140,6 +140,7 @@ function CH:SetupTempChat()
 end
 
 function CH:PositionChat(override)
+	if E.global.chat.enable ~= true then return end
 	if (InCombatLockdown() and not override and self.initialMove) or (IsMouseButtonDown("LeftButton") and not override) then return end
 
 	local chat, chatbg, tab, id, point, button, isDocked, chatFound
@@ -154,8 +155,8 @@ function CH:PositionChat(override)
 		end
 	end
 
-	RightChatPanel:Size(E.db.core.panelWidth, E.db.core.panelHeight)
-	LeftChatPanel:Size(E.db.core.panelWidth, E.db.core.panelHeight)
+	RightChatPanel:Size(E.db.general.panelWidth, E.db.general.panelHeight)
+	LeftChatPanel:Size(E.db.general.panelWidth, E.db.general.panelHeight)
 
 	if chatFound then
 		self.RightChatWindowID = id
@@ -189,11 +190,11 @@ function CH:PositionChat(override)
 			if id ~= 2 then
 				chat:ClearAllPoints()
 				chat:Point("BOTTOMLEFT", RightChatDataPanel, "TOPLEFT", 1, 3)
-				chat:SetSize(E.db.core.panelWidth - 11, (E.db.core.panelHeight - 60))
+				chat:SetSize(E.db.general.panelWidth - 11, (E.db.general.panelHeight - 60))
 			else
 				chat:ClearAllPoints()
 				chat:Point("BOTTOMLEFT", RightChatDataPanel, "TOPLEFT", 1, 3)
-				chat:Size(E.db.core.panelWidth - 11, (E.db.core.panelHeight - 60) - CombatLogQuickButtonFrame_Custom:GetHeight())
+				chat:Size(E.db.general.panelWidth - 11, (E.db.general.panelHeight - 60) - CombatLogQuickButtonFrame_Custom:GetHeight())
 			end
 
 
@@ -208,7 +209,7 @@ function CH:PositionChat(override)
 			if id ~= 2 and not (id > NUM_CHAT_WINDOWS) then
 				chat:ClearAllPoints()
 				chat:Point("BOTTOMLEFT", LeftChatToggleButton, "TOPLEFT", 1, 3)
-				chat:Size(E.db.core.panelWidth - 11, (E.db.core.panelHeight - 60))
+				chat:Size(E.db.general.panelWidth - 11, (E.db.general.panelHeight - 60))
 				FCF_SavePositionAndDimensions(chat)
 			end
 			chat:SetParent(LeftChatPanel)
@@ -351,7 +352,7 @@ function CH:CHAT_MSG_CHANNEL(...)
 	if locale == 'enUS' or locale == 'enGB' then
 		isSpam = CH.SpamFilter(self, ...)
 	end
-	
+
 	if isSpam then
 		return true;
 	else
@@ -364,7 +365,7 @@ function CH:CHAT_MSG_YELL(...)
 	if locale == 'enUS' or locale == 'enGB' then
 		isSpam = CH.SpamFilter(self, ...)
 	end
-	
+
 	if isSpam then
 		return true;
 	else
@@ -377,7 +378,7 @@ function CH:CHAT_MSG_SAY(...)
 	if locale == 'enUS' or locale == 'enGB' then
 		isSpam = CH.SpamFilter(self, ...)
 	end
-	
+
 	if isSpam then
 		return true;
 	else
@@ -387,7 +388,7 @@ end
 
 function CH:Initialize()
 	self.db = E.db.chat
-	if self.db.enable ~= true then return end
+	if E.global.chat.enable ~= true then return end
 	E.Chat = self
 
 	FriendsMicroButton:Kill()
