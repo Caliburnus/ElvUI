@@ -11,6 +11,7 @@ local BAGS_BACKPACK = {0, 1, 2, 3, 4}
 local BAGS_BANK = {-1, 5, 6, 7, 8, 9, 10, 11}
 local trashParent = CreateFrame("Frame", nil, E.UIParent)
 local trashButton, trashBag = {}, {}
+local allButtons = {}
 
 B.buttons = {};
 B.bags = {};
@@ -176,6 +177,7 @@ end
 function B:SlotNew(bag, slot)
 	for _, v in ipairs(self.buttons) do
 		if v.bag == bag and v.slot == slot then
+			v.lock = false;
 			return v, false
 		end
 	end
@@ -199,12 +201,15 @@ function B:SlotNew(bag, slot)
 			if b == bag and s == slot then
 				f = i
 				break
+			else
+				v:Hide()
 			end
 		end
 
 		if f ~= -1 then
 			ret.frame = trashButton[f]
 			table.remove(trashButton, f)
+			ret.frame:Show()
 		end
 	end
 
@@ -235,6 +240,7 @@ function B:SlotNew(bag, slot)
 end
 
 function B:Layout(isBank)
+	if E.global.general.bags ~= true then return end
 	local slots = 0
 	local rows = 0
 	local offset = 26
@@ -244,8 +250,8 @@ function B:Layout(isBank)
 	if not isBank then
 		bs = BAGS_BACKPACK
 		if E.db.bags.bagcols == 0 then
-			cols = floor((E.db.core.panelWidth - 10)/370 * 10)
-			bagWidth = E.db.core.panelWidth - 10
+			cols = floor((E.db.general.panelWidth - 10)/370 * 10)
+			bagWidth = E.db.general.panelWidth - 10
 		else
 			cols = E.db.bags.bagcols
 			bagWidth = 35 * cols
@@ -256,8 +262,8 @@ function B:Layout(isBank)
 	else
 		bs = BAGS_BANK
 		if E.db.bags.bankcols == 0 then
-			cols = floor((E.db.core.panelWidth - 10)/370 * 10)
-			bagWidth = E.db.core.panelWidth - 10
+			cols = floor((E.db.general.panelWidth - 10)/370 * 10)
+			bagWidth = E.db.general.panelWidth - 10
 		else
 			cols = E.db.bags.bankcols
 			bagWidth = 35 * cols
@@ -331,7 +337,7 @@ function B:Layout(isBank)
 	local idx = 0
 	for _, i in ipairs(bs) do
 		local bag_cnt = GetContainerNumSlots(i)
-
+		local specialType = select(2, GetContainerNumFreeSlots(i))
 		if bag_cnt > 0 then
 			self.bags[i] = B:BagNew(i, f)
 			local bagType = self.bags[i].bagType
@@ -345,6 +351,7 @@ function B:Layout(isBank)
 
 				if isnew then
 					table.insert(self.buttons, idx + 1, b)
+					table.insert(allButtons, b)
 
 					if not isBank then
 						b.bagOwner = i - 1
@@ -365,8 +372,23 @@ function B:Layout(isBank)
 				b.frame:SetAlpha(1)
 
 				local clink = GetContainerItemLink
-				if (clink and b.rarity and b.rarity > 1) then
-					b.frame:SetBackdropBorderColor(GetItemQualityColor(b.rarity))
+				if bagType == ST_SPECIAL then
+					if specialType == 0x0008 then      -- Leatherworking
+						b.frame:SetBackdropBorderColor(224/255, 187/255,  74/255)
+					elseif specialType == 0x0010 then -- Inscription
+						b.frame:SetBackdropBorderColor(74/255, 77/255,  224/255)
+					elseif specialType == 0x0020 then -- Herbs
+						b.frame:SetBackdropBorderColor(18/255, 181/255,  32/255)
+					elseif specialType == 0x0040 then -- Enchanting
+						b.frame:SetBackdropBorderColor(160/255, 3/255,  168/255)
+					elseif specialType == 0x0080 then -- Engineering
+						b.frame:SetBackdropBorderColor(232/255, 118/255,  46/255)
+					elseif specialType == 0x0200 then -- Gems
+						b.frame:SetBackdropBorderColor(8/255, 180/255,  207/255)
+					elseif specialType == 0x0400 then -- Mining
+						b.frame:SetBackdropBorderColor(105/255, 79/255,  7/255)
+					end
+					b.frame.lock = true
 				elseif (clink and b.qitem) then
 					b.frame:SetBackdropBorderColor(1.0, 0.3, 0.3)
 				elseif bagType == ST_QUIVER then
@@ -375,13 +397,11 @@ function B:Layout(isBank)
 				elseif bagType == ST_SOULBAG then
 					b.frame:SetBackdropBorderColor(0.5, 0.2, 0.2)
 					b.frame.lock = true
-				elseif bagType == ST_SPECIAL then
-					b.frame:SetBackdropBorderColor(0.2, 0.2, 0.8)
-					b.frame.lock = true
+				elseif (clink and b.rarity and b.rarity > 1) then
+					b.frame:SetBackdropBorderColor(GetItemQualityColor(b.rarity))
+				else
+					b.frame:SetBackdropBorderColor(unpack(E.media.bordercolor))
 				end
-
-				-- color profession bag slot border ~yellow
-				if bagType == ST_SPECIAL then b.frame:SetBackdropBorderColor(255/255, 243/255,  82/255) b.frame.lock = true end
 
 				idx = idx + 1
 			end
@@ -409,6 +429,15 @@ end
 function B:Bags_OnHide()
 	if bankFrame then
 		bankFrame:Hide()
+	end
+
+	if B.buttons then
+		for _, v in ipairs(allButtons) do
+			v.frame.lock = false
+			if not B.buttons[v] and not trashButton[v.frame] then
+				v.frame:Hide()
+			end
+		end
 	end
 end
 
@@ -791,7 +820,7 @@ function B:BAG_CLOSED(event, id)
 		for i, v in ipairs(self.buttons) do
 			if v.bag == id then
 				v.frame:Hide()
-
+				v.frame.lock = false;
 				table.insert(trashButton, #trashButton + 1, v.frame)
 				table.remove(self.buttons, i)
 
@@ -1376,7 +1405,7 @@ function B:PLAYERBANKBAGSLOTS_CHANGED()
 end
 
 function B:Initialize()
-	if not E.db.core.bags then return end
+	if not E.global.general.bags then return end
 	self:InitBags()
 
 	--Register Events

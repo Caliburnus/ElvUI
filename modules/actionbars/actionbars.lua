@@ -16,7 +16,7 @@ E['snapBars'] = { E.UIParent }
 
 function AB:Initialize()
 	self.db = E.db.actionbar
-	if self.db.enable ~= true then return; end
+	if E.global.actionbar.enable ~= true then return; end
 	E.ActionBars = AB;
 
 	self:DisableBlizzard()
@@ -83,6 +83,7 @@ function AB:ReassignBindings()
 end
 
 function AB:UpdateButtonSettings()
+	if E.global.actionbar.enable ~= true then return end
 	if InCombatLockdown() then self:RegisterEvent('PLAYER_REGEN_ENABLED'); return; end
 	for button, _ in pairs(self["handledbuttons"]) do
 		if button then
@@ -104,7 +105,7 @@ function AB:UpdateButtonSettings()
 		mover.bar:SetScript("OnDragStart", function(mover)
 			if InCombatLockdown() then E:Print(ERR_NOT_IN_COMBAT) return end
 
-			if E.db.core.stickyFrames then
+			if E.db.general.stickyFrames then
 				local offset = 2
 				local name = mover.name
 				if name and self.db[name] and self.db[name].buttonspacing then
@@ -409,6 +410,20 @@ function AB:ResetMovers(...)
 	end
 end
 
+function AB:SetMoverPositions()
+	if E.global.actionbar.enable ~= true then return end
+	for name, _ in pairs(self.movers) do
+		local f = self.movers[name].bar
+		if f and self.db[name] and self.db[name]['position'] then
+			f:ClearAllPoints()
+			f:SetPoint(self.db[name]["position"].p, UIParent, self.db[name]["position"].p2, self.db[name]["position"].p3, self.db[name]["position"].p4)
+		elseif f then
+			f:ClearAllPoints()
+			f:Point(self.movers[name]["p"], self.movers[name]["p2"], self.movers[name]["p3"], self.movers[name]["p4"], self.movers[name]["p5"])
+		end
+	end
+end
+
 function AB:CreateMover(bar, text, name, padding)
 	local p, p2, p3, p4, p5 = bar:GetPoint()
 
@@ -439,7 +454,7 @@ function AB:CreateMover(bar, text, name, padding)
 	mover:RegisterForDrag("LeftButton", "RightButton")
 	mover:SetScript("OnDragStart", function(self)
 		if InCombatLockdown() then E:Print(ERR_NOT_IN_COMBAT) return end
-		if E.db.core.stickyFrames then
+		if E.db.general.stickyFrames then
 			local offset = AB.db[name].buttonspacing/2
 			if padding then offset = padding end
 			Sticky:StartMoving(self, E['snapBars'], offset, offset, offset, offset)
@@ -450,7 +465,7 @@ function AB:CreateMover(bar, text, name, padding)
 
 	mover:SetScript("OnDragStop", function(frame)
 		if InCombatLockdown() then E:Print(ERR_NOT_IN_COMBAT) return end
-		if E.db.core.stickyFrames then
+		if E.db.general.stickyFrames then
 			Sticky:StopMoving(frame)
 		else
 			frame:StopMovingOrSizing()
