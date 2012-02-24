@@ -193,8 +193,8 @@ local function UpdateFilterGroup()
 					type = 'input',
 					get = function(info) return "" end,
 					set = function(info, value) 
-						if DF['unitframe']['aurafilters'][selectedFilter] then
-							if DF['unitframe']['aurafilters'][selectedFilter]['spells'][value] then
+						if P['unitframe']['aurafilters'][selectedFilter] then
+							if P['unitframe']['aurafilters'][selectedFilter]['spells'][value] then
 								E.global.unitframe['aurafilters'][selectedFilter]['spells'][value] = false;
 								E:Print(L['You may not remove a spell from a default filter that is not customly added. Setting spell to false instead.'])
 							else
@@ -4729,16 +4729,22 @@ E.Options.args.unitframe.args.party = {
 					name = L['Position'],
 					values = positionValues,
 				},	
+				frequentUpdates = {
+					type = 'toggle',
+					order = 4,
+					name = L['Frequent Updates'],
+					desc = L['Rapidly update the health, uses more memory and cpu. Only recommended for healing.'],
+				},
 				orientation = {
 					type = 'select',
-					order = 4,
+					order = 5,
 					name = L['Orientation'],
 					desc = L['Direction the health bar moves when gaining/losing health.'],
 					values = {
 						['HORIZONTAL'] = L['Horizontal'],
 						['VERTICAL'] = L['Vertical'],
 					},
-				},				
+				},		
 			},
 		},
 		power = {
@@ -5329,16 +5335,22 @@ E.Options.args.unitframe.args.raid625 = {
 					name = L['Position'],
 					values = positionValues,
 				},					
+				frequentUpdates = {
+					type = 'toggle',
+					order = 4,
+					name = L['Frequent Updates'],
+					desc = L['Rapidly update the health, uses more memory and cpu. Only recommended for healing.'],
+				},
 				orientation = {
 					type = 'select',
-					order = 4,
+					order = 5,
 					name = L['Orientation'],
 					desc = L['Direction the health bar moves when gaining/losing health.'],
 					values = {
 						['HORIZONTAL'] = L['Horizontal'],
 						['VERTICAL'] = L['Vertical'],
 					},
-				},
+				},	
 			},
 		},
 		power = {
@@ -5849,16 +5861,22 @@ E.Options.args.unitframe.args.raid2640 = {
 					name = L['Position'],
 					values = positionValues,
 				},					
+				frequentUpdates = {
+					type = 'toggle',
+					order = 4,
+					name = L['Frequent Updates'],
+					desc = L['Rapidly update the health, uses more memory and cpu. Only recommended for healing.'],
+				},
 				orientation = {
 					type = 'select',
-					order = 4,
+					order = 5,
 					name = L['Orientation'],
 					desc = L['Direction the health bar moves when gaining/losing health.'],
 					values = {
 						['HORIZONTAL'] = L['Horizontal'],
 						['VERTICAL'] = L['Vertical'],
 					},
-				},
+				},	
 			},
 		},
 		power = {

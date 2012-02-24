@@ -752,6 +752,7 @@ P['unitframe'] = {
 				['text_format'] = 'current-percent',
 				['position'] = 'RIGHT',
 				['orientation'] = 'HORIZONTAL',
+				['frequentUpdates'] = false,
 			},
 			['power'] = {
 				['enable'] = true,
@@ -847,6 +848,7 @@ P['unitframe'] = {
 				['text_format'] = 'deficit',
 				['position'] = 'BOTTOM',
 				['orientation'] = 'HORIZONTAL',
+				['frequentUpdates'] = false,
 			},
 			['power'] = {
 				['enable'] = true,
@@ -929,6 +931,7 @@ P['unitframe'] = {
 				['text_format'] = 'deficit',
 				['position'] = 'BOTTOM',
 				['orientation'] = 'HORIZONTAL',
+				['frequentUpdates'] = false,
 			},
 			['power'] = {
 				['enable'] = false,
