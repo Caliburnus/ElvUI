@@ -28,7 +28,7 @@ function CH:StyleChat(frame)
 	_G[tab:GetName()..'Glow']:SetTexture('Interface\\ChatFrame\\ChatFrameTab-NewMessage')
 
 	tab.text = _G[name.."TabText"]
-	tab.text:FontTemplate()
+	tab.text:FontTemplate(E['media'].pixelFont, 10, 'OUTLINE')
 	tab.text:SetTextColor(unpack(E["media"].rgbvaluecolor))
 	tab.text.OldSetTextColor = tab.text.SetTextColor
 	tab.text.SetTextColor = E.noop
@@ -295,7 +295,11 @@ function CH:AddMessage(text, ...)
 			text = text:gsub("^%["..RAID_WARNING.."%]", '['..L['RW']..']')
 		end
 
-		text = text:gsub('|Hplayer:Elv:', '|TInterface\\ChatFrame\\UI-ChatIcon-Blizz:12:20:0:0:32:16:4:28:0:16|t|Hplayer:Elv:')
+		if text:find('|Hplayer:Elv:') then
+			text = text:gsub('|Hplayer:Elv:', '|TInterface\\ChatFrame\\UI-ChatIcon-Blizz:12:20:0:0:32:16:4:28:0:16|t|Hplayer:Elv:')
+		elseif text:find('|Hplayer:Elv-') then
+			text = text:gsub('|Hplayer:Elv-', '|TInterface\\ChatFrame\\UI-ChatIcon-Blizz:12:20:0:0:32:16:4:28:0:16|t|Hplayer:Elv-')
+		end
 	end
 
 	self.OldAddMessage(self, text, ...)
@@ -461,6 +465,15 @@ function CH:Initialize()
 	close:EnableMouse(true)
 
 	S:HandleCloseButton(close)
+
+	local SoundSys = CreateFrame("Frame")
+	SoundSys:RegisterEvent("CHAT_MSG_WHISPER")
+	SoundSys:RegisterEvent("CHAT_MSG_BN_WHISPER")
+	SoundSys:HookScript("OnEvent", function(self, event, ...)
+		if event == "CHAT_MSG_WHISPER" or "CHAT_MSG_BN_WHISPER" then
+			PlaySoundFile(E.media.whispersound, "Master")
+		end
+	end)
 end
 
 E:RegisterModule(CH:GetName())

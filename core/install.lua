@@ -180,6 +180,7 @@ function E:SetupResolution()
 		E.db.actionbar.bar2.enabled = true;
 		E.db.actionbar.bar3.enabled = false;
 		E.db.actionbar.bar5.enabled = false;
+		E:GetModule('ActionBars'):ResetMovers('')
 		E.db.actionbar.bar2["position"] = {
 			["p2"] = "BOTTOM",
 			["p"] = "CENTER",
@@ -229,6 +230,7 @@ function E:SetupResolution()
 		E:CopyTable(E.db.unitframe.units, P.unitframe.units)
 		E.db.unitframe.fontsize = 12
 		E.db.unitframe.units["positions"] = nil;
+		E:GetModule('ActionBars'):ResetMovers('')
 		E.db.lowresolutionset = nil;
 	end
 
@@ -244,6 +246,10 @@ function E:SetupLayout(layout)
 	--Unitframes
 	E:CopyTable(E.db.unitframe.units, P.unitframe.units)
 	if layout == 'healer' then
+		E.db.unitframe.units.party.health.frequentUpdates = true;
+		E.db.unitframe.units.raid625.health.frequentUpdates = true;
+		E.db.unitframe.units.raid2640.health.frequentUpdates = true;
+
 		E.db.unitframe.units.boss.width = 200;
 		E.db.unitframe.units.boss.castbar.width = 200;
 		E.db.unitframe.units.arena.width = 200;
@@ -497,7 +503,7 @@ end
 --Install UI
 function E:Install()
 	if not InstallStepComplete then
-		local imsg = CreateFrame("Frame", "InstallStepComplete", E.UIParent)
+		local imsg = CreateFrame("Button", "InstallStepComplete", E.UIParent)
 		imsg:Size(418, 72)
 		imsg:Point("TOP", 0, -190)
 		imsg:Hide()

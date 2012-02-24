@@ -136,7 +136,7 @@ function DT:RegisterPanel(panel, numPoints, anchor, xOff, yOff)
 			panel.dataPanels[pointIndex]:RegisterForClicks("AnyUp")
 			panel.dataPanels[pointIndex].text = panel.dataPanels[pointIndex]:CreateFontString(nil, 'OVERLAY')
 			panel.dataPanels[pointIndex].text:SetAllPoints()
-			panel.dataPanels[pointIndex].text:FontTemplate()
+			panel.dataPanels[pointIndex].text:FontTemplate(E['media'].pixelFont, 10, 'OUTLINE')
 			panel.dataPanels[pointIndex].text:SetJustifyH("CENTER")
 			panel.dataPanels[pointIndex].text:SetJustifyV("middle")
 		end

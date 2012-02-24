@@ -44,12 +44,16 @@ function E:UpdateMedia()
 	--Fonts
 	self["media"].normFont = LSM:Fetch("font", self.db['general'].font)
 	self["media"].combatFont = LSM:Fetch("font", self.db['general'].dmgfont)
-
+	self["media"].pixelFont = LSM:Fetch("font", self.db["general"].pixelfont)
+	self["media"].kbFont = LSM:Fetch("font", self.db["general"].kbfont)
 
 	--Textures
 	self["media"].blankTex = LSM:Fetch("background", "ElvUI Blank")
 	self["media"].normTex = LSM:Fetch("statusbar", self.global['general'].normTex)
 	self["media"].glossTex = LSM:Fetch("statusbar", self.global['general'].glossTex)
+
+	--Sound
+	self["media"].whispersound = LSM:Fetch("sound", self.db["general"].whispersound)
 
 	--Border Color
 	local border = self.db['general'].bordercolor
@@ -305,12 +309,13 @@ function E:CheckIncompatible()
 end
 
 function E:IsFoolsDay()
-	local date = date()
+	--[[local date = date()
 	if string.find(date, '04/01/') then
 		return true;
 	else
 		return false;
-	end
+	end--]]
+	return false
 end
 
 function E:CopyTable(currentTable, defaultTable)

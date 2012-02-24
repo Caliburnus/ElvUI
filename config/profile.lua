@@ -12,6 +12,8 @@ P['general'] = {
 	-- fonts
 	["fontsize"] = 12,
 	["font"] = "ElvUI Font",
+	["pixelfont"] = "ElvUI Pixel",
+	["kbfont"] = "ElvUI Pixel 2",
 
 	--colors
 	["bordercolor"] = { r = .31,g = .31,b = .31 },
@@ -29,6 +31,7 @@ P['general'] = {
 
 	--misc
 	['mapTransparency'] = 0.5,
+	['whispersound'] = 'ElvUI Whisper',
 };
 
 --NamePlate
@@ -748,6 +751,7 @@ P['unitframe'] = {
 				['text_format'] = 'current-percent',
 				['position'] = 'RIGHT',
 				['orientation'] = 'HORIZONTAL',
+				['frequentUpdates'] = false,
 			},
 			['power'] = {
 				['enable'] = true,
@@ -843,6 +847,7 @@ P['unitframe'] = {
 				['text_format'] = 'deficit',
 				['position'] = 'BOTTOM',
 				['orientation'] = 'HORIZONTAL',
+				['frequentUpdates'] = false,
 			},
 			['power'] = {
 				['enable'] = true,
@@ -925,6 +930,7 @@ P['unitframe'] = {
 				['text_format'] = 'deficit',
 				['position'] = 'BOTTOM',
 				['orientation'] = 'HORIZONTAL',
+				['frequentUpdates'] = false,
 			},
 			['power'] = {
 				['enable'] = false,
@@ -1105,4 +1111,9 @@ P["actionbar"] = {
 		['enabled'] = true,
 		['mouseover'] = false,
 	},
+};
+
+P['bags'] = {
+	['bagcols'] = 12,	-- Number of columns (width) of bag use an integer or 0 (zero) to match width of chat panels
+	['bankcols'] = 20,	-- Number of columns (width) of bank use an integer or 0 (zero) to match width of chat panels
 };
