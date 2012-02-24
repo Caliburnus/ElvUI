@@ -200,7 +200,7 @@ end
 
 function UF:Update_FontStrings()
 	for font in pairs(UF['fontstrings']) do
-		font:FontTemplate(LSM:Fetch("font", self.db.font), self.db.fontsize, self.db.fontoutline..", MONOCHROME")
+		font:FontTemplate(LSM:Fetch("font", self.db.font), self.db.fontsize, self.db.fontoutline)
 	end
 end
 

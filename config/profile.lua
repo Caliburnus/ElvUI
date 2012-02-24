@@ -12,12 +12,6 @@ P['general'] = {
 	-- fonts
 	["fontsize"] = 12,
 	["font"] = "ElvUI Font",
-	["pixelfont"] = "ElvUI Pixel",
-	["kbfont"] = "ElvUI Pixel 2",
-
-	-- textures
-	["normTex"] = "Minimalist",--"ElvUI Norm",
-	["glossTex"] = "Minimalist",--"ElvUI Gloss",
 
 	--colors
 	["bordercolor"] = { r = .31,g = .31,b = .31 },
@@ -35,7 +29,6 @@ P['general'] = {
 
 	--misc
 	['mapTransparency'] = 0.5,
-	['whispersound'] = 'ElvUI Whisper',
 };
 
 --NamePlate
@@ -130,7 +123,7 @@ P['tooltip'] = {
 --UnitFrame
 P['unitframe'] = {
 	['smoothbars'] = true,
-	['statusbar'] = 'Minimalist',--'ElvUI Norm',
+	['statusbar'] = "Minimalist",
 	['font'] = 'ElvUI Font',
 	['fontsize'] = 12,
 	['fontoutline'] = 'OUTLINE',
@@ -1112,9 +1105,4 @@ P["actionbar"] = {
 		['enabled'] = true,
 		['mouseover'] = false,
 	},
-};
-
-P['bags'] = {
-	['bagcols'] = 12,	-- Number of columns (width) of bag use an integer or 0 (zero) to match width of chat panels
-	['bankcols'] = 20,	-- Number of columns (width) of bank use an integer or 0 (zero) to match width of chat panels
 };

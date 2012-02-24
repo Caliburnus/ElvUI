@@ -28,7 +28,7 @@ function CH:StyleChat(frame)
 	_G[tab:GetName()..'Glow']:SetTexture('Interface\\ChatFrame\\ChatFrameTab-NewMessage')
 
 	tab.text = _G[name.."TabText"]
-	tab.text:FontTemplate(E['media'].pixelFont, 10, 'OUTLINE')
+	tab.text:FontTemplate()
 	tab.text:SetTextColor(unpack(E["media"].rgbvaluecolor))
 	tab.text.OldSetTextColor = tab.text.SetTextColor
 	tab.text.SetTextColor = E.noop
@@ -301,6 +301,28 @@ function CH:AddMessage(text, ...)
 	self.OldAddMessage(self, text, ...)
 end
 
+if E:IsFoolsDay() then
+	local playerName = UnitName('player')
+	function CH:AddMessage(text, ...)
+		if type(text) == "string" then
+			if CH.db.shortChannels then
+				text = text:gsub("|Hchannel:(.-)|h%[(.-)%]|h", CH.ShortChannel)
+				text = text:gsub('CHANNEL:', '')
+				text = text:gsub("^(.-|h) "..L['whispers'], "%1")
+				text = text:gsub("^(.-|h) "..L['says'], "%1")
+				text = text:gsub("^(.-|h) "..L['yells'], "%1")
+				text = text:gsub("<"..AFK..">", "[|cffFF0000"..L['AFK'].."|r] ")
+				text = text:gsub("<"..DND..">", "[|cffE7E716"..L['DND'].."|r] ")
+				text = text:gsub("^%["..RAID_WARNING.."%]", '['..L['RW']..']')
+			end
+
+			text = text:gsub('|Hplayer:'..playerName..':', '|TInterface\\ChatFrame\\UI-ChatIcon-Blizz:12:20:0:0:32:16:4:28:0:16|t|Hplayer:'..playerName..':')
+		end
+
+		self.OldAddMessage(self, text, ...)
+	end
+end
+
 function CH:SetupChat(event, ...)
 	for i = 1, NUM_CHAT_WINDOWS do
 		local frame = _G[format("ChatFrame%s", i)]
@@ -439,15 +461,6 @@ function CH:Initialize()
 	close:EnableMouse(true)
 
 	S:HandleCloseButton(close)
-
-	local SoundSys = CreateFrame("Frame")
-	SoundSys:RegisterEvent("CHAT_MSG_WHISPER")
-	SoundSys:RegisterEvent("CHAT_MSG_BN_WHISPER")
-	SoundSys:HookScript("OnEvent", function(self, event, ...)
-		if event == "CHAT_MSG_WHISPER" or "CHAT_MSG_BN_WHISPER" then
-			PlaySoundFile(E.media.whispersound, "Master")
-		end
-	end)
 end
 
 E:RegisterModule(CH:GetName())

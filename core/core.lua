@@ -44,16 +44,12 @@ function E:UpdateMedia()
 	--Fonts
 	self["media"].normFont = LSM:Fetch("font", self.db['general'].font)
 	self["media"].combatFont = LSM:Fetch("font", self.db['general'].dmgfont)
-	self["media"].pixelFont = LSM:Fetch("font", self.db["general"].pixelfont)
-	self["media"].kbFont = LSM:Fetch("font", self.db["general"].kbfont)
+
 
 	--Textures
 	self["media"].blankTex = LSM:Fetch("background", "ElvUI Blank")
 	self["media"].normTex = LSM:Fetch("statusbar", self.global['general'].normTex)
 	self["media"].glossTex = LSM:Fetch("statusbar", self.global['general'].glossTex)
-
-	--Sound
-	self["media"].whispersound = LSM:Fetch("sound", self.db["core"].whispersound)
 
 	--Border Color
 	local border = self.db['general'].bordercolor
@@ -305,6 +301,15 @@ function E:CheckIncompatible()
 		E:Print(format(L['INCOMPATIBLE_ADDON'], 'OneBag3', 'Bags'))
 	elseif IsAddOnLoaded('OneBank3') and E.db.general.bags then
 		E:Print(format(L['INCOMPATIBLE_ADDON'], 'OneBank3', 'Bags'))
+	end
+end
+
+function E:IsFoolsDay()
+	local date = date()
+	if string.find(date, '04/01/') then
+		return true;
+	else
+		return false;
 	end
 end
 

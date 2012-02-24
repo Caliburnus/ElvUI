@@ -155,7 +155,7 @@ function M:LoadMinimap()
 	HideUIPanel(SpellBookFrame)
 
 	Minimap.location = Minimap:CreateFontString(nil, 'OVERLAY')
-	Minimap.location:FontTemplate(E['media'].pixelFont, 10, 'OUTLINE')
+	Minimap.location:FontTemplate(nil, nil, 'OUTLINE')
 	Minimap.location:Point('TOP', Minimap, 'TOP', 0, -2)
 	Minimap.location:SetJustifyH("CENTER")
 	Minimap.location:SetJustifyV("MIDDLE")
@@ -268,12 +268,10 @@ function M:LoadMinimap()
 		MinimapCluster:SetAllPoints(Minimap)
 	end)
 
-
 	UIParent:HookScript('OnShow', function()
 		FarmModeMap:Hide()
 	end)
-	
-	
+
 	if IsAddOnLoaded('Routes') then
 		LibStub("AceAddon-3.0"):GetAddon('Routes'):ReparentMinimap(FarmModeMap)
 	end

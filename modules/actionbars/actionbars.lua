@@ -166,7 +166,7 @@ function AB:StyleButton(button, noBackdrop)
 	if count then
 		count:ClearAllPoints();
 		count:SetPoint("BOTTOMRIGHT", 0, 2);
-		count:FontTemplate(E['media'].kbFont, E.db.actionbar.fontsize, "OUTLINE, MONOCHROME");
+		count:FontTemplate(nil, 11, "OUTLINE");
 	end
 
 	if not button.noBackdrop and not button.backdrop then
@@ -186,7 +186,7 @@ function AB:StyleButton(button, noBackdrop)
 	end
 
 	if self.db.hotkeytext then
-		hotkey:FontTemplate(E['media'].kbFont, E.db.actionbar.fontsize, "OUTLINE, MONOCHROME");
+		hotkey:FontTemplate(nil, E.db.actionbar.fontsize, "OUTLINE");
 	end
 
 	--Extra Action Button

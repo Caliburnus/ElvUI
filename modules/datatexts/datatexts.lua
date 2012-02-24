@@ -5,13 +5,13 @@ local LDB = LibStub:GetLibrary("LibDataBroker-1.1");
 function DT:Initialize()
 	--if E.db["datatexts"].enable ~= true then return end
 	E.DataTexts = DT
-	
+
 	if E.db.datatexts.panels.spec1 then
 		E:CopyTable(E.db.datatexts.panels, E.db.datatexts.panels.spec1)
 		E.db.datatexts.panels.spec1 = nil;
 		E.db.datatexts.panels.spec2 = nil;
-	end	
-	
+	end
+
 	self:RegisterLDB()
 	self:LoadDataTexts()
 	self:PanelLayoutOptions()
@@ -136,7 +136,7 @@ function DT:RegisterPanel(panel, numPoints, anchor, xOff, yOff)
 			panel.dataPanels[pointIndex]:RegisterForClicks("AnyUp")
 			panel.dataPanels[pointIndex].text = panel.dataPanels[pointIndex]:CreateFontString(nil, 'OVERLAY')
 			panel.dataPanels[pointIndex].text:SetAllPoints()
-			panel.dataPanels[pointIndex].text:FontTemplate(E['media'].pixelFont, 10, 'OUTLINE')
+			panel.dataPanels[pointIndex].text:FontTemplate()
 			panel.dataPanels[pointIndex].text:SetJustifyH("CENTER")
 			panel.dataPanels[pointIndex].text:SetJustifyV("middle")
 		end
