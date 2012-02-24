@@ -66,8 +66,12 @@ P['auras'] = {
 
 --Chat
 P['chat'] = {
-	['url'] = true;
-	['shortChannels'] = true;
+	['url'] = true,
+	['shortChannels'] = true,
+	['hyperlinkHover'] = true,
+	['throttleInterval'] = 45,
+	['scrollDownInterval'] = 15,
+	['minWhisperLevel'] = 5,
 }
 
 --ClassTimers
