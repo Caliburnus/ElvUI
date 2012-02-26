@@ -998,7 +998,6 @@ P['unitframe'] = {
 	},
 }
 
-
 --Actionbar
 P["actionbar"] = {
 	["macrotext"] = false,
@@ -1117,7 +1116,9 @@ P["actionbar"] = {
 	},
 };
 
+--Bags
 P['bags'] = {
-	['bagcols'] = 12,	-- Number of columns (width) of bag use an integer or 0 (zero) to match width of chat panels
-	['bankcols'] = 20,	-- Number of columns (width) of bank use an integer or 0 (zero) to match width of chat panels
+	['bagCols'] = 0,	-- Number of columns (width) of bag use an integer or 0 (zero) to match width of chat panels
+	['bankCols'] = 0,	-- Number of columns (width) of bank use an integer or 0 (zero) to match width of chat panels
+	['sortOrientation'] = 'BOTTOM-TOP',
 };

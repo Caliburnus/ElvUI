@@ -249,11 +249,11 @@ function B:Layout(isBank)
 
 	if not isBank then
 		bs = BAGS_BACKPACK
-		if E.db.bags.bagcols == 0 then
+		if E.db.bags.bagCols == 0 then
 			cols = floor((E.db.general.panelWidth - 10)/370 * 10)
 			bagWidth = E.db.general.panelWidth - 10
 		else
-			cols = E.db.bags.bagcols
+			cols = E.db.bags.bagCols
 			bagWidth = 35 * cols
 		end
 
@@ -261,11 +261,11 @@ function B:Layout(isBank)
 		bSize = 30
 	else
 		bs = BAGS_BANK
-		if E.db.bags.bankcols == 0 then
+		if E.db.bags.bankCols == 0 then
 			cols = floor((E.db.general.panelWidth - 10)/370 * 10)
 			bagWidth = E.db.general.panelWidth - 10
 		else
-			cols = E.db.bags.bankcols
+			cols = E.db.bags.bankCols
 			bagWidth = 35 * cols
 		end
 
@@ -951,11 +951,21 @@ local function BagToUse(item, bags)
 		itemFamily = 0
 	end
 
-	local idx
-	for i, b in ipairs(bags) do
-		if not b.full then
+	local idx, initialBag, endBag, nextBag
+	if E.db.bags.sortOrientation == 'BOTTOM-TOP' then
+		initialBag = #bags
+		endBag = 1
+		nextBag = -1
+	else
+		initialBag = 1
+		endBag = #bags
+		nextBag = 1
+	end
+	
+	for i = initialBag, endBag, nextBag do
+		if not bags[i].full then
 			-- Get the bag's family
-			local bagFamily = select(2, GetContainerNumFreeSlots(b.bag))
+			local bagFamily = select(2, GetContainerNumFreeSlots(bags[i].bag))
 
 			if bagFamily == 0 or bit.band(itemFamily, bagFamily) > 0 then
 				idx = i
@@ -1134,7 +1144,7 @@ end
 function B:SortBags(frame)
 	if InCombatLockdown() then return end;
 
-	local bs
+	local bs, nextSlot
 	if not specialSort then
 		bs = self.sortBags
 	else
@@ -1143,17 +1153,20 @@ function B:SortBags(frame)
 			table.insert(bs, {
 				full = false,
 				bag = v,
-				slot = 1,
-				maxSlots = GetContainerNumSlots(v),
+				slot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and GetContainerNumSlots(v) or 1,
+				endSlot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and 0 or (GetContainerNumSlots(v) + 1),
 			})
 		end
 	end
+
+	nextSlot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and -1 or 1
 
 	if #bs < 1 then
 		return
 	end
 
 	local st = {}
+
 	self:OpenBags()
 
 	for i, v in pairs(self.buttons) do
@@ -1190,39 +1203,56 @@ function B:SortBags(frame)
 	end)
 
 	if not specialSort then
-		local st_idx = 1
-		local dbag = bs[st_idx]
-		local dslot = 1
-		local max_dslot = GetContainerNumSlots(dbag)
-
+		local idx, dbag, dslot, endSlot, endBag
+		if E.db.bags.sortOrientation == 'BOTTOM-TOP' then
+			idx = #bs
+			dslot = GetContainerNumSlots(bs[idx])
+			endSlot = 0
+			endBag = -1
+			limitValue = 0
+		else
+			idx = 1
+			dslot = 1
+			endSlot = GetContainerNumSlots(bs[idx]) + 1
+			endBag = #bs + 1
+			limitValue = 5
+		end
+		dbag = bs[idx]
+		
 		for i, v in ipairs (st) do
 			v.dbag = dbag
 			v.dslot = dslot
 			v.dstSlot = self:SlotNew(dbag, dslot)
 
-			dslot = dslot + 1
+			dslot = dslot + nextSlot
 
-			if dslot > max_dslot then
-				dslot = 1
-
+			if dslot == endSlot then
 				while true do
-					st_idx = st_idx + 1
+					idx = idx + nextSlot
 
-					if st_idx > #bs then
+					if idx == endBag then
 						break
 					end
 
-					dbag = bs[st_idx]
+					dbag = bs[idx]
 
-					if dbag and (B:BagType(dbag) == ST_NORMAL or B:BagType(dbag) == ST_SPECIAL or dbag > 4) then
+					-- The original last check for dbag is dbag < 1 (for Top-Bottom sort direction), or dbag > 4 (for Top-Bottom)
+					if dbag and (B:BagType(dbag) == ST_NORMAL or B:BagType(dbag) == ST_SPECIAL or dbag == limitValue) then
 						break
 					end
 				end
 
 				if dbag then
-					max_dslot = GetContainerNumSlots(dbag)
+					if E.db.bags.sortOrientation == 'BOTTOM-TOP' then
+						dslot = GetContainerNumSlots(dbag)
+						endSlot = 0
+					else
+						dslot = 1
+						endSlot = GetContainerNumSlots(dbag) + 1
+					end
 				else
-					max_dslot = 8
+					dslot = 8 -- Why this value? Beats me.
+					endSlot = 8
 				end
 			end
 		end
@@ -1233,13 +1263,14 @@ function B:SortBags(frame)
 			-- We need to determine the bag we'll place the item into. This is to prevent an endless cycle
 			-- when there are different special bags in the backpack or the bank.
 			b = BagToUse(GetContainerItemID(v.sbag, v.sslot), bs)
+
 			if b then -- An available bag was found.
 				v.dbag = bs[b].bag
 				v.dslot = bs[b].slot
 				v.dstSlot = self:SlotNew(bs[b].bag, bs[b].slot)
 
-				bs[b].slot = bs[b].slot + 1
-				if bs[b].slot > bs[b].maxSlots then
+				bs[b].slot = bs[b].slot + nextSlot
+				if bs[b].slot == bs[b].endSlot then
 					bs[b].full = true
 				end
 			end
