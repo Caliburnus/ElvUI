@@ -167,11 +167,19 @@ function UF:PostUpdateHealth(unit, min, max)
 		elseif ghost then
 			self.value:SetText("|cffD7BEA5"..L['Ghost'].."|r")
 		end
+
+		if self:GetParent().ResurrectIcon then
+			self:GetParent().ResurrectIcon:SetAlpha(1)
+		end
 	else
 		local r, g, b = ElvUF.ColorGradient(min, max, 0.69, 0.31, 0.31, 0.65, 0.63, 0.35, 0.33, 0.59, 0.33)
 		local reverse
 		if unit == "target" then
 			reverse = true
+		end
+
+		if self:GetParent().ResurrectIcon then
+			self:GetParent().ResurrectIcon:SetAlpha(0)
 		end
 
 		self.value:SetText(GetInfoText(self:GetParent(), unit, r, g, b, min, max, reverse, 'health'))
@@ -198,7 +206,12 @@ end
 
 function UF:PostUpdatePower(unit, min, max)
 	local pType, pToken, altR, altG, altB = UnitPowerType(unit)
-	local color = ElvUF['colors'].power[pToken]
+	local color
+	if pToken then
+		color = ElvUF['colors'].power[pToken]
+	else
+
+	end
 	local perc
 	if max == 0 then
 		perc = 0
@@ -607,6 +620,7 @@ function UF:DruidResourceBarVisibilityUpdate(unit)
 	local db = E.db['unitframe']['units'].player
 	local health = self:GetParent().Health
 	local frame = self:GetParent()
+	local threat = frame.Threat
 	local PORTRAIT_WIDTH = db.portrait.width
 	local USE_PORTRAIT = db.portrait.enable
 	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT
@@ -618,6 +632,13 @@ function UF:DruidResourceBarVisibilityUpdate(unit)
 	local USE_POWERBAR = db.power.enable
 	local USE_MINI_POWERBAR = db.power.width ~= 'fill' and USE_POWERBAR
 	local USE_POWERBAR_OFFSET = db.power.offset ~= 0 and USE_POWERBAR
+	local POWERBAR_OFFSET = db.power.offset
+	local POWERBAR_HEIGHT = db.power.height
+	local SPACING = 1;
+
+	if not USE_POWERBAR then
+		POWERBAR_HEIGHT = 0
+	end
 
 	if USE_PORTRAIT_OVERLAY or not USE_PORTRAIT then
 		PORTRAIT_WIDTH = 0
@@ -634,6 +655,27 @@ function UF:DruidResourceBarVisibilityUpdate(unit)
 			health:Point("TOPRIGHT", frame, "TOPRIGHT", -2, -(2 + CLASSBAR_HEIGHT + 1))
 		end
 		health:Point("TOPLEFT", frame, "TOPLEFT", PORTRAIT_WIDTH + 2, -(2 + CLASSBAR_HEIGHT + 1))
+
+		local mini_classbarY = 0
+		if USE_MINI_CLASSBAR then
+			mini_classbarY = -(SPACING+(CLASSBAR_HEIGHT))
+		end
+
+		threat:Point("TOPLEFT", -4, 4+mini_classbarY)
+		threat:Point("TOPRIGHT", 4, 4+mini_classbarY)
+
+		if USE_MINI_POWERBAR then
+			threat:Point("BOTTOMLEFT", -4, -4 + (POWERBAR_HEIGHT/2))
+			threat:Point("BOTTOMRIGHT", 4, -4 + (POWERBAR_HEIGHT/2))
+		else
+			threat:Point("BOTTOMLEFT", -4, -4)
+			threat:Point("BOTTOMRIGHT", 4, -4)
+		end
+
+		if USE_POWERBAR_OFFSET then
+			threat:Point("TOPRIGHT", 4-POWERBAR_OFFSET, 4+mini_classbarY)
+			threat:Point("BOTTOMRIGHT", 4-POWERBAR_OFFSET, -4)
+		end
 
 		if db.portrait.enable and not db.portrait.overlay then
 			local portrait = self:GetParent().Portrait
@@ -657,6 +699,22 @@ function UF:DruidResourceBarVisibilityUpdate(unit)
 			health:Point("TOPRIGHT", frame, "TOPRIGHT", -2, -2)
 		end
 		health:Point("TOPLEFT", frame, "TOPLEFT", PORTRAIT_WIDTH + 2, -2)
+
+		threat:Point("TOPLEFT", -4, 4)
+		threat:Point("TOPRIGHT", 4, 4)
+
+		if USE_MINI_POWERBAR then
+			threat:Point("BOTTOMLEFT", -4, -4 + (POWERBAR_HEIGHT/2))
+			threat:Point("BOTTOMRIGHT", 4, -4 + (POWERBAR_HEIGHT/2))
+		else
+			threat:Point("BOTTOMLEFT", -4, -4)
+			threat:Point("BOTTOMRIGHT", 4, -4)
+		end
+
+		if USE_POWERBAR_OFFSET then
+			threat:Point("TOPRIGHT", 4-POWERBAR_OFFSET, 4)
+			threat:Point("BOTTOMRIGHT", 4-POWERBAR_OFFSET, -4)
+		end
 
 		if db.portrait.enable and not db.portrait.overlay then
 			local portrait = self:GetParent().Portrait
@@ -757,6 +815,33 @@ function UF:UpdateThreat(event, unit)
 				self.Power.backdrop:SetTemplate("Default")
 			end
 		end
+	end
+end
+
+function UF:UpdateTargetGlow(event)
+	if not self.unit then return; end
+	local unit = self.unit
+
+	if UnitIsUnit(unit, 'target') then
+		self.TargetGlow:Show()
+		local reaction = UnitReaction(unit, 'player')
+
+		if UnitIsPlayer(unit) then
+			local _, class = UnitClass(unit)
+			if class then
+				local color = RAID_CLASS_COLORS[class]
+				self.TargetGlow:SetBackdropBorderColor(color.r, color.g, color.b)
+			else
+				self.TargetGlow:SetBackdropBorderColor(1, 1, 1)
+			end
+		elseif reaction then
+			local color = FACTION_BAR_COLORS[reaction]
+			self.TargetGlow:SetBackdropBorderColor(color.r, color.g, color.b)
+		else
+			self.TargetGlow:SetBackdropBorderColor(1, 1, 1)
+		end
+	else
+		self.TargetGlow:Hide()
 	end
 end
 

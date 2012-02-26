@@ -1,6 +1,6 @@
 local E, L, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, ProfileDB, GlobalDB
 local CH = E:NewModule('Chat', 'AceTimer-3.0', 'AceHook-3.0', 'AceEvent-3.0')
-
+local LSM = LibStub("LibSharedMedia-3.0")
 local CreatedFrames = 0;
 local lines = {};
 local msgList, msgCount, msgTime = {}, {}, {}
@@ -358,6 +358,7 @@ if E:IsFoolsDay() then
 	end
 end
 
+local hyperLinkEntered
 function CH:OnHyperlinkEnter(frame, refString)
 	if InCombatLockdown() then return; end
 	local linkToken = refString:match("^([^:]+)")
@@ -365,6 +366,7 @@ function CH:OnHyperlinkEnter(frame, refString)
 		ShowUIPanel(GameTooltip)
 		GameTooltip:SetOwner(frame, "ANCHOR_CURSOR")
 		GameTooltip:SetHyperlink(refString)
+		hyperLinkEntered = frame;
 		GameTooltip:Show()
 	end
 end
@@ -373,22 +375,36 @@ function CH:OnHyperlinkLeave(frame, refString)
 	local linkToken = refString:match("^([^:]+)")
 	if hyperlinkTypes[linkToken] then
 		HideUIPanel(GameTooltip)
+		hyperLinkEntered = nil;
+	end
+end
+
+function CH:OnMessageScrollChanged(frame)
+	if hyperLinkEntered == frame then
+		HideUIPanel(GameTooltip)
+		hyperLinkEntered = false;
 	end
 end
 
 function CH:EnableHyperlink()
 	for i = 1, NUM_CHAT_WINDOWS do
 		local frame = _G[format("ChatFrame%s", i)]
-		self:HookScript(frame, 'OnHyperlinkEnter')
-		self:HookScript(frame, 'OnHyperlinkLeave')
+		if not self.hooks[frame] then
+			self:HookScript(frame, 'OnHyperlinkEnter')
+			self:HookScript(frame, 'OnHyperlinkLeave')
+			self:HookScript(frame, 'OnMessageScrollChanged')
+		end
 	end
 end
 
 function CH:DisableHyperlink()
 	for i = 1, NUM_CHAT_WINDOWS do
 		local frame = _G[format("ChatFrame%s", i)]
-		self:Unhook(frame, 'OnHyperlinkEnter')
-		self:Unhook(frame, 'OnHyperlinkLeave')
+		if self.hooks[frame] then
+			self:Unhook(frame, 'OnHyperlinkEnter')
+			self:Unhook(frame, 'OnHyperlinkLeave')
+			self:Unhook(frame, 'OnMessageScrollChanged')
+		end
 	end
 end
 
@@ -417,8 +433,16 @@ end
 function CH:SetupChat(event, ...)
 	for i = 1, NUM_CHAT_WINDOWS do
 		local frame = _G[format("ChatFrame%s", i)]
+		local _, fontSize = FCF_GetChatWindowInfo(frame:GetID());
 		self:StyleChat(frame)
 		FCFTab_UpdateAlpha(frame)
+		frame:SetFont(LSM:Fetch("font", self.db.font), fontSize, self.db.fontoutline)
+		if self.db.fontoutline ~= 'NONE' then
+			frame:SetShadowColor(0, 0, 0, 0.2)
+		else
+			frame:SetShadowColor(0, 0, 0, 1)
+		end
+		frame:SetShadowOffset((E.mult or 1), -(E.mult or 1))
 	end
 
 	if self.db.hyperlinkHover then
@@ -436,7 +460,11 @@ function CH:SetupChat(event, ...)
 	GeneralDockManager:SetParent(LeftChatPanel)
 	self:ScheduleRepeatingTimer('PositionChat', 1)
 	self:PositionChat(true)
-	self:SecureHook('FCF_OpenTemporaryWindow', 'SetupTempChat')
+
+	if self.HookSecured then
+		self:SecureHook('FCF_OpenTemporaryWindow', 'SetupTempChat')
+		self.HookSecured = true;
+	end
 
 	self:UnregisterEvent('UPDATE_CHAT_WINDOWS')
 	self:UnregisterEvent('UPDATE_FLOATING_CHAT_WINDOWS')
