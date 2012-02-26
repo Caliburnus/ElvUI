@@ -13,10 +13,10 @@ function UF:Construct_Raid625Frames(unitGroup)
 	self.menu = UF.SpawnMenu
 
 	self.Health = UF:Construct_HealthBar(self, true, true, 'RIGHT')
-	
+
 	self.Power = UF:Construct_PowerBar(self, true, true, 'LEFT', false)
 	self.Power.frequentUpdates = false;
-	
+
 	self.Name = UF:Construct_NameText(self)
 	self.Buffs = UF:Construct_Buffs(self)
 	self.Debuffs = UF:Construct_Debuffs(self)
@@ -26,8 +26,9 @@ function UF:Construct_Raid625Frames(unitGroup)
 	self.ResurrectIcon = UF:Construct_ResurectionIcon(self)
 	self.LFDRole = UF:Construct_RoleIcon(self)
 
+	self.TargetGlow = UF:Construct_TargetGlow(self)
 	table.insert(self.__elements, UF.UpdateThreat)
-	self:RegisterEvent('PLAYER_TARGET_CHANGED', UF.UpdateThreat)
+	self:RegisterEvent('PLAYER_TARGET_CHANGED', function(...) UF.UpdateThreat(...); UF.UpdateTargetGlow(...) end)
 	self:RegisterEvent('UNIT_THREAT_LIST_UPDATE', UF.UpdateThreat)
 	self:RegisterEvent('UNIT_THREAT_SITUATION_UPDATE', UF.UpdateThreat)
 
@@ -60,9 +61,12 @@ function UF:Raid625SmartVisibility(event)
 		end
 	else
 		self:RegisterEvent("PLAYER_REGEN_ENABLED")
+		return
 	end
 
-	UF:UpdateGroupChildren(self, self.db)
+	if event == 'PARTY_MEMBERS_CHANGED' then
+		UF:UpdateGroupChildren(self, self.db)
+	end
 end
 
 function UF:Update_Raid625Header(header, db)
@@ -162,7 +166,7 @@ function UF:Update_Raid625Frames(frame, db)
 		local health = frame.Health
 		health.Smooth = self.db.smoothbars
 		health.frequentUpdates = db.health.frequentUpdates
-		
+
 		--Text
 		if db.health.text then
 			health.value:Show()
@@ -275,6 +279,29 @@ function UF:Update_Raid625Frames(frame, db)
 			frame:DisableElement('Power')
 			power:Hide()
 			power.value:Hide()
+		end
+	end
+
+	--Target Glow
+	do
+		local tGlow = frame.TargetGlow
+		tGlow:ClearAllPoints()
+		tGlow:Point("TOPLEFT", -4, 4)
+		tGlow:Point("TOPRIGHT", 4, 4)
+
+		if USE_MINI_POWERBAR then
+			tGlow:Point("BOTTOMLEFT", -4, -4 + (POWERBAR_HEIGHT/2))
+			tGlow:Point("BOTTOMRIGHT", 4, -4 + (POWERBAR_HEIGHT/2))
+		else
+			tGlow:Point("BOTTOMLEFT", -4, -4)
+			tGlow:Point("BOTTOMRIGHT", 4, -4)
+		end
+
+		if USE_POWERBAR_OFFSET then
+			tGlow:Point("TOPLEFT", -4+POWERBAR_OFFSET, 4)
+			tGlow:Point("TOPRIGHT", 4, 4)
+			tGlow:Point("BOTTOMLEFT", -4+POWERBAR_OFFSET, -4+POWERBAR_OFFSET)
+			tGlow:Point("BOTTOMRIGHT", 4, -4+POWERBAR_OFFSET)
 		end
 	end
 
