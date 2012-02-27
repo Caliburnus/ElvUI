@@ -31,6 +31,12 @@ local hyperlinkTypes = {
 	['glyph'] = true,
 }
 
+local tabTexs = {
+	'',
+	'Selected',
+	'Highlight'
+}
+
 function CH:StyleChat(frame)
 	if frame.styled then return end
 	local id = frame:GetID()
@@ -38,11 +44,14 @@ function CH:StyleChat(frame)
 	local tab = _G[name..'Tab']
 	local editbox = _G[name..'EditBox']
 
+	for _, texName in pairs(tabTexs) do
+		_G[tab:GetName()..texName..'Left']:Kill()
+		_G[tab:GetName()..texName..'Middle']:Kill()
+		_G[tab:GetName()..texName..'Right']:Kill()
+	end
 
-	tab:StripTextures()
 	tab:SetAlpha(1)
 	tab.SetAlpha = UIFrameFadeRemoveFrame
-	_G[tab:GetName()..'Glow']:SetTexture('Interface\\ChatFrame\\ChatFrameTab-NewMessage')
 
 	tab.text = _G[name.."TabText"]
 	tab.text:FontTemplate(E['media'].pixelFont, 10, 'OUTLINE')
@@ -149,20 +158,13 @@ function CH:CopyChat(frame)
 	end
 end
 
-function CH:SetupTempChat()
-	local frame = FCF_GetCurrentChatFrame()
-	if frame.styled then return end
-
-	self:StyleChat(frame)
-end
-
 function CH:PositionChat(override)
 	if E.global.chat.enable ~= true then return end
 	if (InCombatLockdown() and not override and self.initialMove) or (IsMouseButtonDown("LeftButton") and not override) then return end
 
 	local chat, chatbg, tab, id, point, button, isDocked, chatFound
-	for i = 1, NUM_CHAT_WINDOWS do
-		chat = _G[format("ChatFrame%d", i)]
+	for _, frameName in pairs(CHAT_FRAMES) do
+		chat = _G[frameName]
 		id = chat:GetID()
 		point = GetChatWindowSavedPosition(id)
 
@@ -387,8 +389,8 @@ function CH:OnMessageScrollChanged(frame)
 end
 
 function CH:EnableHyperlink()
-	for i = 1, NUM_CHAT_WINDOWS do
-		local frame = _G[format("ChatFrame%s", i)]
+	for _, frameName in pairs(CHAT_FRAMES) do
+		local frame = _G[frameName]
 		if not self.hooks[frame] then
 			self:HookScript(frame, 'OnHyperlinkEnter')
 			self:HookScript(frame, 'OnHyperlinkLeave')
@@ -398,8 +400,8 @@ function CH:EnableHyperlink()
 end
 
 function CH:DisableHyperlink()
-	for i = 1, NUM_CHAT_WINDOWS do
-		local frame = _G[format("ChatFrame%s", i)]
+	for _, frameName in pairs(CHAT_FRAMES) do
+		local frame = _G[frameName]
 		if self.hooks[frame] then
 			self:Unhook(frame, 'OnHyperlinkEnter')
 			self:Unhook(frame, 'OnHyperlinkLeave')
@@ -431,8 +433,8 @@ function CH:DisableMinLevelWhisper()
 end
 
 function CH:SetupChat(event, ...)
-	for i = 1, NUM_CHAT_WINDOWS do
-		local frame = _G[format("ChatFrame%s", i)]
+	for _, frameName in pairs(CHAT_FRAMES) do
+		local frame = _G[frameName]
 		local _, fontSize = FCF_GetChatWindowInfo(frame:GetID());
 		self:StyleChat(frame)
 		FCFTab_UpdateAlpha(frame)
@@ -461,8 +463,8 @@ function CH:SetupChat(event, ...)
 	self:ScheduleRepeatingTimer('PositionChat', 1)
 	self:PositionChat(true)
 
-	if self.HookSecured then
-		self:SecureHook('FCF_OpenTemporaryWindow', 'SetupTempChat')
+	if not self.HookSecured then
+		self:SecureHook('FCF_OpenTemporaryWindow', 'SetupChat')
 		self.HookSecured = true;
 	end
 

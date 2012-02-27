@@ -721,3 +721,4 @@ L['Sort Orientation'] = 'Sort Orientation';
 L['Direction the bag sorting will use to allocate the items.'] = 'Direction the bag sorting will use to allocate the items.';
 L['Bottom to Top'] = 'Bottom to Top';
 L['Top to Bottom'] = 'Top to Bottom';
+L['Grid Size:'] = true;
