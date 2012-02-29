@@ -223,13 +223,13 @@ function E:Grid_Hide()
 	end
 end
 
-function E:Grid_Create() 
-	grid = CreateFrame('Frame', nil, UIParent) 
+function E:Grid_Create()
+	grid = CreateFrame('Frame', nil, UIParent)
 	grid.boxSize = E.db.gridSize
-	grid:SetAllPoints(E.UIParent) 
+	grid:SetAllPoints(E.UIParent)
 	grid:Show()
 
-	local size = 1 
+	local size = 1
 	local width = E.eyefinity or GetScreenWidth()
 	local ratio = width / GetScreenHeight()
 	local height = GetScreenHeight() * ratio
@@ -237,35 +237,35 @@ function E:Grid_Create()
 	local wStep = width / E.db.gridSize
 	local hStep = height / E.db.gridSize
 
-	for i = 0, E.db.gridSize do 
-		local tx = grid:CreateTexture(nil, 'BACKGROUND') 
-		if i == E.db.gridSize / 2 then 
-			tx:SetTexture(1, 0, 0) 
-		else 
-			tx:SetTexture(0, 0, 0) 
-		end 
-		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", i*wStep - (size/2), 0) 
-		tx:SetPoint('BOTTOMRIGHT', grid, 'BOTTOMLEFT', i*wStep + (size/2), 0) 
-	end 
+	for i = 0, E.db.gridSize do
+		local tx = grid:CreateTexture(nil, 'BACKGROUND')
+		if i == E.db.gridSize / 2 then
+			tx:SetTexture(1, 0, 0)
+		else
+			tx:SetTexture(0, 0, 0)
+		end
+		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", i*wStep - (size/2), 0)
+		tx:SetPoint('BOTTOMRIGHT', grid, 'BOTTOMLEFT', i*wStep + (size/2), 0)
+	end
 	height = GetScreenHeight()
-	
+
 	do
-		local tx = grid:CreateTexture(nil, 'BACKGROUND') 
+		local tx = grid:CreateTexture(nil, 'BACKGROUND')
 		tx:SetTexture(1, 0, 0)
 		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height/2) + (size/2))
 		tx:SetPoint('BOTTOMRIGHT', grid, 'TOPRIGHT', 0, -(height/2 + size/2))
 	end
-	
+
 	for i = 1, math.floor((height/2)/hStep) do
-		local tx = grid:CreateTexture(nil, 'BACKGROUND') 
+		local tx = grid:CreateTexture(nil, 'BACKGROUND')
 		tx:SetTexture(0, 0, 0)
-		
+
 		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height/2+i*hStep) + (size/2))
 		tx:SetPoint('BOTTOMRIGHT', grid, 'TOPRIGHT', 0, -(height/2+i*hStep + size/2))
-		
-		tx = grid:CreateTexture(nil, 'BACKGROUND') 
+
+		tx = grid:CreateTexture(nil, 'BACKGROUND')
 		tx:SetTexture(0, 0, 0)
-		
+
 		tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(height/2-i*hStep) + (size/2))
 		tx:SetPoint('BOTTOMRIGHT', grid, 'TOPRIGHT', 0, -(height/2-i*hStep + size/2))
 	end
@@ -325,7 +325,7 @@ function E:CreateMoverPopup()
 		self:GetParent():Hide()
 		ACD['Open'](ACD, 'ElvUI')
 	end)
-	
+
 	local align = CreateFrame('EditBox', 'AlignBox', f, 'InputBoxTemplate')
 	align:Width(24)
 	align:Height(17)
@@ -356,7 +356,7 @@ function E:CreateMoverPopup()
 		EditBox_ClearFocus(self)
 		self:SetText(E.db.gridSize)
 	end)
-	
+
 	align.text = align:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
 	align.text:SetPoint('RIGHT', align, 'LEFT', -4, 0)
 	align.text:SetText(L['Grid Size:'])
@@ -365,11 +365,11 @@ function E:CreateMoverPopup()
 	snapping:SetPoint("BOTTOMLEFT", 14, 10)
 	lock:SetPoint("BOTTOMRIGHT", -14, 14)
 	align:SetPoint('TOPRIGHT', lock, 'TOPLEFT', -4, -2)
-	
+
 	S:HandleCheckBox(snapping)
 	S:HandleButton(lock)
 	S:HandleEditBox(align)
-	
+
 	f:RegisterEvent('PLAYER_REGEN_DISABLED')
 	f:SetScript('OnEvent', function(self)
 		if self:IsShown() then
@@ -624,10 +624,6 @@ function E:Initialize()
 	--self:SaveKeybinds()
 
 	self:GetModule('Maps'):Minimap_UpdateSettings()
-
-	if IsAddOnLoaded('Routes') or IsAddOnLoaded('GatherMate2') then
-		E:Print(L['Detected either the Routes or GatherMate2 addon running, if you wish to use these addons with ElvUI you must type the /farmmode command.'])
-	end
 
 	collectgarbage("collect");
 end
