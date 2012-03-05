@@ -478,14 +478,19 @@ function E:SendRecieve(event, prefix, message, channel, sender)
 	end
 end
 
---[[
-WTHAT THE F'ING FUCK IS WRONG WITH THIS
+
+--WTHAT THE F'ING FUCK IS WRONG WITH THIS
+local localBindsSet = false
 function E:SaveKeybinds()
+	if not E.global.general.profileBinds or localBindsSet then return end
+
 	if not E.db.keybinds then
 		E.db.keybinds = {};
+	else
+		table.wipe(E.db.keybinds)
 	end
-	local TotalBinds = GetNumBindings();
-	for i = 1, TotalBinds do
+
+	for i = 1, GetNumBindings() do
 		local TheAction, BindingOne, BindingTwo = GetBinding(i);
 		if BindingOne then
 			E.db.keybinds[TheAction] = {BindingOne, BindingTwo};
@@ -496,13 +501,28 @@ function E:SaveKeybinds()
 end
 
 function E:LoadKeybinds()
+	if not E.global.general.profileBinds then E.db.keybinds = nil; return end
 	if not E.db.keybinds then
 		E:SaveKeybinds()
 		return
 	end
 
+	localBindsSet = true;
+
+	for i = 1, GetNumBindings() do
+		local TheAction, BindingOne, BindingTwo = GetBinding(i);
+
+		if BindingOne then
+			SetBinding(BindingOne)
+		end
+
+		if BindingTwo then
+			SetBinding(BindingTwo)
+		end
+	end
+
 	for action, actionBind in pairs(E.db.keybinds) do
-		local BindingOne, BindingTwo = unpack(actionBind)
+		local BindingOne, BindingTwo = actionBind[1], actionBind[2]
 
 		if BindingOne then
 			SetBinding(BindingOne, action)
@@ -514,7 +534,8 @@ function E:LoadKeybinds()
 	end
 
 	SaveBindings(GetCurrentBindingSet());
-end]]
+	localBindsSet = false;
+end
 
 function E:UpdateAll()
 	self.data = LibStub("AceDB-3.0"):New("ElvData", self.DF, true);
@@ -572,7 +593,7 @@ function E:UpdateAll()
 
 	self:GetModule('Maps'):Minimap_UpdateSettings()
 
-	--self:LoadKeybinds()
+	self:LoadKeybinds()
 
 	collectgarbage('collect');
 end
@@ -620,8 +641,8 @@ function E:Initialize()
 	self:RegisterEvent("PARTY_MEMBERS_CHANGED", "SendRecieve")
 	self:RegisterEvent("CHAT_MSG_ADDON", "SendRecieve")
 	self:RegisterEvent('UI_SCALE_CHANGED', 'UIScale')
-	--self:RegisterEvent('UPDATE_BINDINGS', 'SaveKeybinds')
-	--self:SaveKeybinds()
+	self:RegisterEvent('UPDATE_BINDINGS', 'SaveKeybinds')
+	self:SaveKeybinds()
 
 	self:GetModule('Maps'):Minimap_UpdateSettings()
 

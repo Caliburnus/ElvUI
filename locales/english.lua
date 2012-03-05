@@ -722,3 +722,6 @@ L['Direction the bag sorting will use to allocate the items.'] = 'Direction the 
 L['Bottom to Top'] = 'Bottom to Top';
 L['Top to Bottom'] = 'Top to Bottom';
 L['Grid Size:'] = true;
+L["BN:"] = true;
+L['Profile Binds'] = true;
+L['Save your keybinds with your ElvUI profile. That way if you have the dual spec feature enabled in ElvUI you can swap keybinds with your specs.'] = true;
