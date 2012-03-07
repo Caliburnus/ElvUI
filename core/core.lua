@@ -224,7 +224,7 @@ function E:Grid_Hide()
 end
 
 function E:Grid_Create()
-	grid = CreateFrame('Frame', nil, UIParent)
+	grid = CreateFrame('Frame', 'EGrid', UIParent)
 	grid.boxSize = E.db.gridSize
 	grid:SetAllPoints(E.UIParent)
 	grid:Show()
@@ -501,7 +501,7 @@ function E:SaveKeybinds()
 end
 
 function E:LoadKeybinds()
-	if not E.global.general.profileBinds then E.db.keybinds = nil; return end
+	if not E.global.general.profileBinds then return end
 	if not E.db.keybinds then
 		E:SaveKeybinds()
 		return
