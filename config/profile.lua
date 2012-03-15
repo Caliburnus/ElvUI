@@ -33,7 +33,7 @@ P['general'] = {
 	['expRepPos'] = 'TOP_SCREEN',
 
 	--misc
-	['mapTransparency'] = 0.5,
+	['mapTransparency'] = 0,
 	['whispersound'] = 'ElvUI Whisper',
 	['minimapSize'] = 175,
 	['raidReminder'] = true,
