@@ -36,14 +36,32 @@ P['general'] = {
 
 	--misc
 	['mapTransparency'] = 1,
-	['minimapSize'] = 175,
+	['minimapSize'] = 176,
 	['raidReminder'] = true,
+};
+
+--Bags
+P['bags'] = {
+    ['bagCols'] = 0,
+    ['bankCols'] = 0,
+    ['sortOrientation'] = 'BOTTOM-TOP',
+	['xOffset'] = 0,
+	['yOffset'] = 0,
+
+	['bagBar'] = {
+		['growthDirection'] = 'VERTICAL',
+		['sortDirection'] = 'ASCENDING',
+		['size'] = 30,
+		['spacing'] = 4,
+		['showBackdrop'] = false,
+		['mouseover'] = false,
+	},
 };
 
 --NamePlate
 P["nameplate"] = {
 	["markBGHealers"] = true,
-	["width"] = 113,
+	["width"] = 114,
 	["height"] = 8,
 	["cbheight"] = 5,
 	["showlevel"] = true,
@@ -78,6 +96,7 @@ P['chat'] = {
 	['scrollDownInterval'] = 15,
 	['font'] = 'ElvUI Font',
 	['fontoutline'] = 'NONE',
+	['sticky'] = true,
 }
 
 --ClassTimers
@@ -174,7 +193,7 @@ P['unitframe'] = {
 		['player'] = {
 			['enable'] = true,
 			['width'] = 260,
-			['height'] = 53,
+			['height'] = 54,
 			['lowmana'] = 30,
 			['combatfade'] = false,
 			['healPrediction'] = true,
@@ -243,6 +262,7 @@ P['unitframe'] = {
 				['height'] = 18,
 				['icon'] = true,
 				['latency'] = true,
+				['displayTarget'] = false,
 				['color'] = P.general.bordercolor,
 				['interruptcolor'] = { r = 0.78, g = 0.25, b = 0.25 },
 				['xOffset'] = 0,
@@ -254,13 +274,13 @@ P['unitframe'] = {
 			['classbar'] = {
 				['enable'] = true,
 				['fill'] = 'spaced',
-				['height'] = 9,
+				['height'] = 10,
 			},
 		},
 		['target'] = {
 			['enable'] = true,
 			['width'] = 260,
-			['height'] = 53,
+			['height'] = 54,
 			['healPrediction'] = true,
 			['health'] = {
 				['text'] = true,
@@ -330,13 +350,13 @@ P['unitframe'] = {
 			['combobar'] = {
 				['enable'] = true,
 				['fill'] = 'spaced',
-				['height'] = 9,
+				['height'] = 10,
 			},
 		},
 		['targettarget'] = {
 			['enable'] = true,
 			['width'] = 130,
-			['height'] = 35,
+			['height'] = 36,
 			['health'] = {
 				['text'] = false,
 				['text_format'] = 'current-percent',
@@ -388,7 +408,7 @@ P['unitframe'] = {
 		['focus'] = {
 			['enable'] = true,
 			['width'] = 190,
-			['height'] = 35,
+			['height'] = 36,
 			['healPrediction'] = true,
 			['health'] = {
 				['text'] = false,
@@ -453,7 +473,7 @@ P['unitframe'] = {
 		['focustarget'] = {
 			['enable'] = false,
 			['width'] = 190,
-			['height'] = 25,
+			['height'] = 26,
 			['health'] = {
 				['text'] = false,
 				['text_format'] = 'current-percent',
@@ -505,7 +525,7 @@ P['unitframe'] = {
 		['pet'] = {
 			['enable'] = true,
 			['width'] = 130,
-			['height'] = 35,
+			['height'] = 36,
 			['healPrediction'] = true,
 			['health'] = {
 				['text'] = false,
@@ -558,7 +578,7 @@ P['unitframe'] = {
 		['pettarget'] = {
 			['enable'] = false,
 			['width'] = 130,
-			['height'] = 25,
+			['height'] = 26,
 			['health'] = {
 				['text'] = false,
 				['text_format'] = 'current-percent',
@@ -610,8 +630,8 @@ P['unitframe'] = {
 		['boss'] = {
 			['enable'] = true,
 			['growthDirection'] = 'UP',
-			['width'] = 215,
-			['height'] = 45,
+			['width'] = 216,
+			['height'] = 46,
 			['health'] = {
 				['text'] = true,
 				['text_format'] = 'current-percent',
@@ -681,7 +701,7 @@ P['unitframe'] = {
 			['growthDirection'] = 'UP',
 			['pvpTrinket'] = true,
 			['width'] = 240,
-			['height'] = 45,
+			['height'] = 46,
 			['health'] = {
 				['text'] = true,
 				['text_format'] = 'current-percent',
@@ -757,7 +777,7 @@ P['unitframe'] = {
 			['healPrediction'] = false,
 			['columnAnchorPoint'] = "TOP",
 			['width'] = 180,
-			['height'] = 43,
+			['height'] = 44,
 			['health'] = {
 				['text'] = true,
 				['text_format'] = 'current-percent',

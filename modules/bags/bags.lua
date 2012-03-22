@@ -28,7 +28,8 @@ local function ResetAndClear(self)
 end
 
 --This one isn't for the actual bag buttons its for the buttons you can use to swap bags.
-function B:BagFrameSlotNew(frame, slot)
+function B:BagFrameSlotNew(frame, slot, nonAllInOne)
+	if not frame.buttons then frame.buttons = {}; end
 	for _, v in ipairs(frame.buttons) do
 		if v.slot == slot then
 			return v, false
@@ -52,27 +53,29 @@ function B:BagFrameSlotNew(frame, slot)
 		ret.slot = slot
 		table.insert(frame.buttons, ret)
 	end
-
-	ret.frame:HookScript("OnEnter", function()
-		local bag
-		for ind, val in ipairs(B.buttons) do
-			if val.bagOwner == ret.slot then
-				val.frame:SetAlpha(1)
-				--E:Print('Matched Bag Slot: '..val.bagOwner..' to button: '..ind)
-			else
-				val.frame:SetAlpha(0.2)
+	
+	if not nonAllInOne then
+		ret.frame:HookScript("OnEnter", function()
+			local bag
+			for ind, val in ipairs(B.buttons) do
+				if val.bagOwner == ret.slot then
+					val.frame:SetAlpha(1)
+					--E:Print('Matched Bag Slot: '..val.bagOwner..' to button: '..ind)
+				else
+					val.frame:SetAlpha(0.2)
+				end
 			end
-		end
-	end)
+		end)
 
-	ret.frame:HookScript("OnLeave", function()
-		for _, btn in ipairs(self.buttons) do
-			btn.frame:SetAlpha(1)
-		end
-	end)
+		ret.frame:HookScript("OnLeave", function()
+			for _, btn in ipairs(self.buttons) do
+				btn.frame:SetAlpha(1)
+			end
+		end)
 
-	ret.frame:SetScript('OnClick', nil)
-
+		ret.frame:SetScript('OnClick', nil)
+	end
+	
 	ret.frame:SetTemplate('Default', true)
 	ret.frame:StyleButton()
 	ret.frame:SetFrameLevel(ret.frame:GetFrameLevel() + 1)
@@ -241,21 +244,37 @@ function B:SlotNew(bag, slot)
 	return ret, true
 end
 
+
 function B:Layout(isBank)
-	if E.global.general.bags ~= true then return end
+	if E.global.bags.enable ~= true then return end
 	local slots = 0
 	local rows = 0
 	local offset = 26
 	local cols, f, bs, bSize
-
+	local bagWidth
+	
 	if not isBank then
 		bs = BAGS_BACKPACK
-		cols = (floor((E.db.general.panelWidth - 10)/370 * 10))
+		if E.db.bags.bagCols == 0 then
+			cols = floor((E.db.general.panelWidth - 10)/370 * 10)
+			bagWidth = E.db.general.panelWidth - 10
+		else
+			cols = E.db.bags.bagCols
+			bagWidth = 35 * cols
+		end
+
 		f = bagFrame
 		bSize = 30
 	else
 		bs = BAGS_BANK
-		cols = (floor((E.db.general.panelWidth - 10)/370 * 10))
+		if E.db.bags.bankCols == 0 then
+			cols = floor((E.db.general.panelWidth - 10)/370 * 10)
+			bagWidth = E.db.general.panelWidth - 10
+		else
+			cols = E.db.bags.bankCols
+			bagWidth = 35 * cols
+		end
+
 		f = bankFrame
 		bSize = 30
 	end
@@ -313,7 +332,7 @@ function B:Layout(isBank)
 		rows = rows + 1
 	end
 
-	f:Width((E.db.general.panelWidth - 10))
+	f:Width(bagWidth)
 	f:Height(rows * 31 + (rows - 1) * 4 + offset + 24)
 
 	f.HolderFrame:SetWidth(33.5 * cols)
@@ -490,6 +509,16 @@ local function Tooltip_Show(self)
 	end
 end
 
+function B:PositionBagFrames()
+	if self.bagsFrame then
+		self.bagsFrame:Point('BOTTOMRIGHT', RightChatToggleButton, 'TOPRIGHT', 0 - E.db.bags.xOffset, 4 + E.db.bags.yOffset)
+	end
+	
+	if self.bankFrame then
+		self.bankFrame:Point('BOTTOMLEFT', LeftChatToggleButton, 'TOPLEFT', 0 + E.db.bags.xOffset, 4 + E.db.bags.yOffset)
+	end
+end
+
 function B:CreateBagFrame(type)
 	local name = type..'Frame'
 	local f = CreateFrame('Button', name, E.UIParent)
@@ -497,10 +526,12 @@ function B:CreateBagFrame(type)
 	f:SetFrameStrata("DIALOG")
 
 	if type == 'Bags' then
-		f:Point('BOTTOMRIGHT', RightChatToggleButton, 'TOPRIGHT', 0, 4)
+		self.bagsFrame = f
 	else
-		f:Point('BOTTOMLEFT', LeftChatToggleButton, 'TOPLEFT', 0, 4)
+		self.bankFrame = f
 	end
+	
+	self:PositionBagFrames()
 
 	f.HolderFrame = CreateFrame("Frame", name.."HolderFrame", f)
 
@@ -939,8 +970,17 @@ local function BagToUse(item, bags)
 		itemFamily = 0
 	end
 
-	local idx
-	for i = #bags, 1, -1 do
+	local idx, initialBag, endBag, nextBag
+	if E.db.bags.sortOrientation == 'BOTTOM-TOP' then
+		initialBag = #bags
+		endBag = 1
+		nextBag = -1
+	else
+		initialBag = 1
+		endBag = #bags
+		nextBag = 1
+	end
+	for i = initialBag, endBag, nextBag do
 		if not bags[i].full then
 			-- Get the bag's family
 			local bagFamily = select(2, GetContainerNumFreeSlots(bags[i].bag))
@@ -1121,7 +1161,7 @@ end
 function B:SortBags(frame)
 	if InCombatLockdown() then return end;
 
-	local bs
+	local bs, nextSlot
 	if not specialSort then
 		bs = self.sortBags
 	else
@@ -1130,10 +1170,12 @@ function B:SortBags(frame)
 			table.insert(bs, {
 				full = false,
 				bag = v,
-				slot = GetContainerNumSlots(v),
+				slot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and GetContainerNumSlots(v) or 1,
+				endSlot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and 0 or (GetContainerNumSlots(v) + 1),
 			})
 		end
 	end
+	nextSlot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and -1 or 1
 
 	if #bs < 1 then
 		return
@@ -1179,36 +1221,49 @@ function B:SortBags(frame)
 	end)
 
 	if not specialSort then
-		local st_idx = #bs
-		local dbag = bs[st_idx]
-		local dslot = GetContainerNumSlots(dbag)
-
+		local idx, dbag, dslot, endSlot, endBag
+		if E.db.bags.sortOrientation == 'BOTTOM-TOP' then
+			idx = #bs
+			dslot = GetContainerNumSlots(bs[idx])
+			endSlot = 0
+			endBag = -1
+			limitValue = 0
+		else
+			idx = 1
+			dslot = 1
+			endSlot = GetContainerNumSlots(bs[idx]) + 1
+			endBag = #bs + 1
+			limitValue = 5
+		end
+		dbag = bs[idx]
 		for i, v in ipairs (st) do
 			v.dbag = dbag
 			v.dslot = dslot
 			v.dstSlot = self:SlotNew(dbag, dslot)
-
-			dslot = dslot - 1
-
-			if dslot == 0 then
+			dslot = dslot + nextSlot
+			if dslot == endSlot then
 				while true do
-					st_idx = st_idx - 1
-
-					if st_idx < 0 then
+					idx = idx + nextSlot
+					if idx == endBag then
 						break
 					end
-
-					dbag = bs[st_idx]
-
-					if dbag and (B:BagType(dbag) == ST_NORMAL or B:BagType(dbag) == ST_SPECIAL or dbag < 1) then
+					dbag = bs[idx]
+					-- The original last check for dbag is dbag < 1 (for Top-Bottom sort direction), or dbag > 4 (for Top-Bottom)
+					if dbag and (B:BagType(dbag) == ST_NORMAL or B:BagType(dbag) == ST_SPECIAL or dbag == limitValue) then
 						break
 					end
 				end
-
 				if dbag then
-					dslot = GetContainerNumSlots(dbag)
+					if E.db.bags.sortOrientation == 'BOTTOM-TOP' then
+						dslot = GetContainerNumSlots(dbag)
+						endSlot = 0
+					else
+						dslot = 1
+						endSlot = GetContainerNumSlots(dbag) + 1
+					end
 				else
-					dslot = 8
+					dslot = 8 -- Why this value? Beats me.
+					endSlot = 8
 				end
 			end
 		end
@@ -1218,13 +1273,15 @@ function B:SortBags(frame)
 			-- We need to determine the bag we'll place the item into. This is to prevent an endless cycle
 			-- when there are different special bags in the backpack or the bank.
 			b = BagToUse(GetContainerItemID(v.sbag, v.sslot), bs)
-			v.dbag = bs[b].bag
-			v.dslot = bs[b].slot
-			v.dstSlot = self:SlotNew(bs[b].bag, bs[b].slot)
+			if b then -- An available bag was found.
+				v.dbag = bs[b].bag
+				v.dslot = bs[b].slot
+				v.dstSlot = self:SlotNew(bs[b].bag, bs[b].slot)
 
-			bs[b].slot = bs[b].slot - 1
-			if bs[b].slot == 0 then
-				bs[b].full = true
+				bs[b].slot = bs[b].slot + nextSlot
+				if bs[b].slot == bs[b].endSlot then
+					bs[b].full = true
+				end
 			end
 		end
 	end
@@ -1388,9 +1445,12 @@ function B:PLAYERBANKBAGSLOTS_CHANGED()
 end
 
 function B:Initialize()
-	if not E.global.general.bags then return end
+	if not E.global.bags.enable then 
+		self:LoadBagBar()
+		return 
+	end
 	self:InitBags()
-
+	E.bags = self
 	--Register Events
 	self:RegisterEvent("BAG_UPDATE")
 	self:RegisterEvent("ITEM_LOCK_CHANGED")
