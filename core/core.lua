@@ -486,8 +486,7 @@ function E:SendRecieve(event, prefix, message, channel, sender)
 end
 
 
---WTHAT THE F'ING FUCK IS WRONG WITH THIS
-local localBindsSet = false
+--[[local localBindsSet = false
 function E:SaveKeybinds()
 	if not E.global.general.profileBinds or localBindsSet then return end
 
@@ -542,7 +541,7 @@ function E:LoadKeybinds()
 
 	SaveBindings(GetCurrentBindingSet());
 	localBindsSet = false;
-end
+end]]
 
 function E:UpdateAll()
 	self.data = LibStub("AceDB-3.0"):New("ElvData", self.DF, true);
@@ -568,6 +567,8 @@ function E:UpdateAll()
 	local bags = E:GetModule('Bags');
 	bags:Layout();
 	bags:Layout(true);
+	bags:PositionBagFrames()
+	bags:SizeAndPositionBagBar()
 
 	self:GetModule('Skins'):SetEmbedRight(E.db.skins.embedRight)
 	self:GetModule('Layout'):ToggleChatPanels()
@@ -600,7 +601,7 @@ function E:UpdateAll()
 
 	self:GetModule('Minimap'):UpdateSettings()
 
-	self:LoadKeybinds()
+	--self:LoadKeybinds()
 
 	collectgarbage('collect');
 end
@@ -635,14 +636,14 @@ function E:Initialize()
 	self:CheckRole()
 	self:UIScale('PLAYER_LOGIN');
 
+	if self.db.general.loginmessage then
+		print(format(L['LOGIN_MSG'], self["media"].hexvaluecolor, self["media"].hexvaluecolor, self.version))
+	end
+
 	self:LoadConfig(); --Load In-Game Config
 	self:LoadCommands(); --Load Commands
 	self:InitializeModules(); --Load Modules
 	self:LoadMovers(); --Load Movers
-
-	if self.db.general.loginmessage then
-		print(select(2, self:GetModule('Chat'):FindURL(nil, format(L['LOGIN_MSG'], self["media"].hexvaluecolor, self["media"].hexvaluecolor, self.version))))
-	end
 
 	self.initialized = true
 
@@ -665,8 +666,8 @@ function E:Initialize()
 	self:RegisterEvent("PARTY_MEMBERS_CHANGED", "SendRecieve")
 	self:RegisterEvent("CHAT_MSG_ADDON", "SendRecieve")
 	self:RegisterEvent('UI_SCALE_CHANGED', 'UIScale')
-	self:RegisterEvent('UPDATE_BINDINGS', 'SaveKeybinds')
-	self:SaveKeybinds()
+	--self:RegisterEvent('UPDATE_BINDINGS', 'SaveKeybinds')
+	--self:SaveKeybinds()
 
 	self:GetModule('Minimap'):UpdateSettings()
 
@@ -685,11 +686,11 @@ function E:MoveUI(override, type)
 
 	if override then toggle = override end
 
-	if toggle then
+	if toggle and ElvUIMoverPopupWindow then
 		ElvUIMoverPopupWindow:Show()
 		ACD['Close'](ACD, 'ElvUI')
 		GameTooltip:Hide()
-	else
+	elseif ElvUIMoverPopupWindow then
 		ElvUIMoverPopupWindow:Hide()
 	end
 

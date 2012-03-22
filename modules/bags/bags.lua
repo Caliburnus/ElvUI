@@ -28,7 +28,8 @@ local function ResetAndClear(self)
 end
 
 --This one isn't for the actual bag buttons its for the buttons you can use to swap bags.
-function B:BagFrameSlotNew(frame, slot)
+function B:BagFrameSlotNew(frame, slot, nonAllInOne)
+	if not frame.buttons then frame.buttons = {}; end
 	for _, v in ipairs(frame.buttons) do
 		if v.slot == slot then
 			return v, false
@@ -53,23 +54,25 @@ function B:BagFrameSlotNew(frame, slot)
 		table.insert(frame.buttons, ret)
 	end
 
-	ret.frame:HookScript("OnEnter", function()
-		for ind, val in ipairs(B.buttons) do
-			if val.bagOwner == ret.slot then
-				val.frame:SetAlpha(1)
-			else
-				val.frame:SetAlpha(0.2)
+	if not nonAllInOne then
+		ret.frame:HookScript("OnEnter", function()
+			for ind, val in ipairs(B.buttons) do
+				if val.bagOwner == ret.slot then
+					val.frame:SetAlpha(1)
+				else
+					val.frame:SetAlpha(0.2)
+				end
 			end
-		end
-	end)
+		end)
 
-	ret.frame:HookScript("OnLeave", function()
-		for _, btn in ipairs(self.buttons) do
-			btn.frame:SetAlpha(1)
-		end
-	end)
+		ret.frame:HookScript("OnLeave", function()
+			for _, btn in ipairs(self.buttons) do
+				btn.frame:SetAlpha(1)
+			end
+		end)
 
-	ret.frame:SetScript('OnClick', nil)
+		ret.frame:SetScript('OnClick', nil)
+	end
 
 	ret.frame:SetTemplate('Default', true)
 	ret.frame:StyleButton()
@@ -239,8 +242,9 @@ function B:SlotNew(bag, slot)
 	return ret, true
 end
 
+
 function B:Layout(isBank)
-	if E.global.general.bags ~= true then return end
+	if E.global.bags.enable ~= true then return end
 	local slots = 0
 	local rows = 0
 	local offset = 26
@@ -502,6 +506,16 @@ local function Tooltip_Show(self)
 	end
 end
 
+function B:PositionBagFrames()
+	if self.bagsFrame then
+		self.bagsFrame:Point('BOTTOMRIGHT', RightChatToggleButton, 'TOPRIGHT', 0 - E.db.bags.xOffset, 4 + E.db.bags.yOffset)
+	end
+
+	if self.bankFrame then
+		self.bankFrame:Point('BOTTOMLEFT', LeftChatToggleButton, 'TOPLEFT', 0 + E.db.bags.xOffset, 4 + E.db.bags.yOffset)
+	end
+end
+
 function B:CreateBagFrame(type)
 	local name = type..'Frame'
 	local f = CreateFrame('Button', name, E.UIParent)
@@ -509,10 +523,12 @@ function B:CreateBagFrame(type)
 	f:SetFrameStrata("DIALOG")
 
 	if type == 'Bags' then
-		f:Point('BOTTOMRIGHT', RightChatToggleButton, 'TOPRIGHT', 5, E.db.general.panelHeight-20)
+		self.bagsFrame = f
 	else
-		f:Point('BOTTOMLEFT', LeftChatToggleButton, 'TOPLEFT', -5, E.db.general.panelHeight-20)
+		self.bankFrame = f
 	end
+
+	self:PositionBagFrames()
 
 	f.HolderFrame = CreateFrame("Frame", name.."HolderFrame", f)
 
@@ -961,7 +977,7 @@ local function BagToUse(item, bags)
 		endBag = #bags
 		nextBag = 1
 	end
-	
+
 	for i = initialBag, endBag, nextBag do
 		if not bags[i].full then
 			-- Get the bag's family
@@ -1158,6 +1174,7 @@ function B:SortBags(frame)
 			})
 		end
 	end
+	nextSlot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and -1 or 1
 
 	nextSlot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and -1 or 1
 
@@ -1218,7 +1235,7 @@ function B:SortBags(frame)
 			limitValue = 5
 		end
 		dbag = bs[idx]
-		
+
 		for i, v in ipairs (st) do
 			v.dbag = dbag
 			v.dslot = dslot
@@ -1241,7 +1258,6 @@ function B:SortBags(frame)
 						break
 					end
 				end
-
 				if dbag then
 					if E.db.bags.sortOrientation == 'BOTTOM-TOP' then
 						dslot = GetContainerNumSlots(dbag)
@@ -1436,9 +1452,12 @@ function B:PLAYERBANKBAGSLOTS_CHANGED()
 end
 
 function B:Initialize()
-	if not E.global.general.bags then return end
+	if not E.global.bags.enable then
+		self:LoadBagBar()
+		return
+	end
 	self:InitBags()
-
+	E.bags = self
 	--Register Events
 	self:RegisterEvent("BAG_UPDATE")
 	self:RegisterEvent("ITEM_LOCK_CHANGED")
