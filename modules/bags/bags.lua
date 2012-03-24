@@ -300,6 +300,7 @@ function B:Layout(isBank)
 			b.frame:ClearAllPoints()
 			b.frame:Point("LEFT", f.ContainerHolder, "LEFT", xOff, 0)
 			b.frame:Size(bSize)
+			b.frame:FixDimensions()
 
 			if isBank then
 				BankFrameItemButton_Update(b.frame)
@@ -372,6 +373,7 @@ function B:Layout(isBank)
 				b.frame:ClearAllPoints()
 				b.frame:Point("TOPLEFT", f.HolderFrame, "TOPLEFT", xOff, yOff)
 				b.frame:Size(bSize)
+				b.frame:FixDimensions()
 				b.frame.lock = false
 				b.frame:SetAlpha(1)
 
