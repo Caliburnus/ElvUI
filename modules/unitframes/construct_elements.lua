@@ -36,7 +36,7 @@ function UF:Construct_TargetGlow(frame)
 	frame.shadow = nil
 	x:SetFrameStrata('BACKGROUND')
 	x:Hide();
-	
+
 	return x
 end
 
@@ -202,7 +202,7 @@ function UF:Construct_Castbar(self, direction)
 	UF['fontstrings'][castbar.Text] = true
 	castbar.Text:SetPoint("LEFT", castbar, "LEFT", 4, 0)
 	castbar.Text:SetTextColor(0.84, 0.75, 0.65)
-	
+
 	castbar.Spark = castbar:CreateTexture(nil, 'ARTWORK')
 	castbar.Spark:SetBlendMode('ADD')
 	castbar.Spark:SetVertexColor(1, 1, 1)
@@ -499,6 +499,10 @@ function UF:Construct_DebuffHighlight(frame)
 	frame.DebuffHighlightFilter = true
 	frame.DebuffHighlightAlpha = 0.45
 
+	if frame.Health then
+		dbh:SetParent(frame.Health)
+	end
+
 	return dbh
 end
 
@@ -571,6 +575,11 @@ function UF:Construct_HealComm(frame)
 	ohpb:SetStatusBarTexture(E["media"].blankTex)
 	ohpb:SetStatusBarColor(0, 1, 0, 0.25)
 	mhpb:SetFrameLevel(mhpb:GetFrameLevel())
+
+	if frame.Health then
+		ohpb:SetParent(frame.Health)
+		mhpb:SetParent(frame.Health)
+	end
 
 	return {
 		myBar = mhpb,
