@@ -168,7 +168,7 @@ local function SetupCVars()
 	SetCVar('lockActionBars', 1)
 	InterfaceOptionsActionBarsPanelPickupActionKeyDropDown:SetValue('SHIFT')
 	InterfaceOptionsActionBarsPanelPickupActionKeyDropDown:RefreshValue()
-	
+
 	InstallStepComplete.message = L["CVars Set"]
 	InstallStepComplete:Show()
 end
@@ -253,7 +253,7 @@ function E:SetupLayout(layout)
 		if not IsAddOnLoaded('Clique') then
 			E:Print(L['Using the healer layout it is highly recommended you download the addon Clique to work side by side with ElvUI.'])
 		end
-		
+
 		E.db.unitframe.units.party.health.frequentUpdates = true;
 		E.db.unitframe.units.raid625.health.frequentUpdates = true;
 		E.db.unitframe.units.raid2640.health.frequentUpdates = true;
@@ -358,25 +358,28 @@ function E:SetupLayout(layout)
 	end
 
 	--Datatexts
-	E:CopyTable(E.db.datatexts.panels, P.datatexts.panels)
-	if layout == 'tank' then
-		E.db.datatexts.panels.LeftChatDataPanel.left = 'Armor';
-		E.db.datatexts.panels.LeftChatDataPanel.right = 'Avoidance';
-	elseif layout == 'healer' or layout == 'dpsCaster' then
-		E.db.datatexts.panels.LeftChatDataPanel.left = 'Spell/Heal Power';
-		E.db.datatexts.panels.LeftChatDataPanel.right = 'Haste';
-	else
-		E.db.datatexts.panels.LeftChatDataPanel.left = 'Attack Power';
-		E.db.datatexts.panels.LeftChatDataPanel.right = 'Crit Chance';
+	if not E.db.layoutSet then
+		E:CopyTable(E.db.datatexts.panels, P.datatexts.panels)
+		if layout == 'tank' then
+			E.db.datatexts.panels.LeftChatDataPanel.left = 'Armor';
+			E.db.datatexts.panels.LeftChatDataPanel.right = 'Avoidance';
+		elseif layout == 'healer' or layout == 'dpsCaster' then
+			E.db.datatexts.panels.LeftChatDataPanel.left = 'Spell/Heal Power';
+			E.db.datatexts.panels.LeftChatDataPanel.right = 'Haste';
+		else
+			E.db.datatexts.panels.LeftChatDataPanel.left = 'Attack Power';
+			E.db.datatexts.panels.LeftChatDataPanel.right = 'Crit Chance';
+		end
+
+		if InstallStepComplete then
+			InstallStepComplete.message = L["Layout Set"]
+			InstallStepComplete:Show()
+		end
 	end
 
 	E.db.layoutSet = layout
 
 	E:UpdateAll()
-	if InstallStepComplete then
-		InstallStepComplete.message = L["Layout Set"]
-		InstallStepComplete:Show()
-	end
 end
 
 local function InstallComplete()
@@ -474,13 +477,13 @@ local function SetPage(PageNum)
 		f.Desc2:SetText(L["This will change the layout of your unitframes, raidframes, and datatexts."])
 		f.Desc3:SetText(L["Importance: |cffD3CF00Medium|r"])
 		InstallRoleOptionTank:Show()
-		InstallRoleOptionTank:SetScript('OnClick', function() E:SetupLayout('tank') end)
+		InstallRoleOptionTank:SetScript('OnClick', function() E.db.layoutSet = nil; E:SetupLayout('tank') end)
 		InstallRoleOptionHealer:Show()
-		InstallRoleOptionHealer:SetScript('OnClick', function() E:SetupLayout('healer') end)
+		InstallRoleOptionHealer:SetScript('OnClick', function() E.db.layoutSet = nil; E:SetupLayout('healer') end)
 		InstallRoleOptionMeleeDPS:Show()
-		InstallRoleOptionMeleeDPS:SetScript('OnClick', function() E:SetupLayout('dpsMelee') end)
+		InstallRoleOptionMeleeDPS:SetScript('OnClick', function() E.db.layoutSet = nil; E:SetupLayout('dpsMelee') end)
 		InstallRoleOptionCasterDPS:Show()
-		InstallRoleOptionCasterDPS:SetScript('OnClick', function() E:SetupLayout('dpsCaster') end)
+		InstallRoleOptionCasterDPS:SetScript('OnClick', function() E.db.layoutSet = nil; E:SetupLayout('dpsCaster') end)
 	elseif PageNum == 6 then
 		f.SubTitle:SetText(L["Installation Complete"])
 		f.Desc1:SetText(L["You are now finished with the installation process. Bonus Hint: If you wish to access blizzard micro menu, middle click on the minimap. If you don't have a middle click button then hold down shift and right click the minimap. If you are in need of technical support please visit us at www.tukui.org."])
