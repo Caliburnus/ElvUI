@@ -307,6 +307,7 @@ function UF:CreateAndUpdateHeaderGroup(group, groupFilter, template)
 
 	self[group].Update = function()
 		local db = self.db['units'][group]
+		if db.enable ~= true then return end
 		UF["Update_"..E:StringTitle(group).."Header"](self, self[group], db)
 
 		for i=1, self[group]:GetNumChildren() do
@@ -513,23 +514,7 @@ function UF:Initialize()
 end
 
 function UF:ResetUnitSettings(unit)
-	local db = self.db['units'][unit]
-
-	for option, value in pairs(P['unitframe']['units'][unit]) do
-		if type(value) ~= 'table' then
-			db[option] = value
-		else
-			for opt, val in pairs(P['unitframe']['units'][unit][option]) do
-				if type(val) ~= 'table' then
-					db[option][opt] = val
-				else
-					for o, v in pairs(P['unitframe']['units'][unit][option][opt]) do
-						db[option][opt][o] = v
-					end
-				end
-			end
-		end
-	end
+	E:CopyTable(self.db['units'][unit], P['unitframe']['units'][unit]);
 
 	self:Update_AllFrames()
 end

@@ -4612,8 +4612,14 @@ E.Options.args.unitframe.args.party = {
 			order = 1,
 			name = L['Enable'],
 		},
-		general = {
+		resetSettings = {
+			type = 'execute',
 			order = 2,
+			name = L['Restore Defaults'],
+			func = function(info, value) UF:ResetUnitSettings('party') end,
+		},
+		general = {
+			order = 5,
 			type = 'group',
 			name = L['General'],
 			args = {
@@ -4710,6 +4716,17 @@ E.Options.args.unitframe.args.party = {
 					desc = L['Show a incomming heal prediction bar on the unitframe. Also display a slightly different colored bar for incoming overheals.'],
 					type = 'toggle',
 				},
+				--[[groupBy = {
+					order = 16,
+					name = L['Group By'],
+					desc = L['Set the order that the group will sort.'],
+					type = 'select',
+					values = {
+						['CLASS'] = CLASS,
+						['ROLE'] = ROLE,
+						['GROUP'] = GROUP,
+					},
+				},]]
 				visibility = {
 					order = 200,
 					type = 'input',
@@ -5219,8 +5236,14 @@ E.Options.args.unitframe.args.raid625 = {
 			order = 1,
 			name = L['Enable'],
 		},
-		general = {
+		resetSettings = {
+			type = 'execute',
 			order = 2,
+			name = L['Restore Defaults'],
+			func = function(info, value) UF:ResetUnitSettings('raid625') end,
+		},
+		general = {
+			order = 5,
 			type = 'group',
 			name = L['General'],
 			args = {
@@ -5317,6 +5340,17 @@ E.Options.args.unitframe.args.raid625 = {
 					desc = L['Show a incomming heal prediction bar on the unitframe. Also display a slightly different colored bar for incoming overheals.'],
 					type = 'toggle',
 				},
+				--[[groupBy = {
+					order = 16,
+					name = L['Group By'],
+					desc = L['Set the order that the group will sort.'],
+					type = 'select',
+					values = {
+						['CLASS'] = CLASS,
+						['ROLE'] = ROLE,
+						['GROUP'] = GROUP,
+					},
+				},]]
 				visibility = {
 					order = 200,
 					type = 'input',
@@ -5746,8 +5780,14 @@ E.Options.args.unitframe.args.raid2640 = {
 			order = 1,
 			name = L['Enable'],
 		},
-		general = {
+		resetSettings = {
+			type = 'execute',
 			order = 2,
+			name = L['Restore Defaults'],
+			func = function(info, value) UF:ResetUnitSettings('raid2640') end,
+		},
+		general = {
+			order = 5,
 			type = 'group',
 			name = L['General'],
 			args = {
@@ -5844,6 +5884,17 @@ E.Options.args.unitframe.args.raid2640 = {
 					desc = L['Show a incomming heal prediction bar on the unitframe. Also display a slightly different colored bar for incoming overheals.'],
 					type = 'toggle',
 				},
+				--[[groupBy = {
+					order = 16,
+					name = L['Group By'],
+					desc = L['Set the order that the group will sort.'],
+					type = 'select',
+					values = {
+						['CLASS'] = CLASS,
+						['ROLE'] = ROLE,
+						['GROUP'] = GROUP,
+					},
+				},]]
 				visibility = {
 					order = 200,
 					type = 'input',
@@ -6272,8 +6323,14 @@ E.Options.args.unitframe.args.tank = {
 			order = 1,
 			name = L['Enable'],
 		},
-		general = {
+		resetSettings = {
+			type = 'execute',
 			order = 2,
+			name = L['Restore Defaults'],
+			func = function(info, value) UF:ResetUnitSettings('tank') end,
+		},
+		general = {
+			order = 3,
 			type = 'group',
 			name = L['General'],
 			guiInline = true,
@@ -6308,8 +6365,14 @@ E.Options.args.unitframe.args.assist = {
 			order = 1,
 			name = L['Enable'],
 		},
-		general = {
+		resetSettings = {
+			type = 'execute',
 			order = 2,
+			name = L['Restore Defaults'],
+			func = function(info, value) UF:ResetUnitSettings('assist') end,
+		},
+		general = {
+			order = 3,
 			type = 'group',
 			name = L['General'],
 			guiInline = true,
