@@ -158,7 +158,8 @@ function B:SlotUpdate(b)
 
 	if(clink) then
 		local iType
-		b.name, _, b.rarity, _, _, iType = GetItemInfo(clink)
+		b.name, _, b.rarity, _, _, b.class, b.subClass = GetItemInfo(clink)
+		iType = b.class
 
 		-- color slot according to item quality
 		if not b.frame.lock and b.rarity and b.rarity > 1 then
@@ -167,7 +168,7 @@ function B:SlotUpdate(b)
 			b.frame:SetBackdropBorderColor(1.0, 0.3, 0.3)
 		end
 	else
-		b.name, b.rarity = nil, nil
+		b.name, b.rarity, b.class, b.subClass = nil, nil, nil, nil
 	end
 
 	SetItemButtonTexture(b.frame, texture)
@@ -241,7 +242,6 @@ function B:SlotNew(bag, slot)
 
 	return ret, true
 end
-
 
 function B:Layout(isBank)
 	if E.global.bags.enable ~= true then return end
@@ -459,7 +459,8 @@ function B:SearchUpdate(str, frameMatch)
 
 	for _, b in ipairs(self.buttons) do
 		if b.name then
-			if not string.find (string.lower(b.name), str) and b.frame:GetParent():GetParent() == frameMatch then
+			local foundString = string.find (string.lower(b.name), str) or string.find (string.lower(b.class), str) or string.find (string.lower(b.subClass), str)
+			if not foundString and b.frame:GetParent():GetParent() == frameMatch then
 				SetItemButtonDesaturated(b.frame, 1, 1, 1, 1)
 				b.frame:SetAlpha(0.4)
 			else
