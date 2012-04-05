@@ -158,7 +158,7 @@ function B:SlotUpdate(b)
 
 	if(clink) then
 		local iType
-		b.name, _, b.rarity, _, _, b.class, b.subClass = GetItemInfo(clink)
+		b.name, _, b.rarity, _, _, b.class, b.subClass, _, b.equipSlot = GetItemInfo(clink)
 		iType = b.class
 
 		-- color slot according to item quality
@@ -168,7 +168,7 @@ function B:SlotUpdate(b)
 			b.frame:SetBackdropBorderColor(1.0, 0.3, 0.3)
 		end
 	else
-		b.name, b.rarity, b.class, b.subClass = nil, nil, nil, nil
+		b.name, b.rarity, b.class, b.subClass, b.equipSlot = nil, nil, nil, nil, nil
 	end
 
 	SetItemButtonTexture(b.frame, texture)
@@ -459,7 +459,7 @@ function B:SearchUpdate(str, frameMatch)
 
 	for _, b in ipairs(self.buttons) do
 		if b.name then
-			local foundString = string.find (string.lower(b.name), str) or string.find (string.lower(b.class), str) or string.find (string.lower(b.subClass), str)
+			local foundString = string.find(string.lower(b.name), str) or string.find(string.lower(b.class), str) or string.find(string.lower(b.subClass), str) or string.find(string.lower(b.equipSlot), str)
 			if not foundString and b.frame:GetParent():GetParent() == frameMatch then
 				SetItemButtonDesaturated(b.frame, 1, 1, 1, 1)
 				b.frame:SetAlpha(0.4)
