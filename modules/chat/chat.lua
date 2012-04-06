@@ -54,9 +54,9 @@ end
 
 function CH:StyleChat(frame)
 	if frame.styled then return end
-	
+
 	frame.IgnoreFixDimensions = true; --no need to run this constantly
-	
+
 	local id = frame:GetID()
 	local name = frame:GetName()
 	local tab = _G[name..'Tab']
@@ -697,7 +697,7 @@ end
 
 function CH:CopyLineFromPlayerlinkToEdit(origin_frame, ...)
     local frame = (origin_frame and origin_frame:GetObjectType() == "ScrollingMessageFrame" and origin_frame) or self.clickedframe
-
+	if not frame then return; end
 	self.lines = {};
 
     for i=1, #self.lines do
