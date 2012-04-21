@@ -12,7 +12,14 @@ local function LoadSkin()
 	}
 	
 	local buttons = {
-		"HelpFrameAccountSecurityOpenTicket",
+		--[["HelpFrameAccountSecurityOpenTicket",
+		"HelpFrameReportLagLoot",
+		"HelpFrameReportLagAuctionHouse",
+		"HelpFrameReportLagMail",
+		"HelpFrameReportLagMovement",
+		"HelpFrameReportLagSpell",
+		"HelpFrameReportLagChat",
+		"HelpFrameReportAbuseOpenTicket",
 		"HelpFrameOpenTicketHelpTopIssues",
 		"HelpFrameOpenTicketHelpOpenTicket",
 		"HelpFrameKnowledgebaseSearchButton",
@@ -20,15 +27,26 @@ local function LoadSkin()
 		"HelpFrameCharacterStuckStuck",
 		"GMChatOpenLog",
 		"HelpFrameTicketSubmit",
-		"HelpFrameTicketCancel",
+		"HelpFrameTicketCancel",--]]
+		"HelpFrameButton1",
+		"HelpFrameButton2",
+		"HelpFrameButton3",
+		"HelpFrameButton4",
+		"HelpFrameButton5",
+		"HelpFrameButton6",
+		"HelpFrameButton16",
+		"HelpFrameAccountSecurityOpenTicket",
+		"HelpFrameOpenTicketHelpTopIssues",
+		"HelpFrameOpenTicketHelpOpenTicket",
+		"HelpFrameKnowledgebaseSearchButton",
+		"HelpFrameKnowledgebaseNavBarHomeButton",
+		"HelpFrameCharacterStuckStuck",
+		"HelpFrameSubmitSuggestionSubmit",
+		"HelpFrameReportBugSubmit",
+		"GMChatOpenLog",
+		"HelpFrameTicketSubmit",
+		"HelpFrameTicketCancel"
 	}
-	
-	-- 4.3.4 patch
-	if E.wowbuild >= 15595 then
-		tinsert(buttons, "HelpFrameButton16")
-		tinsert(buttons, "HelpFrameSubmitSuggestionSubmit")
-		tinsert(buttons, "HelpFrameReportBugSubmit")
-	end
 	
 	-- skin main frames
 	for i = 1, #frames do
@@ -39,32 +57,6 @@ local function LoadSkin()
 	HelpFrameHeader:SetFrameLevel(HelpFrameHeader:GetFrameLevel() + 2)
 	HelpFrameKnowledgebaseErrorFrame:SetFrameLevel(HelpFrameKnowledgebaseErrorFrame:GetFrameLevel() + 2)
 	
-	HelpFrameReportBugScrollFrame:StripTextures()
-	HelpFrameReportBugScrollFrame:CreateBackdrop("Default")
-	HelpFrameReportBugScrollFrame.backdrop:Point("TOPLEFT", -4, 4)
-	HelpFrameReportBugScrollFrame.backdrop:Point("BOTTOMRIGHT", 6, -4)
-	for i=1, HelpFrameReportBug:GetNumChildren() do
-		local child = select(i, HelpFrameReportBug:GetChildren())
-		if not child:GetName() then
-			child:StripTextures()
-		end
-	end
-	
-	S:HandleScrollBar(HelpFrameReportBugScrollFrameScrollBar)
-	
-	HelpFrameSubmitSuggestionScrollFrame:StripTextures()
-	HelpFrameSubmitSuggestionScrollFrame:CreateBackdrop("Default")
-	HelpFrameSubmitSuggestionScrollFrame.backdrop:Point("TOPLEFT", -4, 4)
-	HelpFrameSubmitSuggestionScrollFrame.backdrop:Point("BOTTOMRIGHT", 6, -4)
-	for i=1, HelpFrameSubmitSuggestion:GetNumChildren() do
-		local child = select(i, HelpFrameSubmitSuggestion:GetChildren())
-		if not child:GetName() then
-			child:StripTextures()
-		end
-	end
-	
-	S:HandleScrollBar(HelpFrameSubmitSuggestionScrollFrameScrollBar)
-
 	HelpFrameTicketScrollFrame:StripTextures()
 	HelpFrameTicketScrollFrame:CreateBackdrop("Default")
 	HelpFrameTicketScrollFrame.backdrop:Point("TOPLEFT", -4, 4)
@@ -74,7 +66,7 @@ local function LoadSkin()
 		if not child:GetName() then
 			child:StripTextures()
 		end
-	end	
+	end
 	
 	S:HandleScrollBar(HelpFrameKnowledgebaseScrollFrame2ScrollBar)
 	

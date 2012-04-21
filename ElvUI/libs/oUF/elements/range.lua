@@ -31,7 +31,7 @@ local OnRangeUpdate = function(self, elapsed)
 						end
 					end
 				else
-					object:SetAlpha(range.insideAlpha)	
+					object:SetAlpha(range.insideAlpha)
 				end
 			end
 		end

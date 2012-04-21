@@ -5,7 +5,7 @@ local MAX_PAGE = 6
 
 local function SetupChat()
 	InstallStepComplete.message = L["Chat Set"]
-	InstallStepComplete:Show()			
+	InstallStepComplete:Show()
 	FCF_ResetChatWindows()
 	FCF_SetLocked(ChatFrame1, 1)
 	FCF_DockFrame(ChatFrame2)
@@ -14,38 +14,38 @@ local function SetupChat()
 	FCF_OpenNewWindow(LOOT)
 	FCF_UnDockFrame(ChatFrame3)
 	FCF_SetLocked(ChatFrame3, 1)
-	ChatFrame3:Show()			
-			
+	ChatFrame3:Show()
+
 	for i = 1, NUM_CHAT_WINDOWS do
 		local frame = _G[format("ChatFrame%s", i)]
 		local chatFrameId = frame:GetID()
 		local chatName = FCF_GetChatWindowInfo(chatFrameId)
-		
+
 		-- move general bottom left
 		if i == 1 then
 			frame:ClearAllPoints()
-			frame:Point("BOTTOMLEFT", LeftChatToggleButton, "TOPLEFT", 1, 3)			
+			frame:Point("BOTTOMLEFT", LeftChatToggleButton, "TOPLEFT", 1, 3)
 		elseif i == 3 then
 			frame:ClearAllPoints()
 			frame:Point("BOTTOMLEFT", RightChatDataPanel, "TOPLEFT", 1, 3)
 		end
-		
+
 		FCF_SavePositionAndDimensions(frame)
 		FCF_StopDragging(frame)
-		
+
 		-- set default Elvui font size
 		FCF_SetChatWindowFontSize(nil, frame, 12)
-		
+
 		-- rename windows general because moved to chat #3
 		if i == 1 then
 			FCF_SetWindowName(frame, GENERAL)
 		elseif i == 2 then
 			FCF_SetWindowName(frame, GUILD_EVENT_LOG)
-		elseif i == 3 then 
-			FCF_SetWindowName(frame, LOOT.." / "..TRADE) 
+		elseif i == 3 then
+			FCF_SetWindowName(frame, LOOT.." / "..TRADE)
 		end
 	end
-	
+
 	ChatFrame_RemoveAllMessageGroups(ChatFrame1)
 	ChatFrame_AddMessageGroup(ChatFrame1, "SAY")
 	ChatFrame_AddMessageGroup(ChatFrame1, "EMOTE")
@@ -77,9 +77,9 @@ local function SetupChat()
 	ChatFrame_AddMessageGroup(ChatFrame1, "BN_WHISPER")
 	ChatFrame_AddMessageGroup(ChatFrame1, "BN_CONVERSATION")
 	ChatFrame_AddMessageGroup(ChatFrame1, "BN_INLINE_TOAST_ALERT")
-	
 
-	ChatFrame_RemoveAllMessageGroups(ChatFrame3)	
+
+	ChatFrame_RemoveAllMessageGroups(ChatFrame3)
 	ChatFrame_AddMessageGroup(ChatFrame3, "COMBAT_FACTION_CHANGE")
 	ChatFrame_AddMessageGroup(ChatFrame3, "SKILL")
 	ChatFrame_AddMessageGroup(ChatFrame3, "LOOT")
@@ -91,7 +91,7 @@ local function SetupChat()
 	ChatFrame_RemoveChannel(ChatFrame1, L['Trade'])
 	ChatFrame_AddChannel(ChatFrame3, L['Trade'])
 
-	
+
 	if E.myname == "Elv" then
 		--keep losing my god damn channels everytime i resetui
 		ChatFrame_AddChannel(DEFAULT_CHAT_FRAME, "tystank")
@@ -101,8 +101,8 @@ local function SetupChat()
 		ChangeChatColor("CHANNEL6", 139/255, 115/255, 85/255)
 		ChangeChatColor("CHANNEL7", RAID_CLASS_COLORS["PALADIN"].r, RAID_CLASS_COLORS["PALADIN"].g, RAID_CLASS_COLORS["PALADIN"].b)
 		SetCVar("scriptErrors", 1)
-	end	
-	
+	end
+
 	-- enable classcolor automatically on login and on each character without doing /configure each time.
 	ToggleChatColorNamesByClassGroup(true, "SAY")
 	ToggleChatColorNamesByClassGroup(true, "EMOTE")
@@ -118,7 +118,7 @@ local function SetupChat()
 	ToggleChatColorNamesByClassGroup(true, "RAID_LEADER")
 	ToggleChatColorNamesByClassGroup(true, "RAID_WARNING")
 	ToggleChatColorNamesByClassGroup(true, "BATTLEGROUND")
-	ToggleChatColorNamesByClassGroup(true, "BATTLEGROUND_LEADER")	
+	ToggleChatColorNamesByClassGroup(true, "BATTLEGROUND_LEADER")
 	ToggleChatColorNamesByClassGroup(true, "CHANNEL1")
 	ToggleChatColorNamesByClassGroup(true, "CHANNEL2")
 	ToggleChatColorNamesByClassGroup(true, "CHANNEL3")
@@ -130,7 +130,7 @@ local function SetupChat()
 	ToggleChatColorNamesByClassGroup(true, "CHANNEL9")
 	ToggleChatColorNamesByClassGroup(true, "CHANNEL10")
 	ToggleChatColorNamesByClassGroup(true, "CHANNEL11")
-	
+
 	--Adjust Chat Colors
 	--General
 	ChangeChatColor("CHANNEL1", 195/255, 230/255, 232/255)
@@ -138,16 +138,16 @@ local function SetupChat()
 	ChangeChatColor("CHANNEL2", 232/255, 158/255, 121/255)
 	--Local Defense
 	ChangeChatColor("CHANNEL3", 232/255, 228/255, 121/255)
-	
+
 	if E.Chat then
 		E.Chat:PositionChat(true)
 		if E.db['RightChatPanelFaded'] then
 			RightChatToggleButton:Click()
 		end
-		
+
 		if E.db['LeftChatPanelFaded'] then
 			LeftChatToggleButton:Click()
-		end		
+		end
 	end
 end
 
@@ -156,7 +156,7 @@ local function SetupCVars()
 	SetCVar("ShowClassColorInNameplate", 1)
 	SetCVar("screenshotQuality", 10)
 	SetCVar("chatMouseScroll", 1)
-	SetCVar("chatStyle", "classic")
+	SetCVar("chatStyle", "im")
 	SetCVar("WholeChatWindowClickable", 0)
 	SetCVar("ConversationMode", "inline")
 	SetCVar("showTutorials", 0)
@@ -168,18 +168,18 @@ local function SetupCVars()
 	SetCVar('lockActionBars', 1)
 	InterfaceOptionsActionBarsPanelPickupActionKeyDropDown:SetValue('SHIFT')
 	InterfaceOptionsActionBarsPanelPickupActionKeyDropDown:RefreshValue()
-	
+
 	InstallStepComplete.message = L["CVars Set"]
-	InstallStepComplete:Show()					
-end	
+	InstallStepComplete:Show()
+end
 
 function E:SetupResolution()
 	if E.lowversion then
 		E.db.general.panelWidth = 400
 		E.db.general.panelHeight = 180
-		
+
 		E:CopyTable(E.db.actionbar, P.actionbar)
-		
+
 		E.db.actionbar.bar1.heightMult = 2;
 		E.db.actionbar.bar2.enabled = true;
 		E.db.actionbar.bar3.enabled = false;
@@ -192,32 +192,31 @@ function E:SetupResolution()
 			["p4"] = 56.18668365478516,
 		}
 
-		
 		E:CopyTable(E.db.unitframe.units, P.unitframe.units)
-		
+
 		E.db.unitframe.fontsize = 11
-		
+
 		E.db.unitframe.units.player.width = 200;
 		E.db.unitframe.units.player.castbar.width = 200;
 		E.db.unitframe.units.player.classbar.fill = 'fill';
-		
+
 		E.db.unitframe.units.target.width = 200;
 		E.db.unitframe.units.target.castbar.width = 200;
-		
+
 		E.db.unitframe.units.pet.power.enable = false;
 		E.db.unitframe.units.pet.width = 200;
 		E.db.unitframe.units.pet.height = 26;
-		
+
 		E.db.unitframe.units.targettarget.debuffs.enable = false;
 		E.db.unitframe.units.targettarget.power.enable = false;
 		E.db.unitframe.units.targettarget.width = 200;
-		E.db.unitframe.units.targettarget.height = 26;	
-		
+		E.db.unitframe.units.targettarget.height = 26;
+
 		E.db.unitframe.units.boss.width = 200;
 		E.db.unitframe.units.boss.castbar.width = 200;
 		E.db.unitframe.units.arena.width = 200;
-		E.db.unitframe.units.arena.castbar.width = 200;			
-		
+		E.db.unitframe.units.arena.castbar.width = 200;
+
 		E.db.unitframe.units["positions"] = {
 			["ElvUF_TargetTarget"] = "BOTTOMUIParent10680",
 			["ElvUF_Player"] = "BOTTOMUIParent-106135",
@@ -225,12 +224,12 @@ function E:SetupResolution()
 			["ElvUF_Pet"] = "BOTTOMUIParent-10680",
 			['ElvUF_Focus'] = "BOTTOMUIParent310332",
 		}
-		
+
 		E.db.lowresolutionset = true;
 	else
 		E.db.general.panelWidth = P.general.panelWidth
 		E.db.general.panelHeight = P.general.panelHeight
-		
+
 		E:CopyTable(E.db.actionbar, P.actionbar)
 		E:CopyTable(E.db.unitframe.units, P.unitframe.units)
 		E.db.unitframe.fontsize = 12
@@ -242,28 +241,28 @@ function E:SetupResolution()
 	E:UpdateAll()
 	if InstallStepComplete then
 		InstallStepComplete.message = L["Resolution Style Set"]
-		InstallStepComplete:Show()		
+		InstallStepComplete:Show()
 	end
 end
 
 function E:SetupLayout(layout)
-	
+
 	--Unitframes
 	E:CopyTable(E.db.unitframe.units, P.unitframe.units)
 	if layout == 'healer' then
 		if not IsAddOnLoaded('Clique') then
 			E:Print(L['Using the healer layout it is highly recommended you download the addon Clique to work side by side with ElvUI.'])
 		end
-		
+
 		E.db.unitframe.units.party.health.frequentUpdates = true;
 		E.db.unitframe.units.raid625.health.frequentUpdates = true;
 		E.db.unitframe.units.raid2640.health.frequentUpdates = true;
-		
+
 		E.db.unitframe.units.boss.width = 200;
 		E.db.unitframe.units.boss.castbar.width = 200;
 		E.db.unitframe.units.arena.width = 200;
 		E.db.unitframe.units.arena.castbar.width = 200;
-		
+
 		E.db.unitframe.units.party.point = 'LEFT';
 		E.db.unitframe.units.party.xOffset = 5;
 		E.db.unitframe.units.party.healPrediction = true;
@@ -294,8 +293,8 @@ function E:SetupLayout(layout)
 		E.db.unitframe.units.raid625.health.orientation = 'VERTICAL';
 
 		E.db.unitframe.units.raid2640.healPrediction = true;
-		E.db.unitframe.units.raid2640.health.orientation = 'VERTICAL';		
-		
+		E.db.unitframe.units.raid2640.health.orientation = 'VERTICAL';
+
 		if E.db.lowresolutionset then
 			E.db.unitframe.units["positions"] = {
 				["ElvUF_Player"] = "BOTTOMUIParent-305242",
@@ -307,7 +306,7 @@ function E:SetupLayout(layout)
 				["ElvUF_Party"] = "BOTTOMUIParent0104",
 				["ElvUF_Pet"] = "BOTTOMUIParent-305187",
 				['ElvUF_Focus'] = "BOTTOMUIParent310432",
-			}			
+			}
 		else
 			E.db.unitframe.units["positions"] = {
 				["ElvUF_Player"] = "BOTTOMLEFTUIParent464242",
@@ -328,36 +327,36 @@ function E:SetupLayout(layout)
 			["ElvUF_Target"] = "BOTTOMUIParent106135",
 			["ElvUF_Pet"] = "BOTTOMUIParent-10680",
 			['ElvUF_Focus'] = "BOTTOMUIParent310332",
-		}		
+		}
 	else
 		E.db.unitframe.units["positions"] = nil;
 	end
-	
+
 	if E.db.lowresolutionset then
 		E.db.unitframe.fontsize = 11
-		
+
 		E.db.unitframe.units.player.width = 200;
 		E.db.unitframe.units.player.castbar.width = 200;
 		E.db.unitframe.units.player.classbar.fill = 'fill';
-		
+
 		E.db.unitframe.units.target.width = 200;
 		E.db.unitframe.units.target.castbar.width = 200;
-		
+
 		E.db.unitframe.units.pet.power.enable = false;
 		E.db.unitframe.units.pet.width = 200;
 		E.db.unitframe.units.pet.height = 26;
-		
+
 		E.db.unitframe.units.targettarget.debuffs.enable = false;
 		E.db.unitframe.units.targettarget.power.enable = false;
 		E.db.unitframe.units.targettarget.width = 200;
-		E.db.unitframe.units.targettarget.height = 26;	
-		
+		E.db.unitframe.units.targettarget.height = 26;
+
 		E.db.unitframe.units.boss.width = 200;
 		E.db.unitframe.units.boss.castbar.width = 200;
 		E.db.unitframe.units.arena.width = 200;
-		E.db.unitframe.units.arena.castbar.width = 200;		
+		E.db.unitframe.units.arena.castbar.width = 200;
 	end
-	
+
 	--Datatexts
 	if not E.db.layoutSet then
 		E:CopyTable(E.db.datatexts.panels, P.datatexts.panels)
@@ -371,28 +370,28 @@ function E:SetupLayout(layout)
 			E.db.datatexts.panels.LeftChatDataPanel.left = 'Attack Power';
 			E.db.datatexts.panels.LeftChatDataPanel.right = 'Crit Chance';
 		end
-		
+
 		if InstallStepComplete then
 			InstallStepComplete.message = L["Layout Set"]
-			InstallStepComplete:Show()	
-		end		
+			InstallStepComplete:Show()
+		end
 	end
-	
+
 	E.db.layoutSet = layout
-	
+
 	E:UpdateAll()
 end
 
 local function InstallComplete()
 	E.db.install_complete = E.version
-	
+
 	if GetCVarBool("Sound_EnableMusic") then
 		StopMusic()
 	end
-	
+
 	ReloadUI()
 end
-		
+
 local function ResetAll()
 	InstallNextButton:Disable()
 	InstallPrevButton:Disable()
@@ -404,9 +403,9 @@ local function ResetAll()
 	InstallRoleOptionHealer:Hide()
 	InstallRoleOptionHealer:SetScript('OnClick', nil)
 	InstallRoleOptionMeleeDPS:Hide()
-	InstallRoleOptionMeleeDPS:SetScript('OnClick', nil)	
+	InstallRoleOptionMeleeDPS:SetScript('OnClick', nil)
 	InstallRoleOptionCasterDPS:Hide()
-	InstallRoleOptionCasterDPS:SetScript('OnClick', nil)		
+	InstallRoleOptionCasterDPS:SetScript('OnClick', nil)
 	ElvUIInstallFrame.SubTitle:SetText("")
 	ElvUIInstallFrame.Desc1:SetText("")
 	ElvUIInstallFrame.Desc2:SetText("")
@@ -419,21 +418,21 @@ end
 local function SetPage(PageNum)
 	ResetAll()
 	InstallStatus:SetValue(PageNum)
-	
+
 	local f = ElvUIInstallFrame
-	
+
 	if PageNum == MAX_PAGE then
 		InstallNextButton:Disable()
 	else
 		InstallNextButton:Enable()
 	end
-	
+
 	if PageNum == 1 then
 		InstallPrevButton:Disable()
 	else
 		InstallPrevButton:Enable()
 	end
-	
+
 	if PageNum == 1 then
 		f.SubTitle:SetText(format(L["Welcome to ElvUI version %s!"], E.version))
 		f.Desc1:SetText(L["This install process will help you learn some of the features in ElvUI has to offer and also prepare your user interface for usage."])
@@ -441,7 +440,7 @@ local function SetPage(PageNum)
 		f.Desc3:SetText(L["Please press the continue button to go onto the next step."])
 		InstallOption1Button:Show()
 		InstallOption1Button:SetScript("OnClick", InstallComplete)
-		InstallOption1Button:SetText(L["Skip Process"])			
+		InstallOption1Button:SetText(L["Skip Process"])
 	elseif PageNum == 2 then
 		f.SubTitle:SetText(L["CVars"])
 		f.Desc1:SetText(L["This part of the installation process sets up your World of Warcraft default options it is recommended you should do this step for everything to behave properly."])
@@ -468,10 +467,10 @@ local function SetPage(PageNum)
 			f.Desc2:SetText(L["This resolution doesn't require that you change settings for the UI to fit on your screen."].." "..L["Click the button below to resize your chat frames, unitframes, and reposition your actionbars."].." "..L["This is completely optional."])
 			f.Desc3:SetText(L["Importance: |cffFF0000Low|r"])
 		end
-		
+
 		InstallOption1Button:Show()
 		InstallOption1Button:SetScript("OnClick", E.SetupResolution)
-		InstallOption1Button:SetText(L["Resolution Setup"])	
+		InstallOption1Button:SetText(L["Resolution Setup"])
 	elseif PageNum == 5 then
 		f.SubTitle:SetText(L["Layout"])
 		f.Desc1:SetText(L["You can now choose what layout you wish to use based on your combat role."])
@@ -488,17 +487,17 @@ local function SetPage(PageNum)
 	elseif PageNum == 6 then
 		f.SubTitle:SetText(L["Installation Complete"])
 		f.Desc1:SetText(L["You are now finished with the installation process. Bonus Hint: If you wish to access blizzard micro menu, middle click on the minimap. If you don't have a middle click button then hold down shift and right click the minimap. If you are in need of technical support please visit us at www.tukui.org."])
-		f.Desc2:SetText(L["Please click the button below so you can setup variables and ReloadUI."])			
+		f.Desc2:SetText(L["Please click the button below so you can setup variables and ReloadUI."])
 		InstallOption1Button:Show()
 		InstallOption1Button:SetScript("OnClick", InstallComplete)
-		InstallOption1Button:SetText(L["Finished"])				
+		InstallOption1Button:SetText(L["Finished"])
 		InstallTutorialImage:Show()
 		InstallTutorialImage:SetTexture([[Interface\AddOns\ElvUI\media\textures\micromenu_tutorial.tga]])
 		ElvUIInstallFrame:Size(550, 500)
 	end
 end
 
-local function NextPage()	
+local function NextPage()
 	if CURRENT_PAGE ~= MAX_PAGE then
 		CURRENT_PAGE = CURRENT_PAGE + 1
 		SetPage(CURRENT_PAGE)
@@ -513,54 +512,54 @@ local function PreviousPage()
 end
 
 --Install UI
-function E:Install()	
+function E:Install()
 	if not InstallStepComplete then
-		local imsg = CreateFrame("Frame", "InstallStepComplete", E.UIParent)
+		local imsg = CreateFrame("Button", "InstallStepComplete", E.UIParent)
 		imsg:Size(418, 72)
 		imsg:Point("TOP", 0, -190)
 		imsg:Hide()
 		imsg:SetScript('OnShow', function(self)
-			if self.message then 
+			if self.message then
 				PlaySoundFile([[Sound\Interface\LevelUp.wav]])
 				self.text:SetText(self.message)
 				UIFrameFadeOut(self, 3.5, 1, 0)
-				E:Delay(4, function() self:Hide() end)	
+				E:Delay(4, function() self:Hide() end)
 				self.message = nil
-				
+
 				if imsg.firstShow == false then
 					if GetCVarBool("Sound_EnableMusic") then
 						PlayMusic([[Sound\Music\ZoneMusic\DMF_L70ETC01.mp3]])
-					end					
+					end
 					imsg.firstShow = true
 				end
 			else
 				self:Hide()
 			end
 		end)
-		
+
 		imsg.firstShow = false
-		
+
 		imsg.bg = imsg:CreateTexture(nil, 'BACKGROUND')
 		imsg.bg:SetTexture([[Interface\LevelUp\LevelUpTex]])
 		imsg.bg:SetPoint('BOTTOM')
 		imsg.bg:Size(326, 103)
 		imsg.bg:SetTexCoord(0.00195313, 0.63867188, 0.03710938, 0.23828125)
 		imsg.bg:SetVertexColor(1, 1, 1, 0.6)
-		
+
 		imsg.lineTop = imsg:CreateTexture(nil, 'BACKGROUND')
 		imsg.lineTop:SetDrawLayer('BACKGROUND', 2)
 		imsg.lineTop:SetTexture([[Interface\LevelUp\LevelUpTex]])
 		imsg.lineTop:SetPoint("TOP")
 		imsg.lineTop:Size(418, 7)
 		imsg.lineTop:SetTexCoord(0.00195313, 0.81835938, 0.01953125, 0.03320313)
-		
+
 		imsg.lineBottom = imsg:CreateTexture(nil, 'BACKGROUND')
 		imsg.lineBottom:SetDrawLayer('BACKGROUND', 2)
 		imsg.lineBottom:SetTexture([[Interface\LevelUp\LevelUpTex]])
 		imsg.lineBottom:SetPoint("BOTTOM")
 		imsg.lineBottom:Size(418, 7)
 		imsg.lineBottom:SetTexCoord(0.00195313, 0.81835938, 0.01953125, 0.03320313)
-		
+
 		imsg.text = imsg:CreateFontString(nil, 'ARTWORK', 'GameFont_Gigantic')
 		imsg.text:Point("BOTTOM", 0, 12)
 		imsg.text:SetTextColor(1, 0.82, 0)
@@ -575,12 +574,12 @@ function E:Install()
 		f:CreateShadow("Default")
 		f:SetPoint("CENTER")
 		f:SetFrameStrata('TOOLTIP')
-		
+
 		f.Title = f:CreateFontString(nil, 'OVERLAY')
 		f.Title:FontTemplate(nil, 17, nil)
 		f.Title:Point("TOP", 0, -5)
 		f.Title:SetText(L["ElvUI Installation"])
-		
+
 		f.Next = CreateFrame("Button", "InstallNextButton", f, "UIPanelButtonTemplate2")
 		f.Next:StripTextures()
 		f.Next:SetTemplate("Default", true)
@@ -590,17 +589,17 @@ function E:Install()
 		f.Next:Disable()
 		f.Next:SetScript("OnClick", NextPage)
 		E.Skins:HandleButton(f.Next, true)
-		
+
 		f.Prev = CreateFrame("Button", "InstallPrevButton", f, "UIPanelButtonTemplate2")
 		f.Prev:StripTextures()
 		f.Prev:SetTemplate("Default", true)
 		f.Prev:Size(110, 25)
 		f.Prev:Point("BOTTOMLEFT", 5, 5)
-		f.Prev:SetText(PREVIOUS)	
+		f.Prev:SetText(PREVIOUS)
 		f.Prev:Disable()
 		f.Prev:SetScript("OnClick", PreviousPage)
 		E.Skins:HandleButton(f.Prev, true)
-		
+
 		f.Status = CreateFrame("StatusBar", "InstallStatus", f)
 		f.Status:SetFrameLevel(f.Status:GetFrameLevel() + 2)
 		f.Status:CreateBackdrop("Default")
@@ -616,7 +615,7 @@ function E:Install()
 		f.Status:SetScript("OnValueChanged", function(self)
 			self.text:SetText(self:GetValue().." / "..MAX_PAGE)
 		end)
-		
+
 		f.Option1 = CreateFrame("Button", "InstallOption1Button", f, "UIPanelButtonTemplate2")
 		f.Option1:StripTextures()
 		f.Option1:SetTemplate("Default", true)
@@ -625,7 +624,7 @@ function E:Install()
 		f.Option1:SetText("")
 		f.Option1:Hide()
 		E.Skins:HandleButton(f.Option1, true)
-		
+
 		f.RoleOptionTank = CreateFrame('Button', 'InstallRoleOptionTank', f, 'UIPanelButtonTemplate2')
 		f.RoleOptionTank:StripTextures()
 		f.RoleOptionTank:SetTemplate("Default", true)
@@ -634,7 +633,7 @@ function E:Install()
 		f.RoleOptionTank:SetText(L['Tank'])
 		f.RoleOptionTank:Hide()
 		E.Skins:HandleButton(f.RoleOptionTank, true)
-		
+
 		f.RoleOptionHealer = CreateFrame('Button', 'InstallRoleOptionHealer', f, 'UIPanelButtonTemplate2')
 		f.RoleOptionHealer:StripTextures()
 		f.RoleOptionHealer:SetTemplate("Default", true)
@@ -642,8 +641,8 @@ function E:Install()
 		f.RoleOptionHealer:Point("LEFT", f.RoleOptionTank, 'RIGHT', 3, 0)
 		f.RoleOptionHealer:SetText(L['Healer'])
 		f.RoleOptionHealer:Hide()
-		E.Skins:HandleButton(f.RoleOptionHealer, true)		
-		
+		E.Skins:HandleButton(f.RoleOptionHealer, true)
+
 		f.RoleOptionMeleeDPS = CreateFrame('Button', 'InstallRoleOptionMeleeDPS', f, 'UIPanelButtonTemplate2')
 		f.RoleOptionMeleeDPS:StripTextures()
 		f.RoleOptionMeleeDPS:SetTemplate("Default", true)
@@ -651,7 +650,7 @@ function E:Install()
 		f.RoleOptionMeleeDPS:Point("RIGHT", f.RoleOptionTank, 'LEFT', -3, 0)
 		f.RoleOptionMeleeDPS:SetText(L['Physical DPS'])
 		f.RoleOptionMeleeDPS:Hide()
-		E.Skins:HandleButton(f.RoleOptionMeleeDPS, true)			
+		E.Skins:HandleButton(f.RoleOptionMeleeDPS, true)
 
 		f.RoleOptionCasterDPS = CreateFrame('Button', 'InstallRoleOptionCasterDPS', f, 'UIPanelButtonTemplate2')
 		f.RoleOptionCasterDPS:StripTextures()
@@ -660,40 +659,40 @@ function E:Install()
 		f.RoleOptionCasterDPS:Point("RIGHT", f.RoleOptionMeleeDPS, 'LEFT', -3, 0)
 		f.RoleOptionCasterDPS:SetText(L['Caster DPS'])
 		f.RoleOptionCasterDPS:Hide()
-		E.Skins:HandleButton(f.RoleOptionCasterDPS, true)		
-		
+		E.Skins:HandleButton(f.RoleOptionCasterDPS, true)
+
 		f.SubTitle = f:CreateFontString(nil, 'OVERLAY')
-		f.SubTitle:FontTemplate(nil, 15, nil)		
+		f.SubTitle:FontTemplate(nil, 15, nil)
 		f.SubTitle:Point("TOP", 0, -40)
-		
+
 		f.Desc1 = f:CreateFontString(nil, 'OVERLAY')
-		f.Desc1:FontTemplate()	
-		f.Desc1:Point("TOPLEFT", 20, -75)	
+		f.Desc1:FontTemplate()
+		f.Desc1:Point("TOPLEFT", 20, -75)
 		f.Desc1:Width(f:GetWidth() - 40)
-		
+
 		f.Desc2 = f:CreateFontString(nil, 'OVERLAY')
-		f.Desc2:FontTemplate()	
-		f.Desc2:Point("TOPLEFT", 20, -125)		
+		f.Desc2:FontTemplate()
+		f.Desc2:Point("TOPLEFT", 20, -125)
 		f.Desc2:Width(f:GetWidth() - 40)
-		
+
 		f.Desc3 = f:CreateFontString(nil, 'OVERLAY')
-		f.Desc3:FontTemplate()	
-		f.Desc3:Point("TOPLEFT", 20, -175)	
+		f.Desc3:FontTemplate()
+		f.Desc3:Point("TOPLEFT", 20, -175)
 		f.Desc3:Width(f:GetWidth() - 40)
-		
+
 		local close = CreateFrame("Button", "InstallCloseButton", f, "UIPanelCloseButton")
 		close:SetPoint("TOPRIGHT", f, "TOPRIGHT")
 		close:SetScript("OnClick", function()
 			f:Hide()
-		end)		
+		end)
 		E.Skins:HandleCloseButton(close)
-		
+
 		f.tutorialImage = f:CreateTexture('InstallTutorialImage', 'OVERLAY')
 		f.tutorialImage:Size(250)
 		f.tutorialImage:Point('BOTTOM', f.Option1, 'TOP', 0, 4)
 
 	end
-	
+
 	ElvUIInstallFrame:Show()
 	NextPage()
 end

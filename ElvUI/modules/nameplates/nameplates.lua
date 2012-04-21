@@ -6,7 +6,6 @@ local numChildren = -1
 local backdrop
 NP.Handled = {} --Skinned Nameplates
 NP.BattleGroundHealers = {};
-
 NP.factionOpposites = {
 	['Horde'] = 1,
 	['Alliance'] = 0,
@@ -17,19 +16,37 @@ NP.Healers = {
 	[L['Discipline']] = true,
 }
 
+NP.RaidTargetReference = {
+	["STAR"] = 0x00000001,
+	["CIRCLE"] = 0x00000002,
+	["DIAMOND"] = 0x00000004,
+	["TRIANGLE"] = 0x00000008,
+	["MOON"] = 0x00000010,
+	["SQUARE"] = 0x00000020,
+	["CROSS"] = 0x00000040,
+	["SKULL"] = 0x00000080,
+}
+
+NP.RaidIconCoordinate = {
+	[0]		= { [0]		= "STAR", [0.25]	= "MOON", },
+	[0.25]	= { [0]		= "CIRCLE", [0.25]	= "SQUARE",	},
+	[0.5]	= { [0]		= "DIAMOND", [0.25]	= "CROSS", },
+	[0.75]	= { [0]		= "TRIANGLE", [0.25]	= "SKULL", },
+}
+
 function NP:Initialize()
 	self.db = E.db["nameplate"]
 	if E.global["nameplate"].enable ~= true then return end
 	E.NamePlates = NP
-	
+
 	CreateFrame('Frame'):SetScript('OnUpdate', function(self, elapsed)
 		if(WorldFrame:GetNumChildren() ~= numChildren) then
 			numChildren = WorldFrame:GetNumChildren()
 			NP:HookFrames(WorldFrame:GetChildren())
-		end	
-		
+		end
+
 		NP:ForEachPlate(NP.CheckFilter)
-		
+
 		if(self.elapsed and self.elapsed > 0.2) then
 			NP:ForEachPlate(NP.ScanHealth)
 			NP:ForEachPlate(NP.CheckUnit_Guid)
@@ -39,20 +56,20 @@ function NP:Initialize()
 		else
 			self.elapsed = (self.elapsed or 0) + elapsed
 		end
-	end)	
-	
+	end)
+
 	self:UpdateAllPlates()
 end
 
 function NP:QueueObject(frame, object)
 	if not frame.queue then frame.queue = {} end
 	frame.queue[object] = true
-	
+
 	if object.OldShow then
 		object.Show = object.OldShow
 		object:Show()
 	end
-	
+
 	if object.OldTexture then
 		object:SetTexture(object.OldTexture)
 	end
@@ -61,7 +78,7 @@ end
 function NP:CreateVirtualFrame(parent, point)
 	if point == nil then point = parent end
 	local noscalemult = E.mult * UIParent:GetScale()
-	
+
 	if point.backdrop then return end
 	point.backdrop = parent:CreateTexture(nil, "BORDER")
 	point.backdrop:SetDrawLayer("BORDER", -8)
@@ -72,35 +89,35 @@ function NP:CreateVirtualFrame(parent, point)
 	point.backdrop2 = parent:CreateTexture(nil, "BORDER")
 	point.backdrop2:SetDrawLayer("BORDER", -7)
 	point.backdrop2:SetAllPoints(point)
-	point.backdrop2:SetTexture(unpack(E["media"].backdropcolor))	
-	
+	point.backdrop2:SetTexture(unpack(E["media"].backdropcolor))
+
 	point.bordertop = parent:CreateTexture(nil, "BORDER")
 	point.bordertop:SetPoint("TOPLEFT", point, "TOPLEFT", -noscalemult*2, noscalemult*2)
 	point.bordertop:SetPoint("TOPRIGHT", point, "TOPRIGHT", noscalemult*2, noscalemult*2)
 	point.bordertop:SetHeight(noscalemult)
-	point.bordertop:SetTexture(unpack(E["media"].bordercolor))	
+	point.bordertop:SetTexture(unpack(E["media"].bordercolor))
 	point.bordertop:SetDrawLayer("BORDER", -7)
-	
+
 	point.borderbottom = parent:CreateTexture(nil, "BORDER")
 	point.borderbottom:SetPoint("BOTTOMLEFT", point, "BOTTOMLEFT", -noscalemult*2, -noscalemult*2)
 	point.borderbottom:SetPoint("BOTTOMRIGHT", point, "BOTTOMRIGHT", noscalemult*2, -noscalemult*2)
 	point.borderbottom:SetHeight(noscalemult)
-	point.borderbottom:SetTexture(unpack(E["media"].bordercolor))	
+	point.borderbottom:SetTexture(unpack(E["media"].bordercolor))
 	point.borderbottom:SetDrawLayer("BORDER", -7)
-	
+
 	point.borderleft = parent:CreateTexture(nil, "BORDER")
 	point.borderleft:SetPoint("TOPLEFT", point, "TOPLEFT", -noscalemult*2, noscalemult*2)
 	point.borderleft:SetPoint("BOTTOMLEFT", point, "BOTTOMLEFT", noscalemult*2, -noscalemult*2)
 	point.borderleft:SetWidth(noscalemult)
-	point.borderleft:SetTexture(unpack(E["media"].bordercolor))	
+	point.borderleft:SetTexture(unpack(E["media"].bordercolor))
 	point.borderleft:SetDrawLayer("BORDER", -7)
-	
+
 	point.borderright = parent:CreateTexture(nil, "BORDER")
 	point.borderright:SetPoint("TOPRIGHT", point, "TOPRIGHT", noscalemult*2, noscalemult*2)
 	point.borderright:SetPoint("BOTTOMRIGHT", point, "BOTTOMRIGHT", -noscalemult*2, -noscalemult*2)
 	point.borderright:SetWidth(noscalemult)
-	point.borderright:SetTexture(unpack(E["media"].bordercolor))	
-	point.borderright:SetDrawLayer("BORDER", -7)	
+	point.borderright:SetTexture(unpack(E["media"].bordercolor))
+	point.borderright:SetDrawLayer("BORDER", -7)
 end
 
 function NP:SetVirtualBorder(parent, r, g, b)
@@ -128,13 +145,225 @@ function NP:HideObjects(frame)
 	for object in pairs(frame.queue) do
 		object.OldShow = object.Show
 		object.Show = E.noop
-		
+
 		if object:GetObjectType() == "Texture" then
 			object.OldTexture = object:GetTexture()
 			object:SetTexture(nil)
 		end
-		
+
 		object:Hide()
+	end
+end
+
+function NP:CreateAuraIcon(parent)
+	local noscalemult = E.mult * UIParent:GetScale()
+	local button = CreateFrame("Frame",nil,parent)
+	button:SetWidth(20)
+	button:SetHeight(20)
+	button:SetScript('OnHide', function(self) NP:UpdateAuraAnchors(self:GetParent()) end)
+
+	button.bg = button:CreateTexture(nil, "BACKGROUND")
+	button.bg:SetTexture(unpack(E["media"].backdropcolor))
+	button.bg:SetAllPoints(button)
+
+	button.bord = button:CreateTexture(nil, "BACKGROUND")
+	button.bord:SetDrawLayer('BACKGROUND', 2)
+	button.bord:SetTexture(unpack(E["media"].bordercolor))
+	button.bord:SetPoint("TOPLEFT",button,"TOPLEFT", noscalemult,-noscalemult)
+	button.bord:SetPoint("BOTTOMRIGHT",button,"BOTTOMRIGHT",-noscalemult,noscalemult)
+
+	button.bg2 = button:CreateTexture(nil, "BACKGROUND")
+	button.bg2:SetDrawLayer('BACKGROUND', 3)
+	button.bg2:SetTexture(unpack(E["media"].backdropcolor))
+	button.bg2:SetPoint("TOPLEFT",button,"TOPLEFT", noscalemult*2,-noscalemult*2)
+	button.bg2:SetPoint("BOTTOMRIGHT",button,"BOTTOMRIGHT",-noscalemult*2,noscalemult*2)
+
+	button.icon = button:CreateTexture(nil, "BORDER")
+	button.icon:SetPoint("TOPLEFT",button,"TOPLEFT", noscalemult*3,-noscalemult*3)
+	button.icon:SetPoint("BOTTOMRIGHT",button,"BOTTOMRIGHT",-noscalemult*3,noscalemult*3)
+	button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+
+	button.text = button:CreateFontString(nil, 'OVERLAY')
+	button.text:Point('CENTER', 1, 1)
+	button.text:SetJustifyH('CENTER')
+	button.text:FontTemplate(nil, 7, 'OUTLINE')
+	button.text:SetShadowColor(0, 0, 0, 0)
+
+	button.count = button:CreateFontString(nil,"OVERLAY")
+	button.count:FontTemplate(nil,7,'OUTLINE')
+	button.count:SetShadowColor(0, 0, 0, 0)
+	button.count:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 2)
+	return button
+end
+
+local day, hour, minute, second = 86400, 3600, 60, 1
+function NP:FormatTime(s)
+	if s >= day then
+		return format("%dd", ceil(s / hour))
+	elseif s >= hour then
+		return format("%dh", ceil(s / hour))
+	elseif s >= minute then
+		return format("%dm", ceil(s / minute))
+	elseif s >= minute / 12 then
+		return floor(s)
+	end
+
+	return format("%.1f", s)
+end
+
+function NP:UpdateAuraTimer(elapsed)
+	if not self.timeLeft then return end
+	self.elapsed = (self.elapsed or 0) + elapsed
+	if self.elapsed >= 0.1 then
+		if not self.firstUpdate then
+			self.timeLeft = self.timeLeft - self.elapsed
+		else
+			self.timeLeft = self.timeLeft - GetTime()
+			self.firstUpdate = false
+		end
+		if self.timeLeft > 0 then
+			local time = NP:FormatTime(self.timeLeft)
+			self.text:SetText(time)
+			if self.timeLeft <= 5 then
+				self.text:SetTextColor(0.99, 0.31, 0.31)
+			else
+				self.text:SetTextColor(1, 1, 1)
+			end
+		else
+			self.text:SetText('')
+			self:SetScript("OnUpdate", nil)
+			self:Hide()
+		end
+		self.elapsed = 0
+	end
+end
+
+function NP:UpdateAuraIcon(button, unit, index, filter)
+	local name,_,icon,count,debuffType,duration,expirationTime,_,_,_,spellID = UnitAura(unit,index,filter)
+
+	button.icon:SetTexture(icon)
+	button.firstUpdate = true;
+	button.duration = duration
+	button.timeLeft = expirationTime
+	button.expirationTime = expirationTime
+	button.duration = duration
+	button.spellID = spellID
+	if count > 1 then
+		button.count:SetText(count)
+	else
+		button.count:SetText("")
+	end
+
+	button:Show()
+	if not button:GetScript('OnUpdate') then
+		button:SetScript('OnUpdate', NP.UpdateAuraTimer)
+	end
+end
+
+function NP:UpdateAuraAnchors(frame)
+	for i = 1, 5 do
+		if frame.icons and frame.icons[i] and frame.icons[i]:IsShown() then
+			if frame.icons.lastShown then
+				frame.icons[i]:SetPoint("RIGHT", frame.icons.lastShown, "LEFT", -2, 0)
+			else
+				frame.icons[i]:SetPoint("RIGHT",frame.icons,"RIGHT", -10, 0)
+			end
+			frame.icons.lastShown = frame.icons[i]
+		end
+	end
+
+	frame.icons.lastShown = nil;
+end
+
+function NP:OnAura(frame, unit)
+	if not frame.icons then return end
+	if not frame.unit then
+		NP:UpdateAuraAnchors(frame)
+		return;
+	end
+	local i = 1
+	local curTime = GetTime()
+	for index = 1,40 do
+		local buffMatch, debuffMatch
+		local name,_,_,_,_,_,expTimeBuff = UnitAura(frame.unit,index)
+		local debuffName,_,_,_,_,_,expTimeDebuff,caster = UnitAura(frame.unit,index, 'HARMFUL')
+
+		if expTimeBuff then
+			expTimeBuff = expTimeBuff - curTime
+			if expTimeBuff < 0 then
+				name = nil;
+				buffMatch = nil;
+			end
+		end
+
+		if self.db.trackauras then
+			if caster == "player" then
+				debuffMatch = 'HARMFUL'
+			end
+		end
+
+		if expTimeDebuff then
+			expTimeDebuff = expTimeDebuff - curTime
+			if expTimeDebuff < 0 then
+				debuffName = nil;
+				debuffMatch = nil;
+			end
+		end
+
+		if self.db.trackfilter and #self.db.trackfilter > 1 and (name or debuffName) then
+			local spellList = E.global['unitframe']['aurafilters'][self.db.trackfilter].spells
+			if spellList[name] then
+				buffMatch = 'HELPFUL'
+			elseif spellList[debuffName] then
+				debuffMatch = 'HARMFUL'
+			end
+		end
+
+		if buffMatch or debuffMatch and i <= 5 then
+			if not frame.icons[i] then frame.icons[i] = self:CreateAuraIcon(frame) end
+			local icon = frame.icons[i]
+			if i == 1 then icon:SetPoint("RIGHT",frame.icons,"RIGHT", -10, 0) end
+			if i ~= 1 and i <= 5 then icon:SetPoint("RIGHT", frame.icons[i-1], "LEFT", -2, 0) end
+			i = i + 1
+			self:UpdateAuraIcon(icon, frame.unit, index, buffMatch or debuffMatch)
+		end
+	end
+	for index = i, #frame.icons do frame.icons[index]:Hide() end
+end
+
+function NP:CastBar_OnShow(frame)
+	frame:ClearAllPoints()
+	frame:SetSize(frame:GetParent().hp:GetWidth(), self.db.cbheight)
+	frame:SetPoint('TOP', frame:GetParent().hp, 'BOTTOM', 0, -8)
+	frame:SetStatusBarTexture(E["media"].normTex)
+	frame:GetStatusBarTexture():SetHorizTile(true)
+	if(frame.shield:IsShown()) then
+		frame:SetStatusBarColor(0.78, 0.25, 0.25, 1)
+	else
+		frame:SetStatusBarColor(1, 208/255, 0)
+	end
+
+	self:SetVirtualBorder(frame, unpack(E["media"].bordercolor))
+	self:SetVirtualBackdrop(frame, unpack(E["media"].backdropcolor))
+
+	frame.icon:Size(self.db.cbheight + frame:GetParent().hp:GetHeight() + 8)
+	self:SetVirtualBorder(frame.icon, unpack(E["media"].bordercolor))
+	self:SetVirtualBackdrop(frame.icon, unpack(E["media"].backdropcolor))
+end
+
+function NP:CastBar_OnValueChanged(frame)
+	local channel
+	local spell, _, name, icon, start, finish, _, spellid, nonInt = UnitCastingInfo("target")
+
+	if not spell then
+		spell, _, name, icon, start, finish, spellid, nonInt = UnitChannelInfo("target");
+		channel = true
+	end
+
+	if spell then
+		NP:StartCastAnimationOnNameplate(frame:GetParent(), spell, spellid, icon, start/1000, finish/1000, nonInt, channel)
+	else
+		NP:StopCastAnimation(frame:GetParent())
 	end
 end
 
@@ -149,9 +378,9 @@ function NP:Colorize(frame)
 			return
 		end
 	end
-	
+
 	frame.isPlayer = nil
-	
+
 	local color
 	if g+b == 0 then -- hostile
 		color = self.db.enemy
@@ -173,37 +402,37 @@ function NP:Colorize(frame)
 		frame.isFriendly = false
 	end
 	frame.hasClass = false
-	
+
 	frame.hp:SetStatusBarColor(r,g,b)
 end
 
 function NP:HealthBar_OnShow(self, frame)
 	if self.GetParent then frame = self; self = NP end
 	frame = frame:GetParent()
-	
+
 	local noscalemult = E.mult * UIParent:GetScale()
 	local r, g, b = frame.hp:GetStatusBarColor()
 	--Have to reposition this here so it doesnt resize after being hidden
 	frame.hp:ClearAllPoints()
-	frame.hp:Size(self.db.width, self.db.height)	
+	frame.hp:Size(self.db.width, self.db.height)
 	frame.hp:SetPoint('BOTTOM', frame, 'BOTTOM', 0, 5)
 	frame.hp:GetStatusBarTexture():SetHorizTile(true)
 
 	self:HealthBar_ValueChanged(frame.oldhp)
-	
+
 	frame.hp.backdrop:SetPoint('TOPLEFT', -noscalemult*3, noscalemult*3)
 	frame.hp.backdrop:SetPoint('BOTTOMRIGHT', noscalemult*3, -noscalemult*3)
 	self:Colorize(frame)
-	
+
 	frame.hp.rcolor, frame.hp.gcolor, frame.hp.bcolor = frame.hp:GetStatusBarColor()
 	frame.hp.hpbg:SetTexture(frame.hp.rcolor, frame.hp.gcolor, frame.hp.bcolor, 0.25)
-	
+
 	--Position Overlay
 	frame.overlay:ClearAllPoints()
 	frame.overlay:SetAllPoints(frame.hp)
-	
+
 	--Set the name text
-	frame.hp.name:SetText(frame.hp.oldname:GetText())	
+	frame.hp.name:SetText(frame.hp.oldname:GetText())
 
 	--Level Text
 	if self.db.showlevel == true then
@@ -214,7 +443,7 @@ function NP:HealthBar_OnShow(self, frame)
 		else
 			frame.hp.level:SetPoint("RIGHT", frame.hp, "LEFT", -1, 0)
 		end
-		
+
 		frame.hp.level:SetTextColor(frame.hp.oldlevel:GetTextColor())
 		if frame.hp.boss:IsShown() then
 			frame.hp.level:SetText("??")
@@ -228,8 +457,8 @@ function NP:HealthBar_OnShow(self, frame)
 		end
 	elseif frame.hp.level then
 		frame.hp.level:Hide()
-	end	
-	
+	end
+
 	self:HideObjects(frame)
 end
 
@@ -263,14 +492,14 @@ function NP:OnHide(frame)
 		for _,icon in ipairs(frame.icons) do
 			icon:Hide()
 		end
-	end	
+	end
 end
 
 function NP:SkinPlate(frame)
 	local oldhp, oldcb = frame:GetChildren()
 	local threat, hpborder, overlay, oldname, oldlevel, bossicon, raidicon, elite = frame:GetRegions()
 	local _, cbborder, cbshield, cbicon = oldcb:GetRegions()
-	
+
 	--Health Bar
 	if not frame.hp then
 		frame.oldhp = oldhp
@@ -282,18 +511,18 @@ function NP:SkinPlate(frame)
 		frame.hp.shadow:Point("TOPLEFT", frame.hp, -5, 5)
 		frame.hp.shadow:Point("BOTTOMLEFT", frame.hp, -5, -5)
 		frame.hp.shadow:Point("TOPRIGHT", frame.hp, 5, 5)
-		frame.hp.shadow:Point("BOTTOMRIGHT", frame.hp, 5, -5)	
+		frame.hp.shadow:Point("BOTTOMRIGHT", frame.hp, 5, -5)
 		frame.hp.shadow:SetBackdropBorderColor(1, 1, 1, 0.75)
 		frame.hp.shadow:SetAlpha(0)
 		self:CreateVirtualFrame(frame.hp)
-		
+
 		frame.hp.hpbg = frame.hp:CreateTexture(nil, 'BORDER')
 		frame.hp.hpbg:SetAllPoints(frame.hp)
-		frame.hp.hpbg:SetTexture(1,1,1,0.25) 				
+		frame.hp.hpbg:SetTexture(1,1,1,0.25)
 	end
 	frame.hp:SetStatusBarTexture(E["media"].normTex)
 	self:SetVirtualBackdrop(frame.hp, unpack(E["media"].backdropcolor))
-	
+
 	--Level Text
 	if not frame.hp.level then
 		frame.hp.level = frame.hp:CreateFontString(nil, "OVERLAY")
@@ -302,7 +531,7 @@ function NP:SkinPlate(frame)
 		frame.hp.boss = bossicon
 		frame.hp.elite = elite
 	end
-	
+
 	--Name Text
 	if not frame.hp.name then
 		frame.hp.name = frame.hp:CreateFontString(nil, 'OVERLAY')
@@ -314,23 +543,23 @@ function NP:SkinPlate(frame)
 
 	--Health Text
 	if not frame.hp.value then
-		frame.hp.value = frame.hp:CreateFontString(nil, "OVERLAY")	
+		frame.hp.value = frame.hp:CreateFontString(nil, "OVERLAY")
 		frame.hp.value:SetPoint("CENTER", frame.hp)
 		frame.hp.value:FontTemplate(nil, 10, 'OUTLINE')
 	end
-	
+
 	--Overlay
 	overlay.oldTexture = overlay:GetTexture()
 	overlay:SetTexture(1,1,1,0.15)
 	frame.overlay = overlay
-	
+
 	--Cast Bar
 	if not frame.cb then
 		frame.oldcb = oldcb
 		frame.cb = CreateFrame("Statusbar", nil, frame)
 		frame.cb:SetFrameLevel(oldcb:GetFrameLevel())
 		frame.cb:SetFrameStrata(oldcb:GetFrameStrata())
-		self:CreateVirtualFrame(frame.cb)	
+		self:CreateVirtualFrame(frame.cb)
 		frame.cb:Hide()
 	end
 
@@ -340,20 +569,20 @@ function NP:SkinPlate(frame)
 		frame.cb.time:SetPoint("RIGHT", frame.cb, "LEFT", -1, 0)
 		frame.cb.time:FontTemplate(nil, 10, 'OUTLINE')
 	end
-	
+
 	--Cast Name
 	if not frame.cb.name then
 		frame.cb.name = frame.cb:CreateFontString(nil, "ARTWORK")
 		frame.cb.name:SetPoint("TOP", frame.cb, "BOTTOM", 0, -3)
 		frame.cb.name:FontTemplate(nil, 10, 'OUTLINE')
 	end
-	
+
 	--Cast Icon
 	if not frame.cb.icon then
 		oldcb:SetAlpha(0)
 		oldcb:SetScale(0.000001)
 		cbicon:ClearAllPoints()
-		cbicon:SetPoint("TOPLEFT", frame.hp, "TOPRIGHT", 8, 0)		
+		cbicon:SetPoint("TOPLEFT", frame.hp, "TOPRIGHT", 8, 0)
 		cbicon:SetTexCoord(.07, .93, .07, .93)
 		cbicon:SetDrawLayer("OVERLAY")
 		cbicon:SetParent(frame.cb)
@@ -367,48 +596,36 @@ function NP:SkinPlate(frame)
 		raidicon:ClearAllPoints()
 		raidicon:SetPoint("BOTTOM", frame.hp, "TOP", 0, 16)
 		raidicon:SetSize(35, 35)
-		raidicon:SetTexture([[Interface\AddOns\ElvUI\media\textures\raidicons.blp]])	
-		frame.raidicon = raidicon	
+		raidicon:SetTexture([[Interface\AddOns\ElvUI\media\textures\raidicons.blp]])
+		frame.raidicon = raidicon
 	end
-	
+
 	--Heal Icon
 	if not frame.healerIcon then
 		frame.healerIcon = frame:CreateTexture(nil, 'ARTWORK')
 		frame.healerIcon:SetPoint("BOTTOM", frame.hp, "TOP", 0, 16)
 		frame.healerIcon:SetSize(35, 35)
-		frame.healerIcon:SetTexture([[Interface\AddOns\ElvUI\media\textures\healer.tga]])	
+		frame.healerIcon:SetTexture([[Interface\AddOns\ElvUI\media\textures\healer.tga]])
 	end
-	
-	if not frame.AuraWidget then
-		--if not WatcherIsEnabled then Enable() end
-		-- Create Base frame
-		local f = CreateFrame("Frame", nil, frame)
-		f:SetHeight(32); f:Show()
-		f:SetPoint('BOTTOMRIGHT', frame.hp, 'TOPRIGHT', 0, 10)
-		f:SetPoint('BOTTOMLEFT', frame.hp, 'TOPLEFT', 0, 10)
-		
-		-- Create Icon Array
-		f.PollFunction = NP.UpdateAuraTime
-		f.AuraIconFrames = {}
-		local AuraIconFrames = f.AuraIconFrames
-		for index = 1, NP.MAX_DISPLAYABLE_DEBUFFS do AuraIconFrames[index] = NP:CreateAuraIcon(f);  end
-		local FirstRowCount = min(NP.MAX_DISPLAYABLE_DEBUFFS/2)
-		-- Set Anchors	
-		AuraIconFrames[1]:SetPoint("RIGHT", f, -1, 0)
-		for index = 2, NP.MAX_DISPLAYABLE_DEBUFFS do AuraIconFrames[index]:SetPoint("RIGHT", AuraIconFrames[index-1], "LEFT", -3, 0) end
-		
-		-- Functions
-		f._Hide = f.Hide
-		f.Hide = function() NP:ClearAuraContext(f); f:_Hide() end
-		f:SetScript("OnHide", function() for index = 1, 4 do NP.PolledHideIn(AuraIconFrames[index], 0) end end)	
-		f.Filter = DefaultFilterFunction
-		f.UpdateContext = NP.UpdateAuraContext
-		f.Update = NP.UpdateAuraContext
-		f.UpdateTarget = NP.UpdateAuraTarget
-		
-		frame.AuraWidget = f
+
+	-- Aura tracking
+	if (self.db.trackauras == true or (self.db.trackfilter and #self.db.trackfilter > 1)) then
+		if not frame.icons then
+			frame.icons = CreateFrame("Frame",nil,frame)
+			frame.icons:SetPoint("BOTTOMRIGHT",frame.hp.name,"TOPRIGHT", 0, 4)
+			frame.icons:SetWidth(self.db.width)
+			frame.icons:SetHeight(25)
+			frame.icons:SetFrameLevel(frame.hp:GetFrameLevel()+2)
+		end
+
+		frame:RegisterEvent("UNIT_AURA")
+		frame:HookScript("OnEvent", function(self, unit) NP:OnAura(self, unit) end)
+	elseif not (self.db.trackauras == true and (not self.db.trackfilter or #self.db.trackfilter < 2)) and frame.icons then
+		frame:UnregisterEvent('UNIT_AURA')
+	elseif frame.icons then
+		frame.icons:SetWidth(20 + self.db.width)
 	end
-		
+
 	--Hide Old Stuff
 	self:QueueObject(frame, oldhp)
 	self:QueueObject(frame, oldlevel)
@@ -419,18 +636,30 @@ function NP:SkinPlate(frame)
 	self:QueueObject(frame, oldname)
 	self:QueueObject(frame, bossicon)
 	self:QueueObject(frame, elite)
-	
+
 	self:HealthBar_OnShow(frame.hp)
 	self:CastBar_OnShow(frame.cb)
 	if not self.hooks[frame] then
 		self:HookScript(frame.cb, 'OnShow', 'CastBar_OnShow')
-		self:HookScript(oldcb, 'OnValueChanged', 'CastBar_OnValueChanged')				
-		self:HookScript(frame.hp, 'OnShow', 'HealthBar_OnShow')		
+		self:HookScript(oldcb, 'OnValueChanged', 'CastBar_OnValueChanged')
+		self:HookScript(frame.hp, 'OnShow', 'HealthBar_OnShow')
 		self:HookScript(oldhp, 'OnValueChanged', 'HealthBar_ValueChanged')
-		self:HookScript(frame, "OnHide", "OnHide")	
+		self:HookScript(frame, "OnHide", "OnHide")
 	end
-	
+
 	NP.Handled[frame:GetName()] = true
+end
+
+function NP:CheckRaidIcon(frame)
+	frame.isMarked = frame.raidicon:IsShown() or false
+
+	if frame.isMarked then
+		local ux, uy = frame.raidicon:GetTexCoord()
+		frame.raidIconType = NP.RaidIconCoordinate[ux][uy]
+	else
+		frame.isMarked = nil;
+		frame.raidIconType = nil;
+	end
 end
 
 local good, bad, transition, transition2, combat, goodscale, badscale
@@ -452,20 +681,20 @@ function NP:UpdateThreat(frame)
 				if not frame.customScale and (goodscale ~= 1 or badscale ~= 1) then
 					frame.hp:Height(self.db.height)
 					frame.hp:Width(self.db.width)
-				end					
+				end
 			else
 				self:SetVirtualBorder(frame.hp, bad.r, bad.g, bad.b)
 				if not frame.customScale and badscale ~= 1 then
 					frame.hp:Height(self.db.height * badscale)
 					frame.hp:Width(self.db.width * badscale)
-				end						
+				end
 			end
 		else
 			self:SetVirtualBorder(frame.hp, unpack(E["media"].bordercolor))
 			if not frame.customScale and goodscale ~= 1 then
 				frame.hp:Height(self.db.height * goodscale)
 				frame.hp:Width(self.db.width * goodscale)
-			end								
+			end
 		end
 		frame.hp.name:SetTextColor(1, 1, 1)
 	else
@@ -481,31 +710,31 @@ function NP:UpdateThreat(frame)
 					if not frame.customScale and badscale ~= 1 then
 						frame.hp:Height(self.db.height * badscale)
 						frame.hp:Width(self.db.width * badscale)
-					end								
+					end
 					frame.threatStatus = "BAD"
 				else
 					if not frame.customColor then
 						frame.hp:SetStatusBarColor(good.r, good.g, good.b)
 						frame.hp.hpbg:SetTexture(good.r, good.g, good.b, 0.25)
 					end
-					
+
 					if not frame.customScale and goodscale ~= 1 then
 						frame.hp:Height(self.db.height * goodscale)
 						frame.hp:Width(self.db.width * goodscale)
-					end					
+					end
 					frame.threatStatus = "GOOD"
-				end		
+				end
 			else
 				--Set colors to their original, not in combat
 				if not frame.customColor then
 					frame.hp:SetStatusBarColor(frame.hp.rcolor, frame.hp.gcolor, frame.hp.bcolor)
 					frame.hp.hpbg:SetTexture(frame.hp.rcolor, frame.hp.gcolor, frame.hp.bcolor, 0.25)
 				end
-				
+
 				if not frame.customScale and (goodscale ~= 1 or badscale ~= 1) then
 					frame.hp:Height(self.db.height)
 					frame.hp:Width(self.db.width)
-				end			
+				end
 				frame.threatStatus = nil
 			end
 		else
@@ -518,44 +747,44 @@ function NP:UpdateThreat(frame)
 						frame.hp:SetStatusBarColor(good.r, good.g, good.b)
 						frame.hp.hpbg:SetTexture(good.r, good.g, good.b, 0.25)
 					end
-					
+
 					if not frame.customScale and goodscale ~= 1 then
 						frame.hp:Height(self.db.height * goodscale)
 						frame.hp:Width(self.db.width * goodscale)
 					end
-					
+
 					frame.threatStatus = "GOOD"
 				else
 					if not frame.customColor then
 						frame.hp:SetStatusBarColor(bad.r, bad.g, bad.b)
 						frame.hp.hpbg:SetTexture(bad.r, bad.g, bad.b, 0.25)
 					end
-					
+
 					if not frame.customScale and badscale ~= 1 then
 						frame.hp:Height(self.db.height * badscale)
 						frame.hp:Width(self.db.width * badscale)
-					end					
+					end
 					frame.threatStatus = "BAD"
 				end
 			else
 				--Losing/Gaining Threat
-				
+
 				if not frame.customScale and (goodscale ~= 1 or badscale ~= 1) then
 					frame.hp:Height(self.db.height)
 					frame.hp:Width(self.db.width)
-				end	
-				
+				end
+
 				if E.role == "Tank" then
 					if frame.threatStatus == "GOOD" then
 						--Losing Threat
 						if not frame.customColor then
-							frame.hp:SetStatusBarColor(transition2.r, transition2.g, transition2.b)	
+							frame.hp:SetStatusBarColor(transition2.r, transition2.g, transition2.b)
 							frame.hp.hpbg:SetTexture(transition2.r, transition2.g, transition2.b, 0.25)
 						end
 					else
 						--Gaining Threat
 						if not frame.customColor then
-							frame.hp:SetStatusBarColor(transition.r, transition.g, transition.b)	
+							frame.hp:SetStatusBarColor(transition.r, transition.g, transition.b)
 							frame.hp.hpbg:SetTexture(transition.r, transition.g, transition.b, 0.25)
 						end
 					end
@@ -563,20 +792,20 @@ function NP:UpdateThreat(frame)
 					if frame.threatStatus == "GOOD" then
 						--Losing Threat
 						if not frame.customColor then
-							frame.hp:SetStatusBarColor(transition.r, transition.g, transition.b)	
+							frame.hp:SetStatusBarColor(transition.r, transition.g, transition.b)
 							frame.hp.hpbg:SetTexture(transition.r, transition.g, transition.b, 0.25)
 						end
 					else
 						--Gaining Threat
 						if not frame.customColor then
-							frame.hp:SetStatusBarColor(transition2.r, transition2.g, transition2.b)	
+							frame.hp:SetStatusBarColor(transition2.r, transition2.g, transition2.b)
 							frame.hp.hpbg:SetTexture(transition2.r, transition2.g, transition2.b, 0.25)
 						end
-					end				
+					end
 				end
 			end
 		end
-		
+
 		if combat then
 			frame.hp.name:SetTextColor(frame.hp.rcolor, frame.hp.gcolor, frame.hp.bcolor)
 		else
@@ -590,14 +819,14 @@ function NP:ScanHealth(frame)
 	local minHealth, maxHealth = frame.oldhp:GetMinMaxValues()
 	local valueHealth = frame.oldhp:GetValue()
 	local d =(valueHealth/maxHealth)*100
-	
+
 	if self.db.showhealth == true then
 		frame.hp.value:Show()
 		frame.hp.value:SetText(E:ShortValue(valueHealth).." - "..(string.format("%d%%", math.floor((valueHealth/maxHealth)*100))))
 	else
 		frame.hp.value:Hide()
 	end
-			
+
 	--Setup frame shadow to change depending on enemy players health, also setup targetted unit to have white shadow
 	if frame.hasClass == true or frame.isFriendly == true then
 		if(d <= 50 and d >= 20) then
@@ -618,17 +847,17 @@ function NP:CheckUnit_Guid(frame, ...)
 	if UnitExists("target") and frame:GetAlpha() == 1 and UnitName("target") == frame.hp.name:GetText() then
 		frame.guid = UnitGUID("target")
 		frame.unit = "target"
-		NP:UpdateAurasByUnitID("target")
+		self:OnAura(frame, "target")
 		frame.hp.shadow:SetAlpha(1)
 	elseif frame.overlay:IsShown() and UnitExists("mouseover") and UnitName("mouseover") == frame.hp.name:GetText() then
 		frame.guid = UnitGUID("mouseover")
 		frame.unit = "mouseover"
-		NP:UpdateAurasByUnitID("mouseover")
+		self:OnAura(frame, "mouseover")
 		frame.hp.shadow:SetAlpha(0)
 	else
 		frame.unit = nil
 		frame.hp.shadow:SetAlpha(0)
-	end	
+	end
 end
 
 function NP:TogglePlate(frame, hide)
@@ -637,10 +866,10 @@ function NP:TogglePlate(frame, hide)
 		frame.cb:Hide()
 		frame.overlay:Hide()
 		frame.overlay:SetTexture(nil)
-		frame.hp.oldlevel:Hide()	
+		frame.hp.oldlevel:Hide()
 	else
 		frame.hp:Show()
-		frame.overlay:SetTexture(1, 1, 1, 0.15)	
+		frame.overlay:SetTexture(1, 1, 1, 0.15)
 	end
 end
 
@@ -654,15 +883,15 @@ function NP:CheckFilter(frame, ...)
 			self:TogglePlate(frame, true)
 		else
 			self:TogglePlate(frame, false)
-			
+
 			if db.customColor then
 				frame.customColor = db.customColor
 				frame.hp.hpbg:SetTexture(db.color.r, db.color.g, db.color.b, 0.25)
 				frame.hp:SetStatusBarColor(db.color.r, db.color.g, db.color.b)
 			else
-				frame.customColor = nil	
+				frame.customColor = nil
 			end
-			
+
 			if db.customScale and db.customScale ~= 1 then
 				frame.hp:Height(self.db.height * db.customScale)
 				frame.hp:Width(self.db.width * db.customScale)
@@ -674,13 +903,201 @@ function NP:CheckFilter(frame, ...)
 	else
 		self:TogglePlate(frame, false)
 	end
-	
+
 	--Check For Healers
 	if self.BattleGroundHealers[name] then
 		frame.healerIcon:Show()
 	else
 		frame.healerIcon:Hide()
 	end
+end
+
+function NP:StopCastAnimation(frame)
+	frame.cb:Hide()
+	frame.cb:SetScript("OnUpdate", nil)
+end
+
+function NP:UpdateCastAnimation()
+	local currentTime = GetTime()
+	if currentTime > (self.endTime or 0) then
+		NP:StopCastAnimation(self:GetParent())
+	else
+		self:SetValue(currentTime)
+		self.time:SetFormattedText("%.1f ", self.endTime - currentTime)
+	end
+end
+
+function NP:UpdateChannelAnimation()
+	local currentTime = GetTime()
+	if currentTime > (self.endTime or 0) then
+		NP:StopCastAnimation(self:GetParent())
+	else
+		self:SetValue(self.startTime + (self.endTime - currentTime))
+		self.time:SetFormattedText("%.1f ", self.endTime - (self.startTime + (self.endTime - currentTime)))
+	end
+end
+
+function NP:StartCastAnimationOnNameplate(frame, spellName, spellID, icon, startTime, endTime, notInterruptible, channel)
+	if not (tonumber(GetCVar("showVKeyCastbar")) == 1) or not spellName then return; end
+	local castbar = frame.cb
+
+	castbar:SetMinMaxValues(startTime, endTime)
+	castbar.name:SetText(spellName)
+	castbar.icon:SetTexture(icon)
+
+	if notInterruptible then
+		castbar.shield:Show()
+	else
+		castbar.shield:Hide()
+	end
+
+	castbar.endTime = endTime
+	castbar.startTime = startTime
+
+	castbar:Show()
+	if channel then
+		castbar:SetValue(endTime - GetTime())
+		castbar:SetScript("OnUpdate", NP.UpdateChannelAnimation)
+	else
+		castbar:SetValue(GetTime())
+		castbar:SetScript("OnUpdate", NP.UpdateCastAnimation)
+	end
+end
+
+function NP:SearchNameplateByGUID(guid)
+	for frame, _ in pairs(NP.Handled) do
+		frame = _G[frame]
+		if frame and frame:IsShown() and frame.guid == guid then
+			return frame
+		end
+	end
+end
+
+function NP:SearchNameplateByName(sourceName)
+	if not sourceName then return; end
+	local SearchFor = strsplit("-", sourceName)
+	for frame, _ in pairs(NP.Handled) do
+		frame = _G[frame]
+		if frame and frame:IsShown() and frame.hp.name:GetText() == SearchFor and frame.hasClass then
+			return frame
+		end
+	end
+end
+
+function NP:SearchNameplateByIcon(UnitFlags)
+	local UnitIcon
+	for iconname, bitmask in pairs(NP.RaidTargetReference) do
+		if bit.band(UnitFlags, bitmask) > 0  then
+			UnitIcon = iconname
+			break
+		end
+	end
+
+	for frame, _ in pairs(NP.Handled) do
+		frame = _G[frame]
+		if frame and frame:IsShown() and frame.isMarked and (frame.raidIconType == UnitIcon) then
+			return frame
+		end
+	end
+end
+
+function NP:COMBAT_LOG_EVENT_UNFILTERED(_, _, event, ...)
+	if event == "SPELL_AURA_REMOVED" then
+		local _, sourceGUID, _, _, _, destGUID, destName, _, _, spellID = ...
+		if sourceGUID == UnitGUID("player") then
+			local frame = NP:SearchNameplateByGUID(destGUID)
+			if frame then
+				for _,icon in ipairs(frame.icons) do
+					if icon.spellID == spellID then
+						icon:Hide()
+					end
+				end
+			end
+		end
+	elseif event == "SPELL_CAST_START" then
+		local _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, _, _, _, _, spellID = ...
+		local FoundPlate = nil;
+		-- Gather Spell Info
+
+		local spell, _, icon, _, _, _, castTime, _, _ = GetSpellInfo(spellID)
+		if not (castTime > 0) then return end
+		if bit.band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) > 0 then
+			if bit.band(sourceFlags, COMBATLOG_OBJECT_CONTROL_PLAYER) > 0 then
+				--	destination plate, by name
+				FoundPlate = NP:SearchNameplateByName(sourceName)
+			elseif bit.band(sourceFlags, COMBATLOG_OBJECT_CONTROL_NPC) > 0 then
+				--	destination plate, by GUID
+				FoundPlate = NP:SearchNameplateByGUID(sourceGUID)
+				if not FoundPlate then
+					FoundPlate = NP:SearchNameplateByIcon(sourceRaidFlags)
+				end
+			else
+				return
+			end
+		else
+			return
+		end
+
+		if FoundPlate and FoundPlate:IsShown() and FoundPlate.unit ~= "target" then
+			FoundPlate.guid = sourceGUID
+			local currentTime = GetTime()
+
+			castTime = (castTime / 1000)	-- Convert to seconds
+			NP:StartCastAnimationOnNameplate(FoundPlate, spell, spellID, icon, currentTime, currentTime + castTime, false, false)
+		end
+	elseif event == "SPELL_CAST_FAILED" or event == "SPELL_INTERRUPT" then
+		local FoundPlate = nil;
+		local _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags = ...
+		if sourceGUID == UnitGUID('player') and event == "SPELL_CAST_FAILED" then return; end
+		if bit.band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) > 0 then
+			if bit.band(sourceFlags, COMBATLOG_OBJECT_CONTROL_PLAYER) > 0 then
+				--	destination plate, by name
+				FoundPlate = NP:SearchNameplateByName(sourceName)
+			elseif bit.band(sourceFlags, COMBATLOG_OBJECT_CONTROL_NPC) > 0 then
+				--	destination plate, by GUID
+				FoundPlate = NP:SearchNameplateByGUID(sourceGUID)
+				if not FoundPlate then
+					FoundPlate = NP:SearchNameplateByIcon(sourceRaidFlags)
+				end
+			else
+				return
+			end
+		else
+			return
+		end
+
+		if FoundPlate and FoundPlate:IsShown() and FoundPlate.unit ~= "target" then
+			FoundPlate.guid = sourceGUID
+			NP:StopCastAnimation(FoundPlate)
+		end
+	else
+		local _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags = ...
+		if bit.band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) > 0 then
+			if bit.band(sourceFlags, COMBATLOG_OBJECT_CONTROL_PLAYER) > 0 then
+				--	destination plate, by name
+				FoundPlate = NP:SearchNameplateByName(sourceName)
+			elseif bit.band(sourceFlags, COMBATLOG_OBJECT_CONTROL_NPC) > 0 then
+				--	destination plate, by raid icon
+				FoundPlate = NP:SearchNameplateByIcon(sourceRaidFlags)
+			else
+				return
+			end
+		else
+			return
+		end
+
+		if FoundPlate and FoundPlate:IsShown() and FoundPlate.unit ~= "target" then
+			FoundPlate.guid = sourceGUID
+		end
+	end
+end
+
+function NP:PLAYER_REGEN_ENABLED()
+	SetCVar("nameplateShowEnemies", 0)
+end
+
+function NP:PLAYER_REGEN_DISABLED()
+	SetCVar("nameplateShowEnemies", 1)
 end
 
 function NP:CheckHealers()
@@ -698,15 +1115,13 @@ function NP:CheckHealers()
 end
 
 function NP:PLAYER_ENTERING_WORLD()
-	if InCombatLockdown() and self.db.combat then 
-		SetCVar("nameplateShowEnemies", 1) 
+	if InCombatLockdown() and self.db.combat then
+		SetCVar("nameplateShowEnemies", 1)
 	elseif self.db.combat then
-		SetCVar("nameplateShowEnemies", 0) 
+		SetCVar("nameplateShowEnemies", 0)
 	end
-	
-	self:UpdateRoster()
-	self:CleanAuraLists()
-	
+
+
 	table.wipe(self.BattleGroundHealers)
 	local inInstance, instanceType = IsInInstance()
 	if inInstance and instanceType == 'pvp' and self.db.markBGHealers then
@@ -718,7 +1133,7 @@ function NP:PLAYER_ENTERING_WORLD()
 			self.CheckHealerTimer = nil;
 		end
 	end
-	
+
 	self.PlayerFaction = UnitFactionGroup("player")
 end
 
@@ -729,25 +1144,24 @@ function NP:UpdateAllPlates()
 		self:SkinPlate(frame)
 	end
 
-	self:RegisterEvent("RAID_ROSTER_UPDATE", "UpdateRoster")
-	self:RegisterEvent("PARTY_MEMBERS_CHANGED", "UpdateRoster")
-	self:RegisterEvent("PARTY_CONVERTED_TO_RAID", "UpdateRoster")
-	self:RegisterEvent('UPDATE_MOUSEOVER_UNIT', 'UpdateCastInfo')
-	self:RegisterEvent('PLAYER_TARGET_CHANGED', 'UpdateCastInfo')
 	self:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 	self:RegisterEvent('PLAYER_ENTERING_WORLD')
-	self:RegisterEvent('PLAYER_REGEN_ENABLED')
-	self:RegisterEvent('PLAYER_REGEN_DISABLED')
-	self:RegisterEvent('UNIT_TARGET')
-	self:RegisterEvent('UNIT_AURA')	
-	self:PLAYER_ENTERING_WORLD()
+
+	if self.db.combat then
+		self:RegisterEvent('PLAYER_REGEN_ENABLED')
+		self:RegisterEvent('PLAYER_REGEN_DISABLED')
+		self:PLAYER_ENTERING_WORLD()
+	else
+		self:UnregisterEvent('PLAYER_REGEN_ENABLED')
+		self:UnregisterEvent('PLAYER_REGEN_DISABLED')
+	end
 end
 
 function NP:HookFrames(...)
 	for index = 1, select('#', ...) do
 		local frame = select(index, ...)
 		local region = frame:GetRegions()
-		
+
 		if(not NP.Handled[frame:GetName()] and (frame:GetName() and frame:GetName():find("NamePlate%d")) and region and region:GetObjectType() == 'Texture' and region:GetTexture() == OVERLAY) then
 			NP:SkinPlate(frame)
 			frame.region = region

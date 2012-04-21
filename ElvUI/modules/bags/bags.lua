@@ -53,14 +53,12 @@ function B:BagFrameSlotNew(frame, slot, nonAllInOne)
 		ret.slot = slot
 		table.insert(frame.buttons, ret)
 	end
-	
+
 	if not nonAllInOne then
 		ret.frame:HookScript("OnEnter", function()
-			local bag
 			for ind, val in ipairs(B.buttons) do
 				if val.bagOwner == ret.slot then
 					val.frame:SetAlpha(1)
-					--E:Print('Matched Bag Slot: '..val.bagOwner..' to button: '..ind)
 				else
 					val.frame:SetAlpha(0.2)
 				end
@@ -75,7 +73,7 @@ function B:BagFrameSlotNew(frame, slot, nonAllInOne)
 
 		ret.frame:SetScript('OnClick', nil)
 	end
-	
+
 	ret.frame:SetTemplate('Default', true)
 	ret.frame:StyleButton()
 	ret.frame:SetFrameLevel(ret.frame:GetFrameLevel() + 1)
@@ -160,7 +158,8 @@ function B:SlotUpdate(b)
 
 	if(clink) then
 		local iType
-		b.name, _, b.rarity, _, _, iType = GetItemInfo(clink)
+		b.name, _, b.rarity, _, _, b.class, b.subClass, _, b.equipSlot = GetItemInfo(clink)
+		iType = b.class
 
 		-- color slot according to item quality
 		if not b.frame.lock and b.rarity and b.rarity > 1 then
@@ -169,7 +168,7 @@ function B:SlotUpdate(b)
 			b.frame:SetBackdropBorderColor(1.0, 0.3, 0.3)
 		end
 	else
-		b.name, b.rarity = nil, nil
+		b.name, b.rarity, b.class, b.subClass, b.equipSlot = nil, nil, nil, nil, nil
 	end
 
 	SetItemButtonTexture(b.frame, texture)
@@ -199,7 +198,7 @@ function B:SlotNew(bag, slot)
 		local f = -1
 		for i, v in ipairs(trashButton) do
 			local b, s = v:GetName():match("(%d+)_(%d+)")
-			
+
 			b = tonumber(b)
 			s = tonumber(s)
 
@@ -244,7 +243,6 @@ function B:SlotNew(bag, slot)
 	return ret, true
 end
 
-
 function B:Layout(isBank)
 	if E.global.bags.enable ~= true then return end
 	local slots = 0
@@ -252,7 +250,7 @@ function B:Layout(isBank)
 	local offset = 26
 	local cols, f, bs, bSize
 	local bagWidth
-	
+
 	if not isBank then
 		bs = BAGS_BACKPACK
 		if E.db.bags.bagCols == 0 then
@@ -360,7 +358,7 @@ function B:Layout(isBank)
 				if isnew then
 					table.insert(self.buttons, idx + 1, b)
 					table.insert(allButtons, b)
-					
+
 					if not isBank then
 						b.bagOwner = i - 1
 					else
@@ -379,7 +377,7 @@ function B:Layout(isBank)
 				b.frame:FixDimensions()
 				b.frame.lock = false
 				b.frame:SetAlpha(1)
-				
+
 				local clink = GetContainerItemLink
 				if bagType == ST_SPECIAL then
 					if specialType == 0x0008 then      -- Leatherworking
@@ -405,7 +403,7 @@ function B:Layout(isBank)
 					b.frame.lock = true
 				elseif bagType == ST_SOULBAG then
 					b.frame:SetBackdropBorderColor(0.5, 0.2, 0.2)
-					b.frame.lock = true					
+					b.frame.lock = true
 				elseif (clink and b.rarity and b.rarity > 1) then
 					b.frame:SetBackdropBorderColor(GetItemQualityColor(b.rarity))
 				else
@@ -439,7 +437,7 @@ function B:Bags_OnHide()
 	if bankFrame then
 		bankFrame:Hide()
 	end
-	
+
 	if B.buttons then
 		for _, v in ipairs(allButtons) do
 			v.frame.lock = false
@@ -491,7 +489,6 @@ local function OpenEditbox(self)
 	self:GetParent().editBox:HighlightText()
 end
 
-
 local function Tooltip_Hide(self)
 	if self.backdropTexture then
 		self:SetBackdropBorderColor(unpack(E.media.bordercolor))
@@ -521,7 +518,7 @@ function B:PositionBagFrames()
 	if self.bagsFrame then
 		self.bagsFrame:Point('BOTTOMRIGHT', RightChatToggleButton, 'TOPRIGHT', 0 - E.db.bags.xOffset, 4 + E.db.bags.yOffset)
 	end
-	
+
 	if self.bankFrame then
 		self.bankFrame:Point('BOTTOMLEFT', LeftChatToggleButton, 'TOPLEFT', 0 + E.db.bags.xOffset, 4 + E.db.bags.yOffset)
 	end
@@ -538,7 +535,7 @@ function B:CreateBagFrame(type)
 	else
 		self.bankFrame = f
 	end
-	
+
 	self:PositionBagFrames()
 
 	f.HolderFrame = CreateFrame("Frame", name.."HolderFrame", f)
@@ -676,7 +673,7 @@ function B:InitBags()
 	f.vendorButton.backdropTexture.SetVertexColor = E.noop
 	f.vendorButton.ttText = L['Vendor Grays']
 	f.vendorButton.ttText2 = L['Hold Shift:']
-	f.vendorButton.ttText2desc = L['Delete Grays']	
+	f.vendorButton.ttText2desc = L['Delete Grays']
 	f.vendorButton:SetScript("OnEnter", Tooltip_Show)
 	f.vendorButton:SetScript("OnLeave", Tooltip_Hide)
 	f.vendorButton:SetScript('OnClick', function() B:VendorGrayCheck() end)
@@ -901,7 +898,7 @@ function B:VendorGrays(delete, nomsg)
 			local l = GetContainerItemLink(b, s)
 			if l then
 				local p = select(11, GetItemInfo(l))*select(2, GetContainerItemInfo(b, s))
-				
+
 				if delete then
 					if string.find(l,"ff9d9d9d") then
 						PickupContainerItem(b, s)
@@ -989,10 +986,12 @@ local function BagToUse(item, bags)
 		endBag = #bags
 		nextBag = 1
 	end
+
 	for i = initialBag, endBag, nextBag do
 		if not bags[i].full then
 			-- Get the bag's family
 			local bagFamily = select(2, GetContainerNumFreeSlots(bags[i].bag))
+
 			if bagFamily == 0 or bit.band(itemFamily, bagFamily) > 0 then
 				idx = i
 				break
@@ -1186,11 +1185,14 @@ function B:SortBags(frame)
 	end
 	nextSlot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and -1 or 1
 
+	nextSlot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and -1 or 1
+
 	if #bs < 1 then
 		return
 	end
 
 	local st = {}
+
 	self:OpenBags()
 
 	for i, v in pairs(self.buttons) do
@@ -1216,10 +1218,7 @@ function B:SortBags(frame)
 					srcSlot = v,
 					sslot = v.slot,
 					sbag = v.bag,
-					--sort = q .. iL .. c1 .. c2 .. rL .. Sl .. n .. i,
-					--sort = q .. iL .. c1 .. c2 .. rL .. Sl .. n .. (#self.buttons - i),
 					sort = itemFamily .. q .. c1 .. c2 .. rL .. n .. iL .. Sl .. (#self.buttons - i),
-					--sort = q .. (#self.buttons - i) .. n,
 				})
 			end
 		end
@@ -1245,18 +1244,24 @@ function B:SortBags(frame)
 			limitValue = 5
 		end
 		dbag = bs[idx]
+
 		for i, v in ipairs (st) do
 			v.dbag = dbag
 			v.dslot = dslot
 			v.dstSlot = self:SlotNew(dbag, dslot)
+
 			dslot = dslot + nextSlot
+
 			if dslot == endSlot then
 				while true do
 					idx = idx + nextSlot
+
 					if idx == endBag then
 						break
 					end
+
 					dbag = bs[idx]
+
 					-- The original last check for dbag is dbag < 1 (for Top-Bottom sort direction), or dbag > 4 (for Top-Bottom)
 					if dbag and (B:BagType(dbag) == ST_NORMAL or B:BagType(dbag) == ST_SPECIAL or dbag == limitValue) then
 						break
@@ -1278,10 +1283,12 @@ function B:SortBags(frame)
 		end
 	else -- Special sort
 		local b
+
 		for i, v in ipairs (st) do
 			-- We need to determine the bag we'll place the item into. This is to prevent an endless cycle
 			-- when there are different special bags in the backpack or the bank.
 			b = BagToUse(GetContainerItemID(v.sbag, v.sslot), bs)
+
 			if b then -- An available bag was found.
 				v.dbag = bs[b].bag
 				v.dslot = bs[b].slot
@@ -1469,9 +1476,9 @@ function B:INVENTORY_SEARCH_UPDATE()
 end
 
 function B:Initialize()
-	if not E.global.bags.enable then 
+	if not E.global.bags.enable then
 		self:LoadBagBar()
-		return 
+		return
 	end
 	self:InitBags()
 	E.bags = self

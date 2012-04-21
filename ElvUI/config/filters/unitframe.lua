@@ -246,6 +246,7 @@ G.unitframe.aurafilters['RaidDebuffs'] = {
 		[SpellName(105285)] = true, -- Target
 
 		--Ultraxion
+		[SpellName(110079)] = true, -- Fading Light
 		[SpellName(109075)] = true, -- Fading Light
 
 		--Warmaster Blackhorn
@@ -259,6 +260,7 @@ G.unitframe.aurafilters['RaidDebuffs'] = {
 		[SpellName(105490)] = true, -- Fiery Grip
 
 		--Madness of Deathwing
+		[SpellName(105445)] = true, -- Blistering Heat
 		[SpellName(105841)] = true, -- Degenerative Bite
 		[SpellName(106385)] = true, -- Crush
 		[SpellName(106730)] = true, -- Tetanus

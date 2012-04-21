@@ -1,6 +1,6 @@
 ﻿-- English localization file for enUS and enGB.
 local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
-local L 
+local L
 if UnitName('player') ~= 'Elv' then
 	L = AceLocale:NewLocale("ElvUI", "enUS", true, true);
 else
@@ -371,7 +371,7 @@ L["Local Time"] = "Local Time"
 L["Lock"] = "Lock"
 L["LOCK_AB_ERROR"] = "It has come to our attention that you do not have your actionbars locked. This may cause abilities to be used while dragging buttons to differant slots. Please run the Set CVar portion of the Installation process (Step 2). This can be done by typing /ec and clicking the Install button."
 L["Login Message"] = "Login Message"
-L["LOGIN_MSG"] = "Welcome to %sElvUI|r version %s%s|r, type /ec to access the in-game configuration menu. If you are in need of technical support you can visit us at www.tukui.org. You can report bugs, add suggestions here: http://www.tukui.org/tickets/elvui/."
+L["LOGIN_MSG"] = "Welcome to %sElvUI|r version %s%s|r, type /ec to access the in-game configuration menu. If you are in need of technical support you can visit us at www.tukui.org. You can report bugs, add suggestions here: http://wow.curseforge.com/addons/elvui/tickets."
 L["Loot"] = "Loot"
 L["Loot Roll"] = "Loot Roll"
 L["low"] = "low"
@@ -530,6 +530,7 @@ L["Role Icon"] = "Role Icon"
 L["Run the installation process."] = "Run the installation process."
 L["RW"] = "RW"
 L["Save"] = "Save"
+L["Saved Instance(s)"] = "Saved Instance(s)"
 L["Saved Raid(s)"] = "Saved Raid(s)"
 L["Save your keybinds with your ElvUI profile. That way if you have the dual spec feature enabled in ElvUI you can swap keybinds with your specs."] = "Save your keybinds with your ElvUI profile. That way if you have the dual spec feature enabled in ElvUI you can swap keybinds with your specs."
 L["says"] = "says"
@@ -797,7 +798,5 @@ L["You need to be at least level %d to whisper me."] = "You need to be at least 
 L["Your current resolution is %s, this is considered a %s resolution."] = "Your current resolution is %s, this is considered a %s resolution."
 L["Your items have been repaired for: "] = "Your items have been repaired for: "
 L["Your items have been repaired using guild bank funds for: "] = "Your items have been repaired using guild bank funds for: "
-L["Your version of ElvUI is out of date. You can download the latest version from www.tukui.org"] = "Your version of ElvUI is out of date. You can download the latest version from www.tukui.org"
-L['|cFFE30000Lua error recieved. You can view the error message when you exit combat.'] = true;
-L["%s: %s tried to call the protected function '%s'."] = true;
-L["No locals to dump"] = true;
+L["Your version of ElvUI is out of date. You can download the latest version from www.curse.com"] = "Your version of ElvUI is out of date. You can download the latest version from www.curse.com"
+
