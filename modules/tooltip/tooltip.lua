@@ -36,6 +36,8 @@ local classification = {
 	rare = "|cffAF5050Rare|r",
 }
 
+local gender = { UNKNOWN, MALE, FEMALE }
+
 function TT:SetStatusBarAnchor(pos)
 	GameTooltipStatusBar:ClearAllPoints()
 	
@@ -415,6 +417,7 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 	local crtype = UnitCreatureType(unit)
 	local classif = UnitClassification(unit)
 	local title = UnitPVPName(unit)
+	local sex = UnitSex(unit)
 
 	local r, g, b = GetQuestDifficultyColor(level).r, GetQuestDifficultyColor(level).g, GetQuestDifficultyColor(level).b
 
@@ -442,7 +445,7 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 		for i= offset, lines do
 			
 			if _G["GameTooltipTextLeft"..i] and _G["GameTooltipTextLeft"..i]:GetText() and (_G["GameTooltipTextLeft"..i]:GetText():find("^"..LEVEL)) then
-				_G["GameTooltipTextLeft"..i]:SetFormattedText("|cff%02x%02x%02x%s|r %s %s%s", r*255, g*255, b*255, level > 0 and level or "??", race, color, class.."|r")
+				_G["GameTooltipTextLeft"..i]:SetFormattedText("|cff%02x%02x%02x%s|r %s %s %s%s", r*255, g*255, b*255, level > 0 and level or "??", gender[sex], race, color, class.."|r")
 				break
 			end
 		end
