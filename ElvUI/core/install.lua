@@ -514,7 +514,7 @@ end
 --Install UI
 function E:Install()
 	if not InstallStepComplete then
-		local imsg = CreateFrame("Button", "InstallStepComplete", E.UIParent)
+		local imsg = CreateFrame("Frame", "InstallStepComplete", E.UIParent)
 		imsg:Size(418, 72)
 		imsg:Point("TOP", 0, -190)
 		imsg:Hide()

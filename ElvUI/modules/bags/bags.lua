@@ -158,8 +158,7 @@ function B:SlotUpdate(b)
 
 	if(clink) then
 		local iType
-		b.name, _, b.rarity, _, _, b.class, b.subClass, _, b.equipSlot = GetItemInfo(clink)
-		iType = b.class
+		b.name, _, b.rarity, _, _, iType = GetItemInfo(clink)
 
 		-- color slot according to item quality
 		if not b.frame.lock and b.rarity and b.rarity > 1 then
@@ -168,7 +167,7 @@ function B:SlotUpdate(b)
 			b.frame:SetBackdropBorderColor(1.0, 0.3, 0.3)
 		end
 	else
-		b.name, b.rarity, b.class, b.subClass, b.equipSlot = nil, nil, nil, nil, nil
+		b.name, b.rarity = nil, nil
 	end
 
 	SetItemButtonTexture(b.frame, texture)
@@ -463,7 +462,7 @@ local BagSearch_OnChar = function(self)
 	local searchString = self:GetText();
 	if (string.len(searchString) > MIN_REPEAT_CHARACTERS) then
 		local repeatChar = true;
-		for i=1, MIN_REPEAT_CHARACTERS, 1 do 
+		for i=1, MIN_REPEAT_CHARACTERS, 1 do
 			if ( string.sub(searchString,(0-i), (0-i)) ~= string.sub(searchString,(-1-i),(-1-i)) ) then
 				repeatChar = false;
 				break;
@@ -1183,7 +1182,6 @@ function B:SortBags(frame)
 			})
 		end
 	end
-	nextSlot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and -1 or 1
 
 	nextSlot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and -1 or 1
 
@@ -1192,7 +1190,6 @@ function B:SortBags(frame)
 	end
 
 	local st = {}
-
 	self:OpenBags()
 
 	for i, v in pairs(self.buttons) do
@@ -1249,7 +1246,6 @@ function B:SortBags(frame)
 			v.dbag = dbag
 			v.dslot = dslot
 			v.dstSlot = self:SlotNew(dbag, dslot)
-
 			dslot = dslot + nextSlot
 
 			if dslot == endSlot then
@@ -1464,15 +1460,15 @@ function B:INVENTORY_SEARCH_UPDATE()
 	local isFiltered;
 
 	for _, btn in ipairs(self.buttons) do
-		_, _, _, _, _, _, _, isFiltered = GetContainerItemInfo(btn.bag, btn.frame:GetID());	
+		_, _, _, _, _, _, _, isFiltered = GetContainerItemInfo(btn.bag, btn.frame:GetID());
 		if ( isFiltered ) then
 			SetItemButtonDesaturated(btn.frame, 1, 1, 1, 1)
 			btn.frame:SetAlpha(0.4)
 		else
 			SetItemButtonDesaturated(btn.frame, 0, 1, 1, 1)
 			btn.frame:SetAlpha(1)
-		end		
-	end	
+		end
+	end
 end
 
 function B:Initialize()

@@ -396,10 +396,16 @@ function UF:UpdateAllHeaders(event)
 		self:UnregisterEvent('PLAYER_REGEN_ENABLED')
 	end
 
+	local _, instanceType = IsInInstance();
 	local ORD = ns.oUF_RaidDebuffs or oUF_RaidDebuffs
 	if ORD then
 		ORD:ResetDebuffData()
-		ORD:RegisterDebuffs(E.global.unitframe.aurafilters.RaidDebuffs.spells)
+
+		if instanceType == "party" or instanceType == "raid" then
+			ORD:RegisterDebuffs(E.global.unitframe.aurafilters.RaidDebuffs.spells)
+		else
+			ORD:RegisterDebuffs(E.global.unitframe.aurafilters.CCDebuffs.spells)
+		end
 	end
 
 	for _, header in pairs(UF['handledheaders']) do
@@ -408,10 +414,6 @@ function UF:UpdateAllHeaders(event)
 
 	if E.global.unitframe.disableBlizzard then
 		ElvUF:DisableBlizzard('party')
-	end
-
-	if event == 'PLAYER_ENTERING_WORLD' then
-		self:UnregisterEvent('PLAYER_ENTERING_WORLD')
 	end
 end
 
@@ -429,6 +431,7 @@ function UF:DisableBlizzard(event)
 	CompactRaidFrameManager:HookScript('OnShow', HideRaid)
 	CompactRaidFrameContainer:UnregisterAllEvents()
 	HideRaid()
+	hooksecurefunc("CompactUnitFrame_RegisterEvents", CompactUnitFrame_UnregisterEvents)
 end
 
 function UF:ForceShow(frame)
@@ -463,6 +466,101 @@ function UF:UnforceShow(frame)
 	end
 end
 
+local hiddenParent = CreateFrame("Frame")
+hiddenParent:Hide()
+
+local HandleFrame = function(baseName)
+	local frame
+	if(type(baseName) == 'string') then
+		frame = _G[baseName]
+	else
+		frame = baseName
+	end
+
+	if(frame) then
+		frame:UnregisterAllEvents()
+		frame:Hide()
+
+		-- Keep frame hidden without causing taint
+		frame:SetParent(hiddenParent)
+
+		local health = frame.healthbar
+		if(health) then
+			health:UnregisterAllEvents()
+		end
+
+		local power = frame.manabar
+		if(power) then
+			power:UnregisterAllEvents()
+		end
+
+		local spell = frame.spellbar
+		if(spell) then
+			spell:UnregisterAllEvents()
+		end
+
+		local altpowerbar = frame.powerBarAlt
+		if(altpowerbar) then
+			altpowerbar:UnregisterAllEvents()
+		end
+	end
+end
+
+function ElvUF:DisableBlizzard(unit)
+	if(not unit) or InCombatLockdown() then return end
+
+	if(unit == 'player') then
+		HandleFrame(PlayerFrame)
+
+		-- For the damn vehicle support:
+		PlayerFrame:RegisterEvent('UNIT_ENTERING_VEHICLE')
+		PlayerFrame:RegisterEvent('UNIT_ENTERED_VEHICLE')
+		PlayerFrame:RegisterEvent('UNIT_EXITING_VEHICLE')
+		PlayerFrame:RegisterEvent('UNIT_EXITED_VEHICLE')
+
+		-- User placed frames don't animate
+		PlayerFrame:SetUserPlaced(true)
+		PlayerFrame:SetDontSavePosition(true)
+	elseif(unit == 'pet') then
+		HandleFrame(PetFrame)
+	elseif(unit == 'target') then
+		HandleFrame(TargetFrame)
+		HandleFrame(ComboFrame)
+	elseif(unit == 'focus') then
+		HandleFrame(FocusFrame)
+		HandleFrame(TargetofFocusFrame)
+	elseif(unit == 'targettarget') then
+		HandleFrame(TargetFrameToT)
+	elseif(unit:match'(boss)%d?$' == 'boss') then
+		local id = unit:match'boss(%d)'
+		if(id) then
+			HandleFrame('Boss' .. id .. 'TargetFrame')
+		else
+			for i=1, 4 do
+				HandleFrame(('Boss%dTargetFrame'):format(i))
+			end
+		end
+	elseif(unit:match'(party)%d?$' == 'party') then
+		local id = unit:match'party(%d)'
+		if(id) then
+			HandleFrame('PartyMemberFrame' .. id)
+		else
+			for i=1, 4 do
+				HandleFrame(('PartyMemberFrame%d'):format(i))
+			end
+		end
+	elseif(unit:match'(arena)%d?$' == 'arena') then
+		local id = unit:match'arena(%d)'
+		if(id) then
+			HandleFrame('ArenaEnemyFrame' .. id)
+		else
+			for i=1, 4 do
+				HandleFrame(('ArenaEnemyFrame%d'):format(i))
+			end
+		end
+	end
+end
+
 function UF:Initialize()
 	self.db = E.db["unitframe"]
 	if E.global["unitframe"].enable ~= true then return; end
@@ -490,7 +588,7 @@ function UF:Initialize()
 		UnitPopupMenus["SELF"] = { "PVP_FLAG", "LOOT_METHOD", "LOOT_THRESHOLD", "OPT_OUT_LOOT_TITLE", "LOOT_PROMOTE", "DUNGEON_DIFFICULTY", "RAID_DIFFICULTY", "RESET_INSTANCES", "RAID_TARGET_ICON", "SELECT_ROLE", "CONVERT_TO_PARTY", "CONVERT_TO_RAID", "LEAVE", "CANCEL" };
 		UnitPopupMenus["PET"] = { "PET_PAPERDOLL", "PET_RENAME", "PET_ABANDON", "PET_DISMISS", "CANCEL" };
 		UnitPopupMenus["PARTY"] = { "MUTE", "UNMUTE", "PARTY_SILENCE", "PARTY_UNSILENCE", "RAID_SILENCE", "RAID_UNSILENCE", "BATTLEGROUND_SILENCE", "BATTLEGROUND_UNSILENCE", "WHISPER", "PROMOTE", "PROMOTE_GUIDE", "LOOT_PROMOTE", "VOTE_TO_KICK", "UNINVITE", "INSPECT", "ACHIEVEMENTS", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "SELECT_ROLE", "PVP_REPORT_AFK", "RAF_SUMMON", "RAF_GRANT_LEVEL", "CANCEL" }
-		UnitPopupMenus["PLAYER"] = { "WHISPER", "INSPECT", "INVITE", "ACHIEVEMENTS", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "RAF_SUMMON", "RAF_GRANT_LEVEL", "CANCEL" }
+		UnitPopupMenus["PLAYER"] = { "WHISPER", "INSPECT", "INVITE", "ACHIEVEMENTS", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "RAF_SUMMON", "RAF_GRANT_LEVEL", "REPORT_PLAYER", "CANCEL" }
 		UnitPopupMenus["RAID_PLAYER"] = { "MUTE", "UNMUTE", "RAID_SILENCE", "RAID_UNSILENCE", "BATTLEGROUND_SILENCE", "BATTLEGROUND_UNSILENCE", "WHISPER", "INSPECT", "ACHIEVEMENTS", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "SELECT_ROLE", "RAID_LEADER", "RAID_PROMOTE", "RAID_DEMOTE", "LOOT_PROMOTE", "VOTE_TO_KICK", "RAID_REMOVE", "PVP_REPORT_AFK", "RAF_SUMMON", "RAF_GRANT_LEVEL", "CANCEL" };
 		UnitPopupMenus["RAID"] = { "WHISPER", "MUTE", "UNMUTE", "RAID_SILENCE", "RAID_UNSILENCE", "BATTLEGROUND_SILENCE", "BATTLEGROUND_UNSILENCE", "RAID_LEADER", "RAID_PROMOTE", "RAID_MAINTANK", "RAID_MAINASSIST", "RAID_TARGET_ICON", "SELECT_ROLE", "LOOT_PROMOTE", "RAID_DEMOTE", "VOTE_TO_KICK", "RAID_REMOVE", "PVP_REPORT_AFK", "CANCEL" };
 		UnitPopupMenus["VEHICLE"] = { "RAID_TARGET_ICON", "VEHICLE_LEAVE", "CANCEL" }

@@ -14,15 +14,16 @@ local CheckForReset = function()
 end
 
 local FadeFramesInOut = function(fade, unit)
+	local E = unpack(ElvUI)
 	for frame, unit in pairs(frames) do
 		if not UnitExists(unit) then return end
 		if fade then
 			if frame:GetAlpha() ~= 1 or (frame.fadeInfo and frame.fadeInfo.endAlpha == 0) then
-				UIFrameFadeIn(frame, 0.15)
+				E:UIFrameFadeIn(frame, 0.15)
 			end
-		else	
+		else
 			if frame:GetAlpha() ~= 0 then
-				UIFrameFadeOut(frame, 0.15)
+				E:UIFrameFadeOut(frame, 0.15)
 				frame.fadeInfo.finishedFunc = CheckForReset
 			else
 				showStatus = false;
@@ -30,7 +31,7 @@ local FadeFramesInOut = function(fade, unit)
 			end
 		end
 	end
-	
+
 	if unit == 'player' then
 		showStatus = fade
 	end
@@ -41,13 +42,15 @@ local Update = function(self, arg1, arg2)
 	if type(arg1) == 'boolean' and not frames[self] then
 		return
 	end
-	
+
+	local E = unpack(ElvUI)
+
 	if not frames[self] then
-		UIFrameFadeIn(self, 0.15)
+		E:UIFrameFadeIn(self, 0.15)
 		self.fadeInfo.reset = true
 		return
-	end		
-		
+	end
+
 	local combat = InCombatLockdown()
 	local cur, max = UnitHealth("player"), UnitHealthMax("player")
 	local cast, channel = UnitCastingInfo("player"), UnitChannelInfo("player")
@@ -67,18 +70,18 @@ local Update = function(self, arg1, arg2)
 		elseif not target and not combat and not focus and (cur == max) and not (cast or channel) then
 			FadeFramesInOut(false, frames[self])
 		end
-	end	
+	end
 end
 
 local Enable = function(self, unit)
 	if self.CombatFade then
 		frames[self] = self.unit
 		allFrames[self] = self.unit
-		
+
 		if unit == 'player' then
 			showStatus = false;
 		end
-		
+
 		self:RegisterEvent("PLAYER_ENTERING_WORLD", Update)
 		self:RegisterEvent("PLAYER_REGEN_ENABLED", Update)
 		self:RegisterEvent("PLAYER_REGEN_DISABLED", Update)
@@ -91,12 +94,12 @@ local Enable = function(self, unit)
 		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", Update)
 		self:RegisterEvent("UNIT_PORTRAIT_UPDATE", Update)
 		self:RegisterEvent("UNIT_MODEL_CHANGED", Update)
-		
+
 		if not self.CombatFadeHooked then
 			self:HookScript("OnEnter", function(self) Update(self, true) end)
-			self:HookScript("OnLeave", function(self) Update(self, false) end)	
+			self:HookScript("OnLeave", function(self) Update(self, false) end)
 			self.CombatFadeHooked = true
-		end		
+		end
 		return true
 	end
 end

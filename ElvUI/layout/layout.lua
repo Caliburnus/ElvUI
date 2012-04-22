@@ -141,7 +141,7 @@ function LO:CreateChatPanels()
 	--Left Chat
 	local lchat = CreateFrame('Frame', 'LeftChatPanel', E.UIParent)
 	lchat:SetFrameStrata('BACKGROUND')
-	lchat:Size(E.db.general.panelWidth, E.db.general.panelHeight)		
+	lchat:Size(E.db.general.panelWidth, E.db.general.panelHeight)
 	lchat:Point('BOTTOMLEFT', E.UIParent, 4, 4)
 	lchat:CreateBackdrop('Transparent')
 	lchat.backdrop:SetAllPoints()
@@ -164,7 +164,7 @@ function LO:CreateChatPanels()
 	lchatdp:Point('BOTTOMLEFT', lchat, 'BOTTOMLEFT', 5 + SIDE_BUTTON_WIDTH, 5)
 	lchatdp:Point('TOPRIGHT', lchat, 'BOTTOMRIGHT', -5, (5 + PANEL_HEIGHT))
 	lchatdp:SetTemplate('Default', true)
-	
+
 	E:GetModule('DataTexts'):RegisterPanel(lchatdp, 3, 'ANCHOR_TOPLEFT', -17, 4)
 
 	--Left Chat Toggle Button

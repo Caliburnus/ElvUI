@@ -7,6 +7,7 @@ local function LoadSkin()
 	ItemSocketingFrame:SetTemplate("Transparent")
 	ItemSocketingScrollFrame:StripTextures()
 	ItemSocketingScrollFrame:CreateBackdrop("Transparent")
+	S:HandleScrollBar(ItemSocketingScrollFrameScrollBar, 2)
 
 	for i = 1, MAX_NUM_SOCKETS  do
 		local button = _G["ItemSocketingSocket"..i]
@@ -29,7 +30,7 @@ local function LoadSkin()
 			button:SetBackdropBorderColor(color.r, color.g, color.b)
 		end)
 	end
-	
+
 	ItemSocketingFramePortrait:Kill()
 	ItemSocketingSocketButton:ClearAllPoints()
 	ItemSocketingSocketButton:Point("BOTTOMRIGHT", ItemSocketingFrame, "BOTTOMRIGHT", -5, 5)

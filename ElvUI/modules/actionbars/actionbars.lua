@@ -35,10 +35,10 @@ function AB:Initialize()
 	self:RegisterEvent("UPDATE_BINDINGS", "ReassignBindings")
 	self:RegisterEvent('CVAR_UPDATE')
 	self:ReassignBindings()
-	
+
 	if not GetCVarBool('lockActionBars') then
 		E:Print(L['LOCK_AB_ERROR'])
-	end	
+	end
 end
 
 function AB:CreateActionBars()
@@ -214,21 +214,21 @@ function AB:StyleButton(button, noBackdrop)
 end
 
 function AB:Bar_OnEnter(bar)
-	UIFrameFadeIn(bar, 0.2, bar:GetAlpha(), 1)
+	E:UIFrameFadeIn(bar, 0.2, bar:GetAlpha(), 1)
 end
 
 function AB:Bar_OnLeave(bar)
-	UIFrameFadeOut(bar, 0.2, bar:GetAlpha(), 0)
+	E:UIFrameFadeOut(bar, 0.2, bar:GetAlpha(), 0)
 end
 
 function AB:Button_OnEnter(button)
 	local bar = button:GetParent()
-	UIFrameFadeIn(bar, 0.2, bar:GetAlpha(), 1)
+	E:UIFrameFadeIn(bar, 0.2, bar:GetAlpha(), 1)
 end
 
 function AB:Button_OnLeave(button)
 	local bar = button:GetParent()
-	UIFrameFadeOut(bar, 0.2, bar:GetAlpha(), 0)
+	E:UIFrameFadeOut(bar, 0.2, bar:GetAlpha(), 0)
 end
 
 function AB:DisableBlizzard()
@@ -277,6 +277,14 @@ function AB:DisableBlizzard()
 			_G['MultiCastActionButton'..i]:Hide()
 			_G['MultiCastActionButton'..i]:UnregisterAllEvents()
 			_G['MultiCastActionButton'..i]:SetAttribute("statehidden", true)
+		end
+
+		for index, button in pairs(ActionBarButtonEventsFrame.frames) do
+			if E.myclass ~= 'SHAMAN' and button:GetName():find('MultiCastActionButton') then
+				table.remove(ActionBarButtonEventsFrame.frames, index)
+			elseif button:GetName() ~= "ExtraActionButton1" and not button:GetName():find('MultiCastActionButton') then
+				table.remove(ActionBarButtonEventsFrame.frames, index)
+			end
 		end
 	end
 
@@ -375,6 +383,7 @@ function AB:FixKeybindText(button)
 		text = gsub(text, 'DELETE', L['KEY_DELETE']);
 		text = gsub(text, 'MOUSEWHEELUP', L['KEY_MOUSEWHEELUP']);
 		text = gsub(text, 'MOUSEWHEELDOWN', L['KEY_MOUSEWHEELDOWN']);
+		text = gsub(text, 'NMULTIPLY', "*");
 
 		hotkey:SetText(text);
 	end

@@ -171,7 +171,7 @@ P['unitframe'] = {
 		['customhealthbackdrop'] = false,
 		['classbackdrop'] = false,
 		['classNames'] = true,
-		
+
 		['health'] = P.general.bordercolor,
 		['health_backdrop'] = { r = .8,g = .01,b = .01 },
 		['tapped'] = { r = 0.55, g = 0.57, b = 0.61},
@@ -1152,11 +1152,4 @@ P["actionbar"] = {
 		['enabled'] = true,
 		['mouseover'] = false,
 	},
-};
-
---Bags
-P['bags'] = {
-	['bagCols'] = 0,	-- Number of columns (width) of bag use an integer or 0 (zero) to match width of chat panels
-	['bankCols'] = 0,	-- Number of columns (width) of bank use an integer or 0 (zero) to match width of chat panels
-	['sortOrientation'] = 'BOTTOM-TOP',
 };

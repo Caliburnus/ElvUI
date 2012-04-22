@@ -5,9 +5,5 @@
 ## Version: 30300.4-Beta
 ## X-Category: oUF
 ## Dependencies: oUF
-## X-Curse-Packaged-Version: v3.2b-61-gcc872b0
-## X-Curse-Project-Name: ElvUI
-## X-Curse-Project-ID: elvui
-## X-Curse-Repository-ID: wow/elvui/mainline
 
 oUF_Trinkets.lua

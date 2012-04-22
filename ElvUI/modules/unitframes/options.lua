@@ -420,7 +420,7 @@ E.Options.args.unitframe = {
 							type = 'toggle',
 							name = L['Class Names'],
 							desc = L['Color the name text by class or reaction.'],
-						},						
+						},
 						colorsGroup = {
 							order = 7,
 							type = 'group',
