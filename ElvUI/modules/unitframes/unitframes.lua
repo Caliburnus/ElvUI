@@ -658,4 +658,4 @@ function UF:MergeUnitSettings(fromUnit, toUnit)
 	self:Update_AllFrames()
 end
 
-E:RegisterModule(UF:GetName())
+E:RegisterInitialModule(UF:GetName())
