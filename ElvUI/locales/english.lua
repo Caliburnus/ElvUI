@@ -1,6 +1,6 @@
 ﻿-- English localization file for enUS and enGB.
 local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
-local L 
+local L
 if UnitName('player') ~= 'Elv' then
 	L = AceLocale:NewLocale("ElvUI", "enUS", true, true);
 else

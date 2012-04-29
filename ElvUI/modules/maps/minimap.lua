@@ -23,7 +23,7 @@ local menuList = {
 		PlayerTalentFrame_Toggle()
 	end},
 	{text = TIMEMANAGER_TITLE,
-	func = function() ToggleFrame(TimeManagerFrame) end},		
+	func = function() ToggleFrame(TimeManagerFrame) end},
 	{text = ACHIEVEMENT_BUTTON,
 	func = function() ToggleAchievementFrame() end},
 	{text = QUESTLOG_BUTTON,
@@ -49,20 +49,20 @@ local menuList = {
 	func = function() ToggleFrame(LFDParentFrame) end},
 	{text = RAID_FINDER,
 	func = function() RaidMicroButton:Click() end},
-	{text = ENCOUNTER_JOURNAL, 
-	func = function() if not IsAddOnLoaded('Blizzard_EncounterJournal') then LoadAddOn('Blizzard_EncounterJournal'); end ToggleFrame(EncounterJournal) end},	
+	{text = ENCOUNTER_JOURNAL,
+	func = function() if not IsAddOnLoaded('Blizzard_EncounterJournal') then LoadAddOn('Blizzard_EncounterJournal'); end ToggleFrame(EncounterJournal) end},
 	{text = L_CALENDAR,
 	func = function()
 	if(not CalendarFrame) then LoadAddOn("Blizzard_Calendar") end
 		Calendar_Toggle()
-	end},			
+	end},
 	{text = HELP_BUTTON,
 	func = function() ToggleHelpFrame() end},
 }
 
 --Support for other mods
-function GetMinimapShape() 
-	return 'SQUARE' 
+function GetMinimapShape()
+	return 'SQUARE'
 end
 
 function M:GetLocTextColor()
@@ -73,7 +73,7 @@ function M:GetLocTextColor()
 		return 0.05, 0.85, 0.03
 	elseif pvpType == "contested" then
 		return 0.9, 0.85, 0.05
-	elseif pvpType == "hostile" then 
+	elseif pvpType == "hostile" then
 		return 0.84, 0.03, 0.03
 	elseif pvpType == "sanctuary" then
 		return 0.035, 0.58, 0.84
@@ -81,7 +81,7 @@ function M:GetLocTextColor()
 		return 0.84, 0.03, 0.03
 	else
 		return 0.84, 0.03, 0.03
-	end	
+	end
 end
 
 function M:ADDON_LOADED(event, addon)
@@ -99,12 +99,12 @@ function M:Minimap_OnMouseUp(btn)
 			EasyMenu(menuList, menuFrame, "cursor", 0, 0, "MENU", 2)
 		else
 			EasyMenu(menuList, menuFrame, "cursor", -160, 0, "MENU", 2)
-		end	
+		end
 	elseif btn == "RightButton" then
 		local xoff = -1
 
 		if position:match("RIGHT") then xoff = E:Scale(-16) end
-	
+
 		ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, self, xoff, E:Scale(-3))
 	else
 		Minimap_OnClick(self)
@@ -140,26 +140,26 @@ function M:UpdateSettings()
 		self:RegisterEvent('PLAYER_REGEN_ENABLED')
 	end
 	E.MinimapSize = E.db.general.minimapSize
-	
+
 	if E.db.general.raidReminder then
 		E.RBRWidth = ((E.MinimapSize - 6) / 6) + 4
 	else
 		E.RBRWidth = 0;
 	end
-	
-	E.MinimapWidth = E.MinimapSize	
+
+	E.MinimapWidth = E.MinimapSize
 	E.MinimapHeight = E.MinimapSize + 5
 	Minimap:Size(E.MinimapSize, E.MinimapSize)
-	
+
 	if MMHolder then
 		MMHolder:Width((Minimap:GetWidth() + 4) + E.RBRWidth)
-		MMHolder:Height(Minimap:GetHeight() + 27)	
+		MMHolder:Height(Minimap:GetHeight() + 27)
 	end
-	
+
 	if Minimap.location then
 		Minimap.location:Width(E.MinimapSize)
 	end
-	
+
 	if MinimapMover then
 		MinimapMover:Size(MMHolder:GetSize())
 	end
@@ -171,16 +171,16 @@ function M:UpdateSettings()
 			AurasMover:Point("TOPRIGHT", E.UIParent, "TOPRIGHT", -((E.MinimapSize + 4) + E.RBRWidth + 7), -3)
 			E:SaveMoverDefaultPosition('AurasMover')
 		end
-		
+
 		if AurasMover then
 			AurasMover:Height(E.MinimapHeight)
 		end
 	end
-	
+
 	if UpperRepExpBarHolder then
 		E:GetModule('Misc'):UpdateExpRepBarAnchor()
 	end
-	
+
 	if ElvConfigToggle then
 		if E.db.general.raidReminder then
 			ElvConfigToggle:Show()
@@ -189,13 +189,13 @@ function M:UpdateSettings()
 			ElvConfigToggle:Hide()
 		end
 	end
-	
+
 	if RaidBuffReminder then
 		RaidBuffReminder:Width(E.RBRWidth)
 		for i=1, 6 do
 			RaidBuffReminder['spell'..i]:Size(E.RBRWidth - 4)
 		end
-		
+
 		if E.db.general.raidReminder then
 			E:GetModule('RaidBuffReminder'):EnableRBR()
 		else
@@ -204,13 +204,13 @@ function M:UpdateSettings()
 	end
 end
 
-function M:Initialize()	
+function M:Initialize()
 	self:UpdateSettings()
 	local mmholder = CreateFrame('Frame', 'MMHolder', Minimap)
 	mmholder:Point("TOPRIGHT", E.UIParent, "TOPRIGHT", -3, -3)
 	mmholder:Width((Minimap:GetWidth() + 29) + E.RBRWidth)
 	mmholder:Height(Minimap:GetHeight() + 53)
-	
+
 	Minimap:ClearAllPoints()
 	Minimap:Point("TOPLEFT", mmholder, "TOPLEFT", 2, -2)
 	Minimap:SetMaskTexture('Interface\\ChatFrame\\ChatFrameBackground')
@@ -218,26 +218,26 @@ function M:Initialize()
 	Minimap:HookScript('OnEnter', function(self)
 		self.location:Show()
 	end)
-	
+
 	Minimap:HookScript('OnLeave', function(self)
 		self.location:Hide()
-	end)	
-	
+	end)
+
 	--Fix spellbook taint
 	ShowUIPanel(SpellBookFrame)
-	HideUIPanel(SpellBookFrame)	
-	
+	HideUIPanel(SpellBookFrame)
+
 	Minimap.location = Minimap:CreateFontString(nil, 'OVERLAY')
 	Minimap.location:FontTemplate(nil, nil, 'OUTLINE')
 	Minimap.location:Point('TOP', Minimap, 'TOP', 0, -2)
 	Minimap.location:SetJustifyH("CENTER")
-	Minimap.location:SetJustifyV("MIDDLE")		
+	Minimap.location:SetJustifyV("MIDDLE")
 	Minimap.location:Hide()
-	
+
 	LFGSearchStatus:SetTemplate("Default")
 	LFGSearchStatus:SetClampedToScreen(true)
-	LFGDungeonReadyStatus:SetClampedToScreen(true)	
-	
+	LFGDungeonReadyStatus:SetClampedToScreen(true)
+
 	MinimapBorder:Hide()
 	MinimapBorderTop:Hide()
 
@@ -272,50 +272,50 @@ function M:Initialize()
 	GuildInstanceDifficulty:ClearAllPoints()
 	GuildInstanceDifficulty:SetParent(Minimap)
 	GuildInstanceDifficulty:Point("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
-	
+
 	if TimeManagerClockButton then
 		TimeManagerClockButton:Kill()
 	end
-	
+
 	if FeedbackUIButton then
 		FeedbackUIButton:Kill()
 	end
-	
+
 	E:CreateMover(MMHolder, 'MinimapMover', 'Minimap', nil, nil)
 	Minimap.SetPoint = E.noop;
 	MMHolder.SetPoint = E.noop;
 	Minimap.ClearAllPoints = E.noop;
-	MMHolder.ClearAllPoints = E.noop;	
+	MMHolder.ClearAllPoints = E.noop;
 	Minimap:EnableMouseWheel(true)
-	Minimap:SetScript("OnMouseWheel", M.Minimap_OnMouseWheel)	
+	Minimap:SetScript("OnMouseWheel", M.Minimap_OnMouseWheel)
 	Minimap:SetScript("OnMouseUp", M.Minimap_OnMouseUp)
-	
+
 	MiniMapLFGFrame:ClearAllPoints()
 	MiniMapLFGFrame:Point("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", 2, 1)
-	MiniMapLFGFrameBorder:Hide()	
+	MiniMapLFGFrameBorder:Hide()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "Update_ZoneText")
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "Update_ZoneText")
 	self:RegisterEvent("ZONE_CHANGED", "Update_ZoneText")
-	self:RegisterEvent("ZONE_CHANGED_INDOORS", "Update_ZoneText")		
+	self:RegisterEvent("ZONE_CHANGED_INDOORS", "Update_ZoneText")
 	self:RegisterEvent('ADDON_LOADED')
 	self:UpdateSettings()
-	
+
 	--Create Farmmode Minimap
 	local fm = CreateFrame('Minimap', 'FarmModeMap', E.UIParent)
 	fm:Size(E.db.farmSize)
 	fm:Point('TOP', E.UIParent, 'TOP', 0, -120)
-	
+
 	fm:CreateBackdrop('Default')
 	fm:EnableMouseWheel(true)
-	fm:SetScript("OnMouseWheel", M.Minimap_OnMouseWheel)	
-	fm:SetScript("OnMouseUp", M.Minimap_OnMouseUp)	
+	fm:SetScript("OnMouseWheel", M.Minimap_OnMouseWheel)
+	fm:SetScript("OnMouseUp", M.Minimap_OnMouseUp)
 	fm:RegisterForDrag("LeftButton", "RightButton")
 	fm:SetMovable(true)
 	fm:SetScript("OnDragStart", function(self) self:StartMoving() end)
 	fm:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 	fm:Hide()
-	
-	FarmModeMap:SetScript('OnShow', function() 	
+
+	FarmModeMap:SetScript('OnShow', function()
 		if not E:HasMoverBeenMoved('AurasMover') then
 			AurasMover:ClearAllPoints()
 			AurasMover:Point("TOPRIGHT", E.UIParent, "TOPRIGHT", -3, -3)
@@ -328,25 +328,25 @@ function M:Initialize()
 
 		if IsAddOnLoaded('GatherMate2') then
 			LibStub('AceAddon-3.0'):GetAddon('GatherMate2'):GetModule('Display'):ReparentMinimapPins(FarmModeMap)
-		end		
+		end
 	end)
-	
-	FarmModeMap:SetScript('OnHide', function() 
+
+	FarmModeMap:SetScript('OnHide', function()
 		if not E:HasMoverBeenMoved('AurasMover') then
 			E:ResetMovers('Auras Frame')
-		end	
+		end
 		MinimapCluster:ClearAllPoints()
-		MinimapCluster:SetAllPoints(Minimap)	
+		MinimapCluster:SetAllPoints(Minimap)
 		if IsAddOnLoaded('Routes') then
 			LibStub("AceAddon-3.0"):GetAddon('Routes'):ReparentMinimap(Minimap)
 		end
 
 		if IsAddOnLoaded('GatherMate2') then
 			LibStub('AceAddon-3.0'):GetAddon('GatherMate2'):GetModule('Display'):ReparentMinimapPins(Minimap)
-		end	
+		end
 	end)
 
-	
+
 	UIParent:HookScript('OnShow', function()
 		if not FarmModeMap.enabled then
 			FarmModeMap:Hide()

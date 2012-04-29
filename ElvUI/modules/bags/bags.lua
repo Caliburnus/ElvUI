@@ -53,7 +53,7 @@ function B:BagFrameSlotNew(frame, slot, nonAllInOne)
 		ret.slot = slot
 		table.insert(frame.buttons, ret)
 	end
-	
+
 	if not nonAllInOne then
 		ret.frame:HookScript("OnEnter", function()
 			local bag
@@ -75,7 +75,7 @@ function B:BagFrameSlotNew(frame, slot, nonAllInOne)
 
 		ret.frame:SetScript('OnClick', nil)
 	end
-	
+
 	ret.frame:SetTemplate('Default', true)
 	ret.frame:StyleButton()
 	ret.frame:SetFrameLevel(ret.frame:GetFrameLevel() + 1)
@@ -199,7 +199,7 @@ function B:SlotNew(bag, slot)
 		local f = -1
 		for i, v in ipairs(trashButton) do
 			local b, s = v:GetName():match("(%d+)_(%d+)")
-			
+
 			b = tonumber(b)
 			s = tonumber(s)
 
@@ -252,7 +252,7 @@ function B:Layout(isBank)
 	local offset = 26
 	local cols, f, bs, bSize
 	local bagWidth
-	
+
 	if not isBank then
 		bs = BAGS_BACKPACK
 		if E.db.bags.bagCols == 0 then
@@ -360,7 +360,7 @@ function B:Layout(isBank)
 				if isnew then
 					table.insert(self.buttons, idx + 1, b)
 					table.insert(allButtons, b)
-					
+
 					if not isBank then
 						b.bagOwner = i - 1
 					else
@@ -379,7 +379,7 @@ function B:Layout(isBank)
 				b.frame:FixDimensions()
 				b.frame.lock = false
 				b.frame:SetAlpha(1)
-				
+
 				local clink = GetContainerItemLink
 				if bagType == ST_SPECIAL then
 					if specialType == 0x0008 then      -- Leatherworking
@@ -405,7 +405,7 @@ function B:Layout(isBank)
 					b.frame.lock = true
 				elseif bagType == ST_SOULBAG then
 					b.frame:SetBackdropBorderColor(0.5, 0.2, 0.2)
-					b.frame.lock = true					
+					b.frame.lock = true
 				elseif (clink and b.rarity and b.rarity > 1) then
 					b.frame:SetBackdropBorderColor(GetItemQualityColor(b.rarity))
 				else
@@ -439,7 +439,7 @@ function B:Bags_OnHide()
 	if bankFrame then
 		bankFrame:Hide()
 	end
-	
+
 	if B.buttons then
 		for _, v in ipairs(allButtons) do
 			v.frame.lock = false
@@ -465,7 +465,7 @@ local BagSearch_OnChar = function(self)
 	local searchString = self:GetText();
 	if (string.len(searchString) > MIN_REPEAT_CHARACTERS) then
 		local repeatChar = true;
-		for i=1, MIN_REPEAT_CHARACTERS, 1 do 
+		for i=1, MIN_REPEAT_CHARACTERS, 1 do
 			if ( string.sub(searchString,(0-i), (0-i)) ~= string.sub(searchString,(-1-i),(-1-i)) ) then
 				repeatChar = false;
 				break;
@@ -521,7 +521,7 @@ function B:PositionBagFrames()
 	if self.bagsFrame then
 		self.bagsFrame:Point('BOTTOMRIGHT', RightChatToggleButton, 'TOPRIGHT', 0 - E.db.bags.xOffset, 4 + E.db.bags.yOffset)
 	end
-	
+
 	if self.bankFrame then
 		self.bankFrame:Point('BOTTOMLEFT', LeftChatToggleButton, 'TOPLEFT', 0 + E.db.bags.xOffset, 4 + E.db.bags.yOffset)
 	end
@@ -538,7 +538,7 @@ function B:CreateBagFrame(type)
 	else
 		self.bankFrame = f
 	end
-	
+
 	self:PositionBagFrames()
 
 	f.HolderFrame = CreateFrame("Frame", name.."HolderFrame", f)
@@ -676,7 +676,7 @@ function B:InitBags()
 	f.vendorButton.backdropTexture.SetVertexColor = E.noop
 	f.vendorButton.ttText = L['Vendor Grays']
 	f.vendorButton.ttText2 = L['Hold Shift:']
-	f.vendorButton.ttText2desc = L['Delete Grays']	
+	f.vendorButton.ttText2desc = L['Delete Grays']
 	f.vendorButton:SetScript("OnEnter", Tooltip_Show)
 	f.vendorButton:SetScript("OnLeave", Tooltip_Hide)
 	f.vendorButton:SetScript('OnClick', function() B:VendorGrayCheck() end)
@@ -901,7 +901,7 @@ function B:VendorGrays(delete, nomsg)
 			local l = GetContainerItemLink(b, s)
 			if l then
 				local p = select(11, GetItemInfo(l))*select(2, GetContainerItemInfo(b, s))
-				
+
 				if delete then
 					if string.find(l,"ff9d9d9d") then
 						PickupContainerItem(b, s)
@@ -1457,21 +1457,21 @@ function B:INVENTORY_SEARCH_UPDATE()
 	local isFiltered;
 
 	for _, btn in ipairs(self.buttons) do
-		_, _, _, _, _, _, _, isFiltered = GetContainerItemInfo(btn.bag, btn.frame:GetID());	
+		_, _, _, _, _, _, _, isFiltered = GetContainerItemInfo(btn.bag, btn.frame:GetID());
 		if ( isFiltered ) then
 			SetItemButtonDesaturated(btn.frame, 1, 1, 1, 1)
 			btn.frame:SetAlpha(0.4)
 		else
 			SetItemButtonDesaturated(btn.frame, 0, 1, 1, 1)
 			btn.frame:SetAlpha(1)
-		end		
-	end	
+		end
+	end
 end
 
 function B:Initialize()
-	if not E.global.bags.enable then 
+	if not E.global.bags.enable then
 		self:LoadBagBar()
-		return 
+		return
 	end
 	self:InitBags()
 	E.bags = self
