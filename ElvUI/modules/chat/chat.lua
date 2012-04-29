@@ -71,8 +71,9 @@ function CH:StyleChat(frame)
 	tab:SetAlpha(1)
 	tab.SetAlpha = UIFrameFadeRemoveFrame
 
+
 	tab.text = _G[name.."TabText"]
-	tab.text:FontTemplate(E['media'].pixelFont, 10, 'OUTLINE')
+	tab.text:FontTemplate()
 	tab.text:SetTextColor(unpack(E["media"].rgbvaluecolor))
 	tab.text.OldSetTextColor = tab.text.SetTextColor
 	tab.text.SetTextColor = E.noop
@@ -91,6 +92,7 @@ function CH:StyleChat(frame)
 	editbox:HookScript("OnEditFocusGained", function(self) self:Show(); if not LeftChatPanel:IsShown() then LeftChatPanel.editboxforced = true; LeftChatToggleButton:GetScript('OnEnter')(LeftChatToggleButton) end end)
 	editbox:HookScript("OnEditFocusLost", function(self) if LeftChatPanel.editboxforced then LeftChatPanel.editboxforced = nil; if LeftChatPanel:IsShown() then LeftChatToggleButton:GetScript('OnLeave')(LeftChatToggleButton) end end self:Hide() end)
 	editbox:SetAllPoints(LeftChatDataPanel)
+	self:HookScript(editbox, "OnEnterPressed", "ChatEdit_AddHistory")
 	editbox:HookScript("OnTextChanged", function(self)
 	   local text = self:GetText()
 	   if text:len() < 5 then
@@ -116,6 +118,10 @@ function CH:StyleChat(frame)
 			self:SetText(new)
 		end
 	end)
+
+	for i, text in pairs(ElvCharacterData.ChatEditHistory) do
+		editbox:AddHistoryLine(text)
+	end
 
 	hooksecurefunc("ChatEdit_UpdateHeader", function()
 		local type = editbox:GetAttribute("chatType")
@@ -713,9 +719,47 @@ function CH:SetChatFont(dropDown, chatFrame, fontSize)
 	chatFrame:SetShadowOffset((E.mult or 1), -(E.mult or 1))
 end
 
+function CH:ChatEdit_AddHistory(editBox)
+	local text = "";
+	local type = editBox:GetAttribute("chatType");
+	local header = _G["SLASH_"..type.."1"];
+	if ( header ) then
+		text = header;
+	end
+
+	if ( type == "WHISPER" ) then
+		text = text.." "..editBox:GetAttribute("tellTarget");
+	elseif ( type == "CHANNEL" ) then
+		text = "/"..editBox:GetAttribute("channelTarget");
+	end
+
+	local editBoxText = editBox:GetText();
+	if ( strlen(editBoxText) > 0 ) then
+		text = text.." "..editBox:GetText();
+	end
+
+	if text:find("/rl") then return; end
+
+	if ( strlen(text) > 0 ) then
+		for i, t in pairs(ElvCharacterData.ChatEditHistory) do
+			if t == text then
+				return
+			end
+		end
+
+		table.insert(ElvCharacterData.ChatEditHistory, #ElvCharacterData.ChatEditHistory + 1, text)
+		if #ElvCharacterData.ChatEditHistory > 5 then
+			table.remove(ElvCharacterData.ChatEditHistory, 1)
+		end
+	end
+end
+
 function CH:Initialize()
 	self.db = E.db.chat
 	if E.global.chat.enable ~= true then return end
+	if not ElvCharacterData.ChatEditHistory then
+		ElvCharacterData.ChatEditHistory = {};
+	end
 
     UnitPopupButtons["COPYCHAT"] = {
 		text =L["Copy Text"],
@@ -809,15 +853,6 @@ function CH:Initialize()
 	close:EnableMouse(true)
 
 	S:HandleCloseButton(close)
-
-	local SoundSys = CreateFrame("Frame")
-	SoundSys:RegisterEvent("CHAT_MSG_WHISPER")
-	SoundSys:RegisterEvent("CHAT_MSG_BN_WHISPER")
-	SoundSys:HookScript("OnEvent", function(self, event, ...)
-		if event == "CHAT_MSG_WHISPER" or "CHAT_MSG_BN_WHISPER" then
-			PlaySoundFile(E.media.whispersound, "Master")
-		end
-	end)
 end
 
 E:RegisterModule(CH:GetName())

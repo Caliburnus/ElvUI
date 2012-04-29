@@ -14,8 +14,6 @@ function B:Initialize()
 	self:PositionVehicleFrame()
 	self:MoveWatchFrame()
 
-	WorldStateAlwaysUpFrame:SetPoint("TOP", E.UIParent, "TOP", 0, -50)
-
 	CreateFrame("Frame"):SetScript("OnUpdate", function(self, elapsed)
 		if LFRBrowseFrame.timeToClear then
 			LFRBrowseFrame.timeToClear = nil

@@ -228,7 +228,7 @@ function M:Initialize()
 	HideUIPanel(SpellBookFrame)
 
 	Minimap.location = Minimap:CreateFontString(nil, 'OVERLAY')
-	Minimap.location:FontTemplate(E['media'].pixelFont, 10, 'OUTLINE')
+	Minimap.location:FontTemplate(nil, nil, 'OUTLINE')
 	Minimap.location:Point('TOP', Minimap, 'TOP', 0, -2)
 	Minimap.location:SetJustifyH("CENTER")
 	Minimap.location:SetJustifyV("MIDDLE")
@@ -345,6 +345,7 @@ function M:Initialize()
 			LibStub('AceAddon-3.0'):GetAddon('GatherMate2'):GetModule('Display'):ReparentMinimapPins(Minimap)
 		end
 	end)
+
 
 	UIParent:HookScript('OnShow', function()
 		if not FarmModeMap.enabled then

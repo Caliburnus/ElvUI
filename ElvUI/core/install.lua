@@ -156,7 +156,7 @@ local function SetupCVars()
 	SetCVar("ShowClassColorInNameplate", 1)
 	SetCVar("screenshotQuality", 10)
 	SetCVar("chatMouseScroll", 1)
-	SetCVar("chatStyle", "im")
+	SetCVar("chatStyle", "classic")
 	SetCVar("WholeChatWindowClickable", 0)
 	SetCVar("ConversationMode", "inline")
 	SetCVar("showTutorials", 0)
@@ -191,6 +191,7 @@ function E:SetupResolution()
 			["p3"] = 0,
 			["p4"] = 56.18668365478516,
 		}
+
 
 		E:CopyTable(E.db.unitframe.units, P.unitframe.units)
 

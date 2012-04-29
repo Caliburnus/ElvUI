@@ -17,8 +17,6 @@ P['general'] = {
 	-- fonts
 	["fontsize"] = 12,
 	["font"] = "ElvUI Font",
-	["pixelfont"] = "ElvUI Pixel",
-	["kbfont"] = "ElvUI Pixel 2",
 
 	--colors
 	["bordercolor"] = { r = .31,g = .31,b = .31 },
@@ -36,9 +34,9 @@ P['general'] = {
 
 	--misc
 	['mapTransparency'] = 1,
-	['whispersound'] = 'ElvUI Whisper',
 	['minimapSize'] = 176,
 	['raidReminder'] = true,
+	['tinyWorldMap'] = true,
 };
 
 --Bags
@@ -143,7 +141,7 @@ P['datatexts'] = {
 		['RightMiniPanel'] = 'Friends',
 	},
 	['localtime'] = true,
-	['time24'] = true,
+	['time24'] = false,
 }
 
 --Tooltip
@@ -826,7 +824,7 @@ P['unitframe'] = {
 				['anchorPoint'] = 'RIGHT',
 				['fontsize'] = 10,
 				['showPlayerOnly'] = false,
-				['useFilter'] = '',
+				['useFilter'] = 'DebuffBlacklist',
 				['durationLimit'] = 0,
 			},
 			['buffIndicator'] = {
@@ -1036,6 +1034,7 @@ P['unitframe'] = {
 		},
 	},
 }
+
 
 --Actionbar
 P["actionbar"] = {
