@@ -13,7 +13,7 @@ local OnEnter = function(self)
 		GameTooltip:SetLootItem(slot)
 		CursorUpdate(self)
 	end
-
+	
 	LootFrame.selectedSlot = self:GetID()
 	self.drop:Show()
 	self.drop:SetVertexColor(1, 1, 0)
@@ -26,7 +26,7 @@ local OnLeave = function(self)
 	else
 		self.drop:Hide()
 	end
-
+	
 	GameTooltip:Hide()
 	ResetCursor()
 end
@@ -175,7 +175,7 @@ function M:LOOT_OPENED(event, autoloot)
 		lootFrame:Raise()
 	else
 		lootFrame:ClearAllPoints()
-		lootFrame:SetPoint("TOPLEFT", lootFrameHolder, "TOPLEFT")
+		lootFrame:SetPoint("TOPLEFT", lootFrameHolder, "TOPLEFT")	
 	end
 
 	local m, w, t = 0, 0, lootFrame.title:GetStringWidth()
@@ -209,7 +209,7 @@ function M:LOOT_OPENED(event, autoloot)
 				slot.name:SetTextColor(color.r, color.g, color.b)
 			end
 			slot.icon:SetTexture(texture)
-
+			
 			if quality then
 				m = math.max(m, quality)
 			end
@@ -252,14 +252,14 @@ function M:LoadLoot()
 	lootFrameHolder:Point("TOPLEFT", 36, -195)
 	lootFrameHolder:Width(150)
 	lootFrameHolder:Height(22)
-
+	
 	lootFrame = CreateFrame('Button', 'ElvLootFrame', lootFrameHolder)
 	lootFrame:SetClampedToScreen(true)
 	lootFrame:SetPoint('TOPLEFT')
 	lootFrame:Size(256, 64)
 	lootFrame:SetTemplate('Default')
 	lootFrame:SetFrameStrata"FULLSCREEN"
-	lootFrame:SetToplevel(true)
+	lootFrame:SetToplevel(true)	
 	lootFrame.title = lootFrame:CreateFontString(nil, 'OVERLAY')
 	lootFrame.title:FontTemplate(nil, nil, 'OUTLINE')
 	lootFrame.title:Point('BOTTOMLEFT', lootFrame, 'TOPLEFT', 0,  1)
@@ -275,9 +275,9 @@ function M:LoadLoot()
 	self:RegisterEvent("LOOT_CLOSED")
 	self:RegisterEvent("OPEN_MASTER_LOOT_LIST")
 	self:RegisterEvent("UPDATE_MASTER_LOOT_LIST")
-
+	
 	E:CreateMover(lootFrameHolder, "LootFrameMover", "Loot Frame")
-
+	
 	-- Fuzz
 	LootFrame:UnregisterAllEvents()
 	table.insert(UISpecialFrames, 'ElvLootFrame')
@@ -296,6 +296,6 @@ function M:LoadLoot()
 
 	StaticPopupDialogs["CONFIRM_LOOT_DISTRIBUTION"].OnAccept = function(self, data)
 		GiveMasterLoot(ss, data)
-	end
+	end	
 	StaticPopupDialogs["CONFIRM_LOOT_DISTRIBUTION"].preferredIndex = 3;
 end

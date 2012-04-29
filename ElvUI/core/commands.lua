@@ -2,21 +2,21 @@ local E, L, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, ProfileDB,
 
 function E:EnableAddon(addon)
 	local _, _, _, _, _, reason, _ = GetAddOnInfo(addon)
-	if reason ~= "MISSING" then
-		EnableAddOn(addon)
-		ReloadUI()
-	else
-		print("|cffff0000Error, Addon '"..addon.."' not found.|r")
-	end
+	if reason ~= "MISSING" then 
+		EnableAddOn(addon) 
+		ReloadUI() 
+	else 
+		print("|cffff0000Error, Addon '"..addon.."' not found.|r") 
+	end	
 end
 
 function E:DisableAddon(addon)
 	local _, _, _, _, _, reason, _ = GetAddOnInfo(addon)
-	if reason ~= "MISSING" then
-		DisableAddOn(addon)
-		ReloadUI()
-	else
-		print("|cffff0000Error, Addon '"..addon.."' not found.|r")
+	if reason ~= "MISSING" then 
+		DisableAddOn(addon) 
+		ReloadUI() 
+	else 
+		print("|cffff0000Error, Addon '"..addon.."' not found.|r") 
 	end
 end
 
@@ -29,12 +29,12 @@ function FarmMode()
 	if InCombatLockdown() then E:Print(ERR_NOT_IN_COMBAT); return; end
 	if Minimap:IsShown() then
 		UIFrameFadeOut(Minimap, 0.3)
-		UIFrameFadeIn(FarmModeMap, 0.3)
+		UIFrameFadeIn(FarmModeMap, 0.3) 
 		Minimap.fadeInfo.finishedFunc = function() Minimap:Hide(); _G.MinimapZoomIn:Click(); _G.MinimapZoomOut:Click(); Minimap:SetAlpha(1) end
 		FarmModeMap.enabled = true
 	else
 		UIFrameFadeOut(FarmModeMap, 0.3)
-		UIFrameFadeIn(Minimap, 0.3)
+		UIFrameFadeIn(Minimap, 0.3) 
 		FarmModeMap.fadeInfo.finishedFunc = function() FarmModeMap:Hide(); _G.MinimapZoomIn:Click(); _G.MinimapZoomOut:Click(); Minimap:SetAlpha(1) end
 		FarmModeMap.enabled = false
 	end
@@ -45,7 +45,7 @@ function E:FarmMode(msg)
 		E.db.farmSize = tonumber(msg)
 		FarmModeMap:Size(tonumber(msg))
 	end
-
+	
 	FarmMode()
 end
 
@@ -73,10 +73,10 @@ function E:Grid(msg)
 	if msg and type(tonumber(msg))=="number" and tonumber(msg) <= 256 and tonumber(msg) >= 4 then
 		E.db.gridSize = msg
 		E:Grid_Show()
-	else
-		if EGrid then
+	else 
+		if EGrid then		
 			E:Grid_Hide()
-		else
+		else 
 			E:Grid_Show()
 		end
 	end
@@ -107,7 +107,7 @@ end
 function E:LoadCommands()
 	self:RegisterChatCommand("ec", "ToggleConfig")
 	self:RegisterChatCommand("elvui", "ToggleConfig")
-
+	
 	self:RegisterChatCommand('moreinfo', 'FoolsHowTo')
 	self:RegisterChatCommand('aprilfools', 'DisableAprilFools')
 	self:RegisterChatCommand('luaerror', 'LuaError')

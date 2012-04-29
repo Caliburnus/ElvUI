@@ -26,19 +26,19 @@ function AB:Initialize()
 	self.db = E.db.actionbar
 	if E.global.actionbar.enable ~= true then return; end
 	E.ActionBars = AB;
-
+	
 	self:DisableBlizzard()
-
+	
 	self:CreateActionBars()
 	self:LoadKeyBinder()
 	self:UpdateCooldownSettings()
 	self:RegisterEvent("UPDATE_BINDINGS", "ReassignBindings")
 	self:RegisterEvent('CVAR_UPDATE')
 	self:ReassignBindings()
-
+	
 	if not GetCVarBool('lockActionBars') then
 		E:Print(L['LOCK_AB_ERROR'])
-	end
+	end	
 end
 
 function AB:CreateActionBars()
@@ -52,8 +52,8 @@ function AB:CreateActionBars()
 
 	if E.myclass == "SHAMAN" then
 		self:CreateTotemBar()
-	end
-
+	end  
+	
 	self:UpdateButtonSettings()
 end
 
@@ -76,10 +76,10 @@ function AB:CreateVehicleLeave()
 end
 
 function AB:ReassignBindings()
-	if InCombatLockdown() then return end
+	if InCombatLockdown() then return end	
 	for bar, _ in pairs(self["handledBars"]) do
 		if not bar then return end
-
+		
 		ClearOverrideBindings(bar)
 		for i = 1, #bar.buttons do
 			local button = (bar.bindButtons.."%d"):format(i)
@@ -108,15 +108,15 @@ function AB:UpdateButtonSettings()
 
 	for i=1, 5 do
 		self['PositionAndSizeBar'..i](self)
-	end
+	end	
 	self:PositionAndSizeBarPet()
 	self:PositionAndSizeBarShapeShift()
-
+	
 	--Movers snap update
 	for _, mover in pairs(AB['movers']) do
-		mover.bar:SetScript("OnDragStart", function(mover)
+		mover.bar:SetScript("OnDragStart", function(mover) 
 			if InCombatLockdown() then E:Print(ERR_NOT_IN_COMBAT) return end
-
+			
 			if E.db.general.stickyFrames then
 				local offset = 2
 				local name = mover.name
@@ -128,9 +128,9 @@ function AB:UpdateButtonSettings()
 			else
 				mover:StartMoving()
 			end
-		end)
+		end)	
 	end
-
+	
 	for bar, barName in pairs(self["handledBars"]) do
 		self:UpdateButtonConfig(bar, bar.bindButtons)
 	end
@@ -153,7 +153,7 @@ function AB:GetPage(bar, defaultPage, condition)
 	return condition
 end
 
-function AB:StyleButton(button, noBackdrop)
+function AB:StyleButton(button, noBackdrop)	
 	local name = button:GetName();
 	local icon = _G[name.."Icon"];
 	local count = _G[name.."Count"];
@@ -167,14 +167,14 @@ function AB:StyleButton(button, noBackdrop)
 	local combat = InCombatLockdown()
 
 	if flash then flash:SetTexture(nil); end
-	if normal then normal:SetTexture(nil); normal:Hide(); normal:SetAlpha(0); end
-	if normal2 then normal2:SetTexture(nil); normal2:Hide(); normal2:SetAlpha(0); end
+	if normal then normal:SetTexture(nil); normal:Hide(); normal:SetAlpha(0); end	
+	if normal2 then normal2:SetTexture(nil); normal2:Hide(); normal2:SetAlpha(0); end	
 	if border then border:Kill(); end
-
+			
 	if not button.noBackdrop then
 		button.noBackdrop = noBackdrop;
 	end
-
+	
 	if count then
 		count:ClearAllPoints();
 		count:SetPoint("BOTTOMRIGHT", 0, 2);
@@ -185,28 +185,28 @@ function AB:StyleButton(button, noBackdrop)
 		button:CreateBackdrop('Default', true)
 		button.backdrop:SetAllPoints()
 	end
-
+	
 	if icon then
 		icon:SetTexCoord(unpack(E.TexCoords));
 		icon:ClearAllPoints()
 		icon:Point('TOPLEFT', 2, -2)
 		icon:Point('BOTTOMRIGHT', -2, 2)
 	end
-
+	
 	if shine then
 		shine:SetAllPoints()
 	end
-
+	
 	if self.db.hotkeytext then
 		hotkey:FontTemplate(nil, E.db.actionbar.fontsize, "OUTLINE");
 	end
-
+	
 	--Extra Action Button
 	if button.style then
 		button.style:SetParent(button.backdrop)
-		button.style:SetDrawLayer('BACKGROUND', -7)
+		button.style:SetDrawLayer('BACKGROUND', -7)	
 	end
-
+	
 	button.FlyoutUpdateFunc = AB.StyleFlyout
 	self:FixKeybindText(button);
 	button:StyleButton();
@@ -246,7 +246,7 @@ function AB:DisableBlizzard()
 		_G["ActionButton" .. i]:Hide()
 		_G["ActionButton" .. i]:UnregisterAllEvents()
 		_G["ActionButton" .. i]:SetAttribute("statehidden", true)
-
+	
 		_G["MultiBarBottomLeftButton" .. i]:Hide()
 		_G["MultiBarBottomLeftButton" .. i]:UnregisterAllEvents()
 		_G["MultiBarBottomLeftButton" .. i]:SetAttribute("statehidden", true)
@@ -254,15 +254,15 @@ function AB:DisableBlizzard()
 		_G["MultiBarBottomRightButton" .. i]:Hide()
 		_G["MultiBarBottomRightButton" .. i]:UnregisterAllEvents()
 		_G["MultiBarBottomRightButton" .. i]:SetAttribute("statehidden", true)
-
+		
 		_G["MultiBarRightButton" .. i]:Hide()
 		_G["MultiBarRightButton" .. i]:UnregisterAllEvents()
 		_G["MultiBarRightButton" .. i]:SetAttribute("statehidden", true)
-
+		
 		_G["MultiBarLeftButton" .. i]:Hide()
 		_G["MultiBarLeftButton" .. i]:UnregisterAllEvents()
 		_G["MultiBarLeftButton" .. i]:SetAttribute("statehidden", true)
-
+		
 		if _G["VehicleMenuBarActionButton" .. i] then
 			_G["VehicleMenuBarActionButton" .. i]:Hide()
 			_G["VehicleMenuBarActionButton" .. i]:UnregisterAllEvents()
@@ -272,14 +272,14 @@ function AB:DisableBlizzard()
 		_G['BonusActionButton'..i]:Hide()
 		_G['BonusActionButton'..i]:UnregisterAllEvents()
 		_G['BonusActionButton'..i]:SetAttribute("statehidden", true)
-
+		
 		if E.myclass ~= 'SHAMAN' then
 			_G['MultiCastActionButton'..i]:Hide()
 			_G['MultiCastActionButton'..i]:UnregisterAllEvents()
 			_G['MultiCastActionButton'..i]:SetAttribute("statehidden", true)
 		end
-
-		for index, button in pairs(ActionBarButtonEventsFrame.frames) do
+		
+		for index, button in pairs(ActionBarButtonEventsFrame.frames) do			
 			if E.myclass ~= 'SHAMAN' and button:GetName():find('MultiCastActionButton') then
 				table.remove(ActionBarButtonEventsFrame.frames, index)
 			elseif button:GetName() ~= "ExtraActionButton1" and not button:GetName():find('MultiCastActionButton') then
@@ -287,14 +287,13 @@ function AB:DisableBlizzard()
 			end
 		end
 	end
-
 	UIPARENT_MANAGED_FRAME_POSITIONS["MainMenuBar"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["ShapeshiftBarFrame"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["PossessBarFrame"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["PETACTIONBAR_YPOS"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["MultiCastActionBarFrame"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["MULTICASTACTIONBAR_YPOS"] = nil
-
+	
 	MainMenuBar:UnregisterAllEvents()
 	MainMenuBar:Hide()
 	MainMenuBar:SetParent(UIHider)
@@ -319,11 +318,11 @@ function AB:DisableBlizzard()
 	PetActionBarFrame:UnregisterAllEvents()
 	PetActionBarFrame:Hide()
 	PetActionBarFrame:SetParent(UIHider)
-
+	
 	VehicleMenuBar:UnregisterAllEvents()
 	VehicleMenuBar:Hide()
 	VehicleMenuBar:SetParent(UIHider)
-
+	
 	if E.myclass ~= 'SHAMAN' then
 		MultiCastActionBarFrame:UnregisterAllEvents()
 		MultiCastActionBarFrame:Hide()
@@ -335,7 +334,7 @@ function AB:DisableBlizzard()
 	else
 		hooksecurefunc("TalentFrame_LoadUI", function() PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED") end)
 	end
-
+	
 	ActionBarButtonEventsFrame:UnregisterAllEvents()
 	ActionBarButtonEventsFrame:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
 	ActionBarButtonEventsFrame:RegisterEvent('UPDATE_EXTRA_ACTIONBAR')
@@ -358,7 +357,7 @@ function AB:UpdateButtonConfig(bar, buttonName)
 		button:SetAttribute("buttonlock", GetCVar('lockActionBars') == '1' and true or false)
 		button:SetAttribute("checkselfcast", true)
 		button:SetAttribute("checkfocuscast", true)
-
+		
 		button:UpdateConfig(bar.buttonConfig)
 	end
 end
@@ -366,7 +365,7 @@ end
 function AB:FixKeybindText(button)
 	local hotkey = _G[button:GetName()..'HotKey'];
 	local text = hotkey:GetText();
-
+	
 	if text then
 		text = gsub(text, 'SHIFT%-', L['KEY_SHIFT']);
 		text = gsub(text, 'ALT%-', L['KEY_ALT']);
@@ -384,12 +383,12 @@ function AB:FixKeybindText(button)
 		text = gsub(text, 'MOUSEWHEELUP', L['KEY_MOUSEWHEELUP']);
 		text = gsub(text, 'MOUSEWHEELDOWN', L['KEY_MOUSEWHEELDOWN']);
 		text = gsub(text, 'NMULTIPLY', "*");
-
+		
 		hotkey:SetText(text);
 	end
-
+	
 	hotkey:ClearAllPoints()
-	hotkey:Point("TOPRIGHT", 0, -3);
+	hotkey:Point("TOPRIGHT", 0, -3);  
 end
 
 function AB:ToggleMovers(move)
@@ -416,14 +415,14 @@ function AB:ResetMovers(...)
 		if bar == '' then
 			mover:ClearAllPoints()
 			mover:Point(self.movers[name]["p"], self.movers[name]["p2"], self.movers[name]["p3"], self.movers[name]["p4"], self.movers[name]["p5"])
-
+			
 			if self.db[name] then
-				self.db[name]['position'] = nil
+				self.db[name]['position'] = nil		
 			end
 		elseif bar == mover.textString then
 			mover:ClearAllPoints()
 			mover:Point(self.movers[name]["p"], self.movers[name]["p2"], self.movers[name]["p3"], self.movers[name]["p4"], self.movers[name]["p5"])
-
+			
 			if self.db[name] then
 				self.db[name]['position'] = nil
 			end
@@ -440,8 +439,8 @@ function AB:SetMoverPositions()
 			f:SetPoint(self.db[name]["position"].p, UIParent, self.db[name]["position"].p2, self.db[name]["position"].p3, self.db[name]["position"].p4)
 		elseif f then
 			f:ClearAllPoints()
-			f:Point(self.movers[name]["p"], self.movers[name]["p2"], self.movers[name]["p3"], self.movers[name]["p4"], self.movers[name]["p5"])
-		end
+			f:Point(self.movers[name]["p"], self.movers[name]["p2"], self.movers[name]["p3"], self.movers[name]["p4"], self.movers[name]["p5"])		
+		end	
 	end
 end
 
@@ -451,11 +450,11 @@ function AB:CreateMover(bar, text, name, padding)
 	local mover = CreateFrame('Button', nil, E.UIParent)
 	mover:SetSize(bar:GetSize())
 	mover:SetFrameStrata('HIGH')
-	mover:SetTemplate('Default', true)
+	mover:SetTemplate('Default', true)	
 	mover.name = name
 	tinsert(E['snapBars'], mover)
-
-	if self.movers[name] == nil then
+	
+	if self.movers[name] == nil then 
 		self.movers[name] = {}
 		self.movers[name]["bar"] = mover
 		self.movers[name]["p"] = p
@@ -463,17 +462,17 @@ function AB:CreateMover(bar, text, name, padding)
 		self.movers[name]["p3"] = p3
 		self.movers[name]["p4"] = p4
 		self.movers[name]["p5"] = p5
-	end
+	end	
 
 	if self.db and self.db[name] and self.db[name]["position"] then
 		mover:SetPoint(self.db[name]["position"].p, UIParent, self.db[name]["position"].p2, self.db[name]["position"].p3, self.db[name]["position"].p4)
 	else
 		mover:SetPoint(p, p2, p3, p4, p5)
 	end
-
+	
 	mover.padding = padding
 	mover:RegisterForDrag("LeftButton", "RightButton")
-	mover:SetScript("OnDragStart", function(self)
+	mover:SetScript("OnDragStart", function(self) 
 		if InCombatLockdown() then E:Print(ERR_NOT_IN_COMBAT) return end
 		if E.db.general.stickyFrames then
 			local offset = AB.db[name].buttonspacing/2
@@ -484,29 +483,29 @@ function AB:CreateMover(bar, text, name, padding)
 		end
 	end)
 
-	mover:SetScript("OnDragStop", function(frame)
+	mover:SetScript("OnDragStop", function(frame) 
 		if InCombatLockdown() then E:Print(ERR_NOT_IN_COMBAT) return end
 		if E.db.general.stickyFrames then
 			Sticky:StopMoving(frame)
 		else
 			frame:StopMovingOrSizing()
 		end
-
+		
 		if self.db[name] == nil then self.db[name] = {} end
 		if self.db[name]['position'] == nil then self.db[name]['position'] = {} end
-
+		
 		self.db[name]['position'] = {}
-
+		
 		local p, _, p2, p3, p4 = frame:GetPoint()
 		self.db[name]['position']["p"] = p
 		self.db[name]['position']["p2"] = p2
 		self.db[name]['position']["p3"] = p3
 		self.db[name]['position']["p4"] = p4
 		AB:UpdateButtonSettings()
-
+		
 		frame:SetUserPlaced(false)
-	end)
-
+	end)	
+	
 	bar:ClearAllPoints()
 	bar:SetPoint(p3, mover, p3, 0, 0)
 
@@ -519,8 +518,8 @@ function AB:CreateMover(bar, text, name, padding)
 	mover:SetFontString(fs)
 	mover.text = fs
 	mover.textString = text
-
-	mover:SetScript("OnEnter", function(self)
+	
+	mover:SetScript("OnEnter", function(self) 
 		self.text:SetTextColor(1, 1, 1)
 		self:SetBackdropBorderColor(unpack(E["media"].rgbvaluecolor))
 	end)
@@ -528,16 +527,16 @@ function AB:CreateMover(bar, text, name, padding)
 		self.text:SetTextColor(unpack(E["media"].rgbvaluecolor))
 		self:SetTemplate("Default", true)
 	end)
-
+	
 	mover:RegisterEvent('PLAYER_REGEN_DISABLED')
 	mover:SetScript('OnEvent', function(self)
 		if self:IsShown() then
 			self:Hide()
 		end
 	end)
-
+	
 	mover:SetMovable(true)
-	mover:Hide()
+	mover:Hide()	
 	bar.mover = mover
 end
 
@@ -553,7 +552,7 @@ local function SetupFlyoutButton()
 				local parent = self:GetParent()
 				local parentAnchorButton = select(2, parent:GetPoint())
 				if not AB["handledbuttons"][parentAnchorButton] then return end
-
+				
 				local parentAnchorBar = parentAnchorButton:GetParent()
 				if parentAnchorBar.mouseover then
 					AB:Bar_OnEnter(parentAnchorBar)
@@ -563,35 +562,35 @@ local function SetupFlyoutButton()
 				local parent = self:GetParent()
 				local parentAnchorButton = select(2, parent:GetPoint())
 				if not AB["handledbuttons"][parentAnchorButton] then return end
-
+				
 				local parentAnchorBar = parentAnchorButton:GetParent()
-
+				
 				if parentAnchorBar.mouseover then
-					AB:Bar_OnLeave(parentAnchorBar)
+					AB:Bar_OnLeave(parentAnchorBar)	
 				end
 			end)
 		end
 	end
-
+	
 	SpellFlyout:HookScript('OnEnter', function(self)
 		local anchorButton = select(2, self:GetPoint())
 		if not AB["handledbuttons"][anchorButton] then return end
-
+		
 		local parentAnchorBar = anchorButton:GetParent()
 		if parentAnchorBar.mouseover then
 			AB:Bar_OnEnter(parentAnchorBar)
 		end
 	end)
-
+	
 	SpellFlyout:HookScript('OnLeave', function(self)
 		local anchorButton = select(2, self:GetPoint())
 		if not AB["handledbuttons"][anchorButton] then return end
-
+		
 		local parentAnchorBar = anchorButton:GetParent()
 		if parentAnchorBar.mouseover then
-			AB:Bar_OnLeave(parentAnchorBar)
+			AB:Bar_OnLeave(parentAnchorBar)	
 		end
-	end)
+	end)	
 end
 SpellFlyout:HookScript("OnShow", SetupFlyoutButton)
 
@@ -603,11 +602,11 @@ function AB:StyleFlyout(button)
 
 	button.FlyoutBorder:SetAlpha(0)
 	button.FlyoutBorderShadow:SetAlpha(0)
-
+	
 	SpellFlyoutHorizontalBackground:SetAlpha(0)
 	SpellFlyoutVerticalBackground:SetAlpha(0)
 	SpellFlyoutBackgroundEnd:SetAlpha(0)
-
+	
 	for i=1, GetNumFlyouts() do
 		local x = GetFlyoutID(i)
 		local _, _, numSlots, isKnown = GetFlyoutInfo(x)
@@ -616,7 +615,7 @@ function AB:StyleFlyout(button)
 			break
 		end
 	end
-
+	
 	--Change arrow direction depending on what bar the button is on
 	local arrowDistance
 	if ((SpellFlyout:IsShown() and SpellFlyout:GetParent() == button) or GetMouseFocus() == button) then
@@ -625,29 +624,29 @@ function AB:StyleFlyout(button)
 		arrowDistance = 2
 	end
 
-	if button:GetParent() and button:GetParent():GetParent() and button:GetParent():GetParent():GetName() and button:GetParent():GetParent():GetName() == "SpellBookSpellIconsFrame" then
-		return
+	if button:GetParent() and button:GetParent():GetParent() and button:GetParent():GetParent():GetName() and button:GetParent():GetParent():GetName() == "SpellBookSpellIconsFrame" then 
+		return 
 	end
 
 	if button:GetParent() then
 		local point = E:GetScreenQuadrant(button:GetParent())
 		if point == "UNKNOWN" then return end
-
+		
 		if strfind(point, "TOP") then
 			button.FlyoutArrow:ClearAllPoints()
 			button.FlyoutArrow:SetPoint("BOTTOM", button, "BOTTOM", 0, -arrowDistance)
 			SetClampedTextureRotation(button.FlyoutArrow, 180)
-			if not combat then button:SetAttribute("flyoutDirection", "DOWN") end
+			if not combat then button:SetAttribute("flyoutDirection", "DOWN") end			
 		elseif point == "RIGHT" then
 			button.FlyoutArrow:ClearAllPoints()
 			button.FlyoutArrow:SetPoint("LEFT", button, "LEFT", -arrowDistance, 0)
 			SetClampedTextureRotation(button.FlyoutArrow, 270)
-			if not combat then button:SetAttribute("flyoutDirection", "LEFT") end
+			if not combat then button:SetAttribute("flyoutDirection", "LEFT") end		
 		elseif point == "LEFT" then
 			button.FlyoutArrow:ClearAllPoints()
 			button.FlyoutArrow:SetPoint("RIGHT", button, "RIGHT", arrowDistance, 0)
 			SetClampedTextureRotation(button.FlyoutArrow, 90)
-			if not combat then button:SetAttribute("flyoutDirection", "RIGHT") end
+			if not combat then button:SetAttribute("flyoutDirection", "RIGHT") end				
 		elseif point == "CENTER" or strfind(point, "BOTTOM") then
 			button.FlyoutArrow:ClearAllPoints()
 			button.FlyoutArrow:SetPoint("TOP", button, "TOP", 0, arrowDistance)

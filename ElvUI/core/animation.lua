@@ -5,7 +5,7 @@ local E, L, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, ProfileDB,
 
 function E:SetUpAnimGroup(object, type, ...)
 	if not type then type = 'Flash' end
-
+	
 	if type == 'Flash' then
 		object.anim = object:CreateAnimationGroup("Flash")
 		object.anim.fadein = object.anim:CreateAnimation("ALPHA", "FadeIn")
@@ -36,7 +36,7 @@ function E:SetUpAnimGroup(object, type, ...)
 		object[customName].in1:SetOffset(E:Scale(x), E:Scale(y))
 		object[customName].in2:SetOffset(E:Scale(-x), E:Scale(-y))
 		object[customName].out2:SetOffset(E:Scale(x), E:Scale(y))
-		object[customName].out1:SetScript("OnFinished", function() object:Hide() end)
+		object[customName].out1:SetScript("OnFinished", function() object:Hide() end)	
 	end
 end
 
@@ -61,7 +61,7 @@ function E:SlideIn(object, customName)
 		customName = 'anim'
 	end
 	if not object[customName] then return end
-
+	
 	object[customName].out1:Stop()
 	object:Show()
 	object[customName]:Play()
@@ -72,8 +72,8 @@ function E:SlideOut(object, customName)
 		customName = 'anim'
 	end
 	if not object[customName] then return end
-
-	object[customName]:Finish()
+	
+	object[customName]:Finish() 
 	object[customName]:Stop()
 	object[customName].out1:Play()
 end
@@ -93,7 +93,7 @@ function E:UIFrameFade_OnUpdate(elapsed)
 		end
 		fadeInfo.fadeTimer = fadeInfo.fadeTimer + elapsed;
 
-		-- If the fadeTimer is less then the desired fade time then set the alpha otherwise hold the fade state, call the finished function, or just finish the fade
+		-- If the fadeTimer is less then the desired fade time then set the alpha otherwise hold the fade state, call the finished function, or just finish the fade 
 		if ( fadeInfo.fadeTimer < fadeInfo.timeToFade ) then
 			if ( fadeInfo.mode == "IN" ) then
 				frame:SetAlpha((fadeInfo.fadeTimer / fadeInfo.timeToFade) * (fadeInfo.endAlpha - fadeInfo.startAlpha) + fadeInfo.startAlpha);
@@ -114,10 +114,10 @@ function E:UIFrameFade_OnUpdate(elapsed)
 				end
 			end
 		end
-
+		
 		index = index + 1;
 	end
-
+	
 	if ( #FADEFRAMES == 0 ) then
 		frameFadeManager:SetScript("OnUpdate", nil);
 	end
@@ -155,7 +155,7 @@ function E:UIFrameFade(frame, fadeInfo)
 	if not frame:IsProtected() then
 		frame:Show();
 	end
-
+	
 	local index = 1;
 	while FADEFRAMES[index] do
 		-- If frame is already set to fade then return

@@ -19,13 +19,13 @@ local GameTooltips = {
 }
 
 local linkTypes = {
-	item = true, 
-	enchant = true, 
-	spell = true, 
-	quest = true, 
-	unit = true, 
-	talent = true, 
-	achievement = true, 
+	item = true,
+	enchant = true,
+	spell = true,
+	quest = true,
+	unit = true,
+	talent = true,
+	achievement = true,
 	glyph = true
 }
 
@@ -40,60 +40,60 @@ local gender = { UNKNOWN, MALE, FEMALE }
 
 function TT:SetStatusBarAnchor(pos)
 	GameTooltipStatusBar:ClearAllPoints()
-	
+
 	if pos == 'BOTTOM' then
 		GameTooltipStatusBar:Point("TOPLEFT", GameTooltipStatusBar:GetParent(), "BOTTOMLEFT", 2, -5)
-		GameTooltipStatusBar:Point("TOPRIGHT", GameTooltipStatusBar:GetParent(), "BOTTOMRIGHT", -2, -5)			
-	else	
+		GameTooltipStatusBar:Point("TOPRIGHT", GameTooltipStatusBar:GetParent(), "BOTTOMRIGHT", -2, -5)
+	else
 		GameTooltipStatusBar:Point("BOTTOMLEFT", GameTooltipStatusBar:GetParent(), "TOPLEFT", 2, 5)
-		GameTooltipStatusBar:Point("BOTTOMRIGHT", GameTooltipStatusBar:GetParent(), "TOPRIGHT", -2, 5)			
+		GameTooltipStatusBar:Point("BOTTOMRIGHT", GameTooltipStatusBar:GetParent(), "TOPRIGHT", -2, 5)
 	end
-	
+
 	if not GameTooltipStatusBar.text then return end
 	GameTooltipStatusBar.text:ClearAllPoints()
-	
+
 	if pos == 'BOTTOM' then
 		GameTooltipStatusBar.text:Point("CENTER", GameTooltipStatusBar, 0, -3)
 	else
-		GameTooltipStatusBar.text:Point("CENTER", GameTooltipStatusBar, 0, 3)	
+		GameTooltipStatusBar.text:Point("CENTER", GameTooltipStatusBar, 0, 3)
 	end
 end
 
 function TT:GameTooltip_SetDefaultAnchor(tt, parent)
 	if self.db.anchor == 'CURSOR' then
-		tt:SetOwner(parent, "ANCHOR_CURSOR")	
-		
+		tt:SetOwner(parent, "ANCHOR_CURSOR")
+
 		if InCombatLockdown() and E.db.tooltip.combathide then
 			tt:Hide()
-		else		
+		else
 			TT:SetStatusBarAnchor('TOP')
 		end
 	elseif self.db.anchor == 'SMART' then
 		tt:SetOwner(parent, "ANCHOR_NONE")
-		
+
 		if InCombatLockdown() and E.db.tooltip.combathide then
 			tt:Hide()
 		else
 			tt:ClearAllPoints()
-			
+
 			if BagsFrame and BagsFrame:IsShown() then
-				tt:Point('BOTTOMRIGHT', BagsFrame, 'TOPRIGHT', 0, 18)	
+				tt:Point('BOTTOMRIGHT', BagsFrame, 'TOPRIGHT', 0, 18)
 			elseif RightChatPanel:GetAlpha() == 1 then
-				tt:Point('BOTTOMRIGHT', RightChatPanel, 'TOPRIGHT', 0, 18)		
+				tt:Point('BOTTOMRIGHT', RightChatPanel, 'TOPRIGHT', 0, 18)
 			else
 				tt:Point('BOTTOMRIGHT', RightChatPanel, 'BOTTOMRIGHT', 0, 18)
 			end
-			
+
 			TT:SetStatusBarAnchor('BOTTOM')
 		end
 	else
 		tt:SetOwner(parent, "ANCHOR_NONE")
-		
+
 		if InCombatLockdown() and E.db.tooltip.combathide then
 			tt:Hide()
 		else
 			tt:ClearAllPoints()
-			
+
 			local point = E:GetScreenQuadrant(TooltipMover)
 			if point == "TOPLEFT" then
 				tt:Point("TOPLEFT", TooltipMover, "BOTTOMLEFT", 1, -4)
@@ -103,10 +103,10 @@ function TT:GameTooltip_SetDefaultAnchor(tt, parent)
 				tt:Point("BOTTOMLEFT", TooltipMover, "TOPLEFT", 1, 18)
 			else
 				tt:Point("BOTTOMRIGHT", TooltipMover, "TOPRIGHT", -1, 18)
-			end			
-			
+			end
+
 			TT:SetStatusBarAnchor('BOTTOM')
-		end	
+		end
 	end
 end
 
@@ -118,7 +118,7 @@ function TT:GameTooltip_ShowCompareItem(tt, shift)
 	if ( not link ) then
 		return;
 	end
-	
+
 	local shoppingTooltip1, shoppingTooltip2, shoppingTooltip3 = unpack(tt.shoppingTooltips);
 
 	local item1 = nil;
@@ -186,7 +186,7 @@ function TT:GameTooltip_ShowCompareItem(tt, shift)
 		shoppingTooltip3:SetHyperlinkCompareItem(link, 3, shift, tt);
 		shoppingTooltip3:Show();
 	end
-	
+
 	if ( item1 ) then
 		if( item3 ) then
 			shoppingTooltip1:SetOwner(shoppingTooltip3, "ANCHOR_NONE");
@@ -227,7 +227,7 @@ end
 function TT:Colorize(tt)
 	local GMF = GetMouseFocus()
 	local unit = (select(2, tt:GetUnit())) or (GMF and GMF:GetAttribute("unit"))
-	
+
 	local reaction = unit and UnitReaction(unit, "player")
 	local player = unit and UnitIsPlayer(unit)
 	local tapped = unit and UnitIsTapped(unit)
@@ -263,10 +263,10 @@ function TT:Colorize(tt)
 		else
 			tt:SetBackdropBorderColor(unpack(E["media"].bordercolor))
 			GameTooltipStatusBar.backdrop:SetBackdropBorderColor(unpack(E["media"].bordercolor))
-			GameTooltipStatusBar:ColorBar(unpack(E["media"].bordercolor))	
+			GameTooltipStatusBar:ColorBar(unpack(E["media"].bordercolor))
 		end
-	end	
-	
+	end
+
 	tt.needRefresh = true
 end
 
@@ -275,7 +275,7 @@ function TT:SetStyle(tt)
 		tt:SetTemplate("Transparent")
 		tt:SetClampedToScreen(true)
 	end
-	
+
 	tt:SetBackdropBorderColor(unpack(E.media.bordercolor))
 	tt:SetBackdropColor(unpack(E.media.backdropfadecolor))
 	self:Colorize(tt)
@@ -287,19 +287,19 @@ function TT:ADDON_LOADED(event, addon)
 		FrameStackTooltip:HookScript("OnShow", function(self)
 			local noscalemult = E.mult * GetCVar('uiScale')
 			self:SetBackdrop({
-			  bgFile = E["media"].blankTex, 
-			  edgeFile = E["media"].blankTex, 
-			  tile = false, tileSize = 0, edgeSize = noscalemult, 
+			  bgFile = E["media"].blankTex,
+			  edgeFile = E["media"].blankTex,
+			  tile = false, tileSize = 0, edgeSize = noscalemult,
 			  insets = { left = -noscalemult, right = -noscalemult, top = -noscalemult, bottom = -noscalemult}
 			})
 			self:SetBackdropColor(unpack(E["media"].backdropfadecolor))
 			self:SetBackdropBorderColor(unpack(E["media"].bordercolor))
 		end)
-		
+
 		EventTraceTooltip:HookScript("OnShow", function(self)
 			self:SetTemplate("Transparent")
-		end)		
-		
+		end)
+
 		self.debugloaded = true
 		self:UnregisterEvent('ADDON_LOADED')
 	end
@@ -310,14 +310,14 @@ function TT:PLAYER_ENTERING_WORLD()
 		for _, tt in pairs(GameTooltips) do
 			self:HookScript(tt, 'OnShow', 'SetStyle')
 		end
-		
+
 		self:HookScript(ItemRefTooltip, "OnTooltipSetItem", 'SetStyle')
 		FriendsTooltip:SetTemplate("Transparent")
-		
+
 		if IsAddOnLoaded('Blizzard_DebugTools') and not self.debugloaded then
 			self:ADDON_LOADED('ADDON_LOADED', 'Blizzard_DebugTools')
 		end
-		
+
 		self.initialhook = true
 	end
 end
@@ -373,7 +373,7 @@ function TT:GetItemLvL(unit)
 	if (total < 1 or item < 1) then
 		return 0
 	end
-	
+
 	return floor(total / item);
 end
 
@@ -387,7 +387,7 @@ function TT:GetColor(unit)
 	else
 		local color = FACTION_BAR_COLORS[UnitReaction(unit, "player")]
 		if not color then return end
-		return E:RGBToHex(color.r, color.g, color.b)	
+		return E:RGBToHex(color.r, color.g, color.b)
 	end
 end
 
@@ -396,7 +396,7 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 	local GMF = GetMouseFocus()
 	local unit = (select(2, tt:GetUnit())) or (GMF and GMF:GetAttribute("unit"))
 	local owner = tt:GetOwner()
-	
+
 	if (not unit) and (UnitExists("mouseover")) then
 		unit = "mouseover"
 	end
@@ -404,7 +404,7 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 	if not unit then tt:Hide() return end
 
 	if (owner ~= UIParent) and E.db.tooltip.ufhide then tt:Hide() return end
-	
+
 	if (UnitIsUnit(unit,"mouseover")) then
 		unit = "mouseover"
 	end
@@ -421,14 +421,14 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 
 	local r, g, b = GetQuestDifficultyColor(level).r, GetQuestDifficultyColor(level).g, GetQuestDifficultyColor(level).b
 
-	local color = TT:GetColor(unit)	
+	local color = TT:GetColor(unit)
 	if not color then color = "|CFFFFFFFF" end
 	GameTooltipTextLeft1:SetFormattedText("%s%s%s", color, title or name, realm and realm ~= "" and " - "..realm.."|r" or "|r")
-	
+
 	if(UnitIsPlayer(unit)) then
 		if UnitIsAFK(unit) then
 			tt:AppendText((" %s"):format("[|cffFF0000"..L['AFK'].."|r]"))
-		elseif UnitIsDND(unit) then 
+		elseif UnitIsDND(unit) then
 			tt:AppendText((" %s"):format("[|cffE7E716"..L["DND"].."|r]"))
 		end
 
@@ -443,14 +443,14 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 		end
 
 		for i= offset, lines do
-			
+
 			if _G["GameTooltipTextLeft"..i] and _G["GameTooltipTextLeft"..i]:GetText() and (_G["GameTooltipTextLeft"..i]:GetText():find("^"..LEVEL)) then
 				_G["GameTooltipTextLeft"..i]:SetFormattedText("|cff%02x%02x%02x%s|r %s %s %s%s", r*255, g*255, b*255, level > 0 and level or "??", gender[sex], race, color, class.."|r")
 				break
 			end
 		end
 	else
-		for i = 2, lines do			
+		for i = 2, lines do
 			if _G["GameTooltipTextLeft"..i] and _G["GameTooltipTextLeft"..i]:GetText() and ((_G["GameTooltipTextLeft"..i]:GetText():find("^"..LEVEL)) or (crtype and _G["GameTooltipTextLeft"..i]:GetText():find("^"..crtype))) then
 				_G["GameTooltipTextLeft"..i]:SetFormattedText("|cff%02x%02x%02x%s|r%s %s", r*255, g*255, b*255, classif ~= "worldboss" and level > 0 and level or "?? ", classification[classif] or "", crtype or "")
 				break
@@ -465,22 +465,22 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 			break
 		end
 	end
-	
+
 	if IsShiftKeyDown() and (unit and CanInspect(unit)) then
 		local isInspectOpen = (InspectFrame and InspectFrame:IsShown()) or (Examiner and Examiner:IsShown())
 		if ((unit) and (CanInspect(unit)) and (not isInspectOpen)) then
 			NotifyInspect(unit)
-			
+
 			local ilvl = TT:GetItemLvL(unit)
-			
+
 			ClearInspectPlayer(unit)
-			
+
 			if ilvl > 1 then
 				GameTooltip:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL..":", "|cffFFFFFF"..ilvl.."|r")
 				GameTooltip:Show()
 			end
 		end
-	end	
+	end
 
 	-- ToT line
 	if UnitExists(unit.."target") and unit~="player" then
@@ -488,7 +488,7 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 		if not hex then hex = "|cffFFFFFF" end
 		GameTooltip:AddDoubleLine(TARGET..":", hex..UnitName(unit.."target").."|r")
 	end
-	
+
 	if E.db.tooltip.whostarget then token = unit TT:AddTargetedBy() end
 	GameTooltip.forceRefresh = true
 end
@@ -496,12 +496,12 @@ end
 function TT:GameTooltipStatusBar_OnValueChanged(tt, value)
 	if not value then return end
 	local min, max = tt:GetMinMaxValues()
-	
+
 	if (value < min) or (value > max) then
 		return
 	end
 	local _, unit = GameTooltip:GetUnit()
-	
+
 	-- fix target of target returning nil
 	if (not unit) then
 		local GMF = GetMouseFocus()
@@ -546,20 +546,20 @@ function TT:GameTooltip_OnTooltipSetItem(tt)
 		local num = GetItemCount(link)
 		local left = ""
 		local right = ""
-		
+
 		if link ~= nil then
 			left = "|cFFCA3C3C"..ID.."|r "..link:match(":(%w+)")
 		end
-		
+
 		if num > 1  then
 			right = "|cFFCA3C3C"..L['Count'].."|r "..num
 		end
-		
+
 		if left ~= "" or right ~= "" then
 			tt:AddLine(" ")
 			tt:AddDoubleLine(left, right)
 		end
-		
+
 		tt.itemcleared = true
 	end
 end
@@ -584,12 +584,12 @@ function TT:Initialize()
 	GameTooltipStatusBar.text = GameTooltipStatusBar:CreateFontString(nil, "OVERLAY")
 	GameTooltipStatusBar.text:Point("CENTER", GameTooltipStatusBar, 0, -3)
 	GameTooltipStatusBar.text:FontTemplate(nil, nil, 'OUTLINE')
-	
+
 	local GameTooltipAnchor = CreateFrame('Frame', 'GameTooltipAnchor', E.UIParent)
 	GameTooltipAnchor:Point('BOTTOMRIGHT', RightChatToggleButton, 'BOTTOMRIGHT')
 	GameTooltipAnchor:Size(130, 20)
 	E:CreateMover(GameTooltipAnchor, 'TooltipMover', 'Tooltip')
-	
+
 	self:RegisterEvent('PLAYER_ENTERING_WORLD')
 	self:RegisterEvent('ADDON_LOADED')
 	self:SecureHook('GameTooltip_SetDefaultAnchor')
@@ -645,11 +645,11 @@ function TT:Initialize()
 			self.forceRefresh = true;
 		end
 	end)
-	
+
 	BNToastFrame:Point('TOPRIGHT', MMHolder, 'BOTTOMRIGHT', 0, -10);
 	E:CreateMover(BNToastFrame, 'BNETMover', 'BNet Frame')
 	BNToastFrame.SetPoint = E.noop
-	BNToastFrame.ClearAllPoints = E.noop	
+	BNToastFrame.ClearAllPoints = E.noop
 end
 
 E:RegisterModule(TT:GetName())

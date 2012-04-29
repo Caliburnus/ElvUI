@@ -12,13 +12,13 @@ local function UpdateFilterGroup()
 		local buffs = {};
 		for _, value in pairs(E.global.unitframe.buffwatch[E.myclass]) do
 			tinsert(buffs, value);
-		end
-
+		end		
+		
 		if not E.global.unitframe.buffwatch[E.myclass] then
 			E.global.unitframe.buffwatch[E.myclass] = {};
-		end
+		end		
 
-
+		
 		E.Options.args.unitframe.args.filters.args.filterGroup = {
 			type = 'group',
 			name = selectedFilter,
@@ -32,7 +32,7 @@ local function UpdateFilterGroup()
 					desc = L['Add a spell to the filter.'],
 					type = 'input',
 					get = function(info) return "" end,
-					set = function(info, value)
+					set = function(info, value) 
 						if not GetSpellInfo(value) then
 							E:Print(L["Not valid spell id"])
 						else
@@ -41,7 +41,7 @@ local function UpdateFilterGroup()
 							UF:Update_AllFrames();
 							selectedSpell = nil;
 						end
-					end,
+					end,					
 				},
 				removeSpellID = {
 					order = 2,
@@ -49,7 +49,7 @@ local function UpdateFilterGroup()
 					desc = L['Remove a spell from the filter.'],
 					type = 'input',
 					get = function(info) return "" end,
-					set = function(info, value)
+					set = function(info, value) 
 						if not GetSpellInfo(value) then
 							E:Print(L["Not valid spell id"])
 						else
@@ -63,14 +63,14 @@ local function UpdateFilterGroup()
 							if match == nil then
 								E:Print(L["Spell not found in list."])
 							else
-								UpdateFilterGroup()
-							end
-						end
-
+								UpdateFilterGroup()							
+							end									
+						end		
+						
 						selectedSpell = nil;
 						UpdateFilterGroup();
 						UF:Update_AllFrames();
-					end,
+					end,				
 				},
 				selectSpell = {
 					name = L["Select Spell"],
@@ -81,8 +81,8 @@ local function UpdateFilterGroup()
 						buffs = {};
 						for _, value in pairs(E.global.unitframe.buffwatch[E.myclass]) do
 							tinsert(buffs, value);
-						end
-
+						end			
+						
 						for _, spell in pairs(buffs) do
 							local name = GetSpellInfo(spell.id)
 							values[spell.id] = name;
@@ -90,14 +90,14 @@ local function UpdateFilterGroup()
 						return values
 					end,
 					get = function(info) return selectedSpell end,
-					set = function(info, value)
+					set = function(info, value) 
 						selectedSpell = value;
 						UpdateFilterGroup()
 					end,
-				},
+				},				
 			},
 		}
-
+		
 		local tableIndex
 		for i, spell in pairs(E.global.unitframe.buffwatch[E.myclass]) do
 			if spell.id == selectedSpell then
@@ -145,29 +145,29 @@ local function UpdateFilterGroup()
 							local t = E.global.unitframe.buffwatch[E.myclass][tableIndex][ info[#info] ]
 							t.r, t.g, t.b = r, g, b
 							UF:Update_AllFrames()
-						end,
+						end,						
 					},
 					anyUnit = {
 						name = L['Any Unit'],
 						order = 4,
-						type = 'toggle',
+						type = 'toggle',					
 					},
 					onlyShowMissing = {
 						name = L['Show Missing'],
 						order = 5,
-						type = 'toggle',
+						type = 'toggle',						
 					},
-				},
+				},			
 			}
 		end
-
+	
 		buffs = nil;
 	else
 		if not selectedFilter or not E.global.unitframe['aurafilters'][selectedFilter] then
 			E.Options.args.unitframe.args.filters.args.filterGroup = nil
 			return
 		end
-
+	
 		E.Options.args.unitframe.args.filters.args.filterGroup = {
 			type = 'group',
 			name = selectedFilter,
@@ -180,11 +180,11 @@ local function UpdateFilterGroup()
 					desc = L['Add a spell to the filter.'],
 					type = 'input',
 					get = function(info) return "" end,
-					set = function(info, value)
+					set = function(info, value) 
 						E.global.unitframe['aurafilters'][selectedFilter]['spells'][value] = true;
 						UpdateFilterGroup();
 						UF:Update_AllFrames();
-					end,
+					end,					
 				},
 				removeSpell = {
 					order = 1,
@@ -192,7 +192,7 @@ local function UpdateFilterGroup()
 					desc = L['Remove a spell from the filter.'],
 					type = 'input',
 					get = function(info) return "" end,
-					set = function(info, value)
+					set = function(info, value) 
 						if G['unitframe']['aurafilters'][selectedFilter] then
 							if G['unitframe']['aurafilters'][selectedFilter]['spells'][value] then
 								E.global.unitframe['aurafilters'][selectedFilter]['spells'][value] = false;
@@ -203,17 +203,17 @@ local function UpdateFilterGroup()
 						else
 							E.global.unitframe['aurafilters'][selectedFilter]['spells'][value] = nil;
 						end
-
+						
 						UpdateFilterGroup();
 						UF:Update_AllFrames();
-					end,
+					end,				
 				},
 				spacer = {
 					order = 3,
 					type = "description",
 					name = "",
 					width = 'full',
-				},
+				},			
 				filterType = {
 					order = 4,
 					name = L['Filter Type'],
@@ -225,16 +225,16 @@ local function UpdateFilterGroup()
 					},
 					get = function() return E.global.unitframe['aurafilters'][selectedFilter].type end,
 					set = function(info, value) E.global.unitframe['aurafilters'][selectedFilter].type = value; UF:Update_AllFrames(); end,
-				},
+				},	
 				spellGroup = {
 					name = SPELLS,
 					type = 'group',
 					guiInline = true,
 					args = {},
 				},
-			},
+			},	
 		}
-
+		
 
 		for spell, value in pairs(E.global.unitframe['aurafilters'][selectedFilter]['spells']) do
 			E.Options.args.unitframe.args.filters.args.filterGroup.args.spellGroup.args[spell] = {
@@ -327,7 +327,7 @@ E.Options.args.unitframe = {
 							type = 'toggle',
 							order = 2,
 							name = L['Smooth Bars'],
-							desc = L['Bars will transition smoothly.'],
+							desc = L['Bars will transition smoothly.'],	
 							set = function(info, value) E.db.unitframe[ info[#info] ] = value; UF:Update_AllFrames(); end,
 						},
 						statusbar = {
@@ -335,9 +335,9 @@ E.Options.args.unitframe = {
 							order = 3,
 							name = L["StatusBar Texture"],
 							desc = L["Main statusbar texture."],
-							values = AceGUIWidgetLSMlists.statusbar,
+							values = AceGUIWidgetLSMlists.statusbar,			
 							set = function(info, value) E.db.unitframe[ info[#info] ] = value; UF:Update_StatusBars() end,
-						},
+						},	
 					},
 				},
 				fontGroup = {
@@ -361,7 +361,7 @@ E.Options.args.unitframe = {
 							type = "range",
 							min = 6, max = 22, step = 1,
 							set = function(info, value) E.db.unitframe[ info[#info] ] = value; UF:Update_FontStrings() end,
-						},
+						},	
 						fontoutline = {
 							order = 6,
 							name = L["Font Outline"],
@@ -374,7 +374,7 @@ E.Options.args.unitframe = {
 								['THICKOUTLINE'] = 'THICKOUTLINE',
 							},
 							set = function(info, value) E.db.unitframe[ info[#info] ] = value; UF:Update_FontStrings() end,
-						},
+						},	
 					},
 				},
 				allColorsGroup = {
@@ -383,7 +383,7 @@ E.Options.args.unitframe = {
 					guiInline = true,
 					name = L['Colors'],
 					get = function(info) return E.db.unitframe.colors[ info[#info] ] end,
-					set = function(info, value) E.db.unitframe.colors[ info[#info] ] = value; UF:Update_AllFrames() end,
+					set = function(info, value) E.db.unitframe.colors[ info[#info] ] = value; UF:Update_AllFrames() end,					
 					args = {
 						healthclass = {
 							order = 1,
@@ -396,18 +396,18 @@ E.Options.args.unitframe = {
 							type = 'toggle',
 							name = L['Class Power'],
 							desc = L['Color power by classcolor or reaction.'],
-						},
+						},		
 						colorhealthbyvalue = {
 							order = 3,
 							type = 'toggle',
 							name = L['Health By Value'],
-							desc = L['Color health by ammount remaining.'],
+							desc = L['Color health by ammount remaining.'],				
 						},
 						customhealthbackdrop = {
 							order = 4,
 							type = 'toggle',
 							name = L['Custom Health Backdrop'],
-							desc = L['Use the custom health backdrop color instead of a multiple of the main health color.'],
+							desc = L['Use the custom health backdrop color instead of a multiple of the main health color.'],						
 						},
 						classbackdrop = {
 							order = 5,
@@ -420,7 +420,7 @@ E.Options.args.unitframe = {
 							type = 'toggle',
 							name = L['Class Names'],
 							desc = L['Color the name text by class or reaction.'],
-						},
+						},						
 						colorsGroup = {
 							order = 7,
 							type = 'group',
@@ -446,7 +446,7 @@ E.Options.args.unitframe = {
 									order = 2,
 									type = 'color',
 									name = L['Health Backdrop'],
-								},
+								},			
 								tapped = {
 									order = 3,
 									type = 'color',
@@ -456,7 +456,7 @@ E.Options.args.unitframe = {
 									order = 4,
 									type = 'color',
 									name = L['Disconnected'],
-								},
+								},	
 							},
 						},
 						powerGroup = {
@@ -473,7 +473,7 @@ E.Options.args.unitframe = {
 								local t = E.db.unitframe.colors.power[ info[#info] ]
 								t.r, t.g, t.b = r, g, b
 								UF:Update_AllFrames()
-							end,
+							end,	
 							args = {
 								MANA = {
 									order = 1,
@@ -484,22 +484,22 @@ E.Options.args.unitframe = {
 									order = 2,
 									name = RAGE,
 									type = 'color',
-								},
+								},	
 								FOCUS = {
 									order = 3,
 									name = FOCUS,
 									type = 'color',
-								},
+								},	
 								ENERGY = {
 									order = 4,
 									name = ENERGY,
 									type = 'color',
-								},
+								},		
 								RUNIC_POWER = {
 									order = 5,
 									name = RUNIC_POWER,
 									type = 'color',
-								},
+								},									
 							},
 						},
 						reactionGroup = {
@@ -516,25 +516,25 @@ E.Options.args.unitframe = {
 								local t = E.db.unitframe.colors.reaction[ info[#info] ]
 								t.r, t.g, t.b = r, g, b
 								UF:Update_AllFrames()
-							end,
+							end,	
 							args = {
 								BAD = {
 									order = 1,
 									name = L['Bad'],
 									type = 'color',
-								},
+								},	
 								NEUTRAL = {
 									order = 2,
 									name = L['Neutral'],
 									type = 'color',
-								},
+								},	
 								GOOD = {
 									order = 3,
 									name = L['Good'],
 									type = 'color',
-								},
+								},									
 							},
-						},
+						},						
 					},
 				},
 			},
@@ -550,10 +550,10 @@ E.Options.args.unitframe = {
 					desc = L['Create a filter, once created a filter can be set inside the buffs/debuffs section of each unit.'],
 					type = 'input',
 					get = function(info) return "" end,
-					set = function(info, value)
+					set = function(info, value) 
 						E.global.unitframe['aurafilters'][value] = {};
 						E.global.unitframe['aurafilters'][value]['spells'] = {};
-					end,
+					end,					
 				},
 				deleteFilter = {
 					type = 'input',
@@ -561,7 +561,7 @@ E.Options.args.unitframe = {
 					name = L['Delete Filter'],
 					desc = L['Delete a created filter, you cannot delete pre-existing filters, only custom ones.'],
 					get = function(info) return "" end,
-					set = function(info, value)
+					set = function(info, value) 
 						if G['unitframe']['aurafilters'][value] then
 							E:Print(L["You can't remove a pre-existing filter."])
 						else
@@ -569,21 +569,21 @@ E.Options.args.unitframe = {
 							selectedFilter = nil;
 							E.Options.args.unitframe.args.filters.args.filterGroup = nil;
 						end
-					end,
+					end,				
 				},
 				selectFilter = {
 					order = 3,
 					type = 'select',
 					name = L['Select Filter'],
 					get = function(info) return selectedFilter end,
-					set = function(info, value) selectedFilter = value; UpdateFilterGroup() end,
+					set = function(info, value) selectedFilter = value; UpdateFilterGroup() end,							
 					values = function()
 						filters = {}
 						filters[''] = ''
 						for filter in pairs(E.global.unitframe['aurafilters']) do
 							filters[filter] = filter
 						end
-
+						
 						filters['Buff Indicator'] = L['Buff Indicator']
 						return filters
 					end,
@@ -675,12 +675,12 @@ E.Options.args.unitframe.args.player = {
 			name = L['Width'],
 			type = 'range',
 			min = 50, max = 500, step = 1,
-			set = function(info, value)
+			set = function(info, value) 
 				if E.db.unitframe.units['player'].castbar.width == E.db.unitframe.units['player'][ info[#info] ] then
 					E.db.unitframe.units['player'].castbar.width = value;
 				end
-
-				E.db.unitframe.units['player'][ info[#info] ] = value;
+				
+				E.db.unitframe.units['player'][ info[#info] ] = value; 
 				UF:CreateAndUpdateUF('player');
 			end,
 		},
@@ -689,7 +689,7 @@ E.Options.args.unitframe.args.player = {
 			name = L['Height'],
 			type = 'range',
 			min = 10, max = 250, step = 1,
-		},
+		},	
 		lowmana = {
 			order = 6,
 			name = L['Low Mana Threshold'],
@@ -753,7 +753,7 @@ E.Options.args.unitframe.args.player = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -795,9 +795,9 @@ E.Options.args.unitframe.args.player = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},		
 			},
-		},
+		},	
 		altpower = {
 			order = 300,
 			type = 'group',
@@ -823,7 +823,7 @@ E.Options.args.unitframe.args.player = {
 					min = 5, max = 100, step = 1,
 				},
 			},
-		},
+		},	
 		name = {
 			order = 400,
 			type = 'group',
@@ -841,7 +841,7 @@ E.Options.args.unitframe.args.player = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		portrait = {
@@ -876,7 +876,7 @@ E.Options.args.unitframe.args.player = {
 					min = 0.01, max = 4, step = 0.01,
 				},
 			},
-		},
+		},	
 		buffs = {
 			order = 600,
 			type = 'group',
@@ -899,7 +899,7 @@ E.Options.args.unitframe.args.player = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -920,14 +920,14 @@ E.Options.args.unitframe.args.player = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -943,14 +943,14 @@ E.Options.args.unitframe.args.player = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 9,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 10,
 					name = L['Use Filter'],
@@ -970,16 +970,16 @@ E.Options.args.unitframe.args.player = {
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 12,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 700,
 			type = 'group',
@@ -1002,7 +1002,7 @@ E.Options.args.unitframe.args.player = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -1023,14 +1023,14 @@ E.Options.args.unitframe.args.player = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -1046,14 +1046,14 @@ E.Options.args.unitframe.args.player = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},		
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -1073,16 +1073,16 @@ E.Options.args.unitframe.args.player = {
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},				
 			},
-		},
+		},	
 		castbar = {
 			order = 800,
 			type = 'group',
@@ -1094,17 +1094,17 @@ E.Options.args.unitframe.args.player = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},	
 				matchsize = {
 					order = 2,
 					type = 'execute',
 					name = L['Match Frame Width'],
 					func = function() E.db.unitframe.units['player']['castbar']['width'] = E.db.unitframe.units['player']['width']; UF:CreateAndUpdateUF('player') end,
-				},
+				},			
 				forceshow = {
 					order = 3,
 					name = SHOW..' / '..HIDE,
-					func = function()
+					func = function() 
 						local castbar = ElvUF_Player.Castbar
 						if not castbar.oldHide then
 							castbar.oldHide = castbar.Hide
@@ -1113,7 +1113,7 @@ E.Options.args.unitframe.args.player = {
 						else
 							castbar.Hide = castbar.oldHide
 							castbar.oldHide = nil
-							castbar:Hide()
+							castbar:Hide()						
 						end
 					end,
 					type = 'execute',
@@ -1129,7 +1129,7 @@ E.Options.args.unitframe.args.player = {
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 85, step = 1,
-				},
+				},		
 				icon = {
 					order = 6,
 					name = L['Icon'],
@@ -1146,11 +1146,11 @@ E.Options.args.unitframe.args.player = {
 					name = L['Y Offset'],
 					type = 'range',
 					min = -E.screenheight, max = E.screenheight, step = 1,
-				},
+				},				
 				latency = {
 					order = 9,
 					name = L['Latency'],
-					type = 'toggle',
+					type = 'toggle',				
 				},
 				color = {
 					order = 10,
@@ -1165,7 +1165,7 @@ E.Options.args.unitframe.args.player = {
 						local t = E.db.unitframe.units['player']['castbar'][ info[#info] ]
 						t.r, t.g, t.b = r, g, b
 						UF:CreateAndUpdateUF('player')
-					end,
+					end,													
 				},
 				interruptcolor = {
 					order = 11,
@@ -1180,7 +1180,7 @@ E.Options.args.unitframe.args.player = {
 						local t = E.db.unitframe.units['player']['castbar'][ info[#info] ]
 						t.r, t.g, t.b = r, g, b
 						UF:CreateAndUpdateUF('player')
-					end,
+					end,					
 				},
 				format = {
 					order = 12,
@@ -1229,13 +1229,13 @@ E.Options.args.unitframe.args.player = {
 					order = 2,
 					name = L['Height'],
 					min = 5, max = 15, step = 1,
-				},
+				},	
 				fill = {
 					type = 'select',
 					order = 3,
 					name = L['Fill'],
 					values = fillValues,
-				},
+				},				
 			},
 		},
 	},
@@ -1268,33 +1268,33 @@ E.Options.args.unitframe.args.target = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('target') end,
-		},
+		},		
 		width = {
 			order = 4,
 			name = L['Width'],
 			type = 'range',
 			min = 50, max = 500, step = 1,
-			set = function(info, value)
+			set = function(info, value) 
 				if E.db.unitframe.units['target'].castbar.width == E.db.unitframe.units['target'][ info[#info] ] then
 					E.db.unitframe.units['target'].castbar.width = value;
 				end
-
-				E.db.unitframe.units['target'][ info[#info] ] = value;
+				
+				E.db.unitframe.units['target'][ info[#info] ] = value; 
 				UF:CreateAndUpdateUF('target');
-			end,
+			end,			
 		},
 		height = {
 			order = 5,
 			name = L['Height'],
 			type = 'range',
 			min = 10, max = 250, step = 1,
-		},
+		},	
 		healPrediction = {
 			order = 6,
 			name = L['Heal Prediction'],
 			desc = L['Show a incomming heal prediction bar on the unitframe. Also display a slightly different colored bar for incoming overheals.'],
 			type = 'toggle',
-		},
+		},		
 		health = {
 			order = 100,
 			type = 'group',
@@ -1318,7 +1318,7 @@ E.Options.args.unitframe.args.target = {
 					order = 3,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		power = {
@@ -1332,7 +1332,7 @@ E.Options.args.unitframe.args.target = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -1374,9 +1374,9 @@ E.Options.args.unitframe.args.target = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
-		},
+		},	
 		name = {
 			order = 300,
 			type = 'group',
@@ -1394,7 +1394,7 @@ E.Options.args.unitframe.args.target = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		portrait = {
@@ -1427,9 +1427,9 @@ E.Options.args.unitframe.args.target = {
 					desc = L['How far away the portrait is from the camera.'],
 					order = 4,
 					min = 0.01, max = 4, step = 0.01,
-				},
+				},				
 			},
-		},
+		},	
 		buffs = {
 			order = 500,
 			type = 'group',
@@ -1452,7 +1452,7 @@ E.Options.args.unitframe.args.target = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -1473,14 +1473,14 @@ E.Options.args.unitframe.args.target = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -1496,14 +1496,14 @@ E.Options.args.unitframe.args.target = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},				
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -1517,22 +1517,22 @@ E.Options.args.unitframe.args.target = {
 						end
 						return filters
 					end,
-				},
+				},		
 				showPlayerOnly = {
 					order = 8,
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 600,
 			type = 'group',
@@ -1555,7 +1555,7 @@ E.Options.args.unitframe.args.target = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -1576,14 +1576,14 @@ E.Options.args.unitframe.args.target = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -1599,14 +1599,14 @@ E.Options.args.unitframe.args.target = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -1633,9 +1633,9 @@ E.Options.args.unitframe.args.target = {
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		castbar = {
 			order = 700,
 			type = 'group',
@@ -1647,17 +1647,17 @@ E.Options.args.unitframe.args.target = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},	
 				matchsize = {
 					order = 2,
 					type = 'execute',
 					name = L['Match Frame Width'],
 					func = function() E.db.unitframe.units['target']['castbar']['width'] = E.db.unitframe.units['target']['width']; UF:CreateAndUpdateUF('target') end,
-				},
+				},			
 				forceshow = {
 					order = 3,
 					name = SHOW..' / '..HIDE,
-					func = function()
+					func = function() 
 						local castbar = ElvUF_Target.Castbar
 						if not castbar.oldHide then
 							castbar.oldHide = castbar.Hide
@@ -1666,7 +1666,7 @@ E.Options.args.unitframe.args.target = {
 						else
 							castbar.Hide = castbar.oldHide
 							castbar.oldHide = nil
-							castbar:Hide()
+							castbar:Hide()						
 						end
 					end,
 					type = 'execute',
@@ -1682,7 +1682,7 @@ E.Options.args.unitframe.args.target = {
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 85, step = 1,
-				},
+				},		
 				icon = {
 					order = 6,
 					name = L['Icon'],
@@ -1699,7 +1699,7 @@ E.Options.args.unitframe.args.target = {
 					name = L['Y Offset'],
 					type = 'range',
 					min = -E.screenheight, max = E.screenheight, step = 1,
-				},
+				},				
 				color = {
 					order = 9,
 					type = 'color',
@@ -1713,7 +1713,7 @@ E.Options.args.unitframe.args.target = {
 						local t = E.db.unitframe.units['target']['castbar'][ info[#info] ]
 						t.r, t.g, t.b = r, g, b
 						UF:CreateAndUpdateUF('target')
-					end,
+					end,													
 				},
 				interruptcolor = {
 					order = 10,
@@ -1728,7 +1728,7 @@ E.Options.args.unitframe.args.target = {
 						local t = E.db.unitframe.units['target']['castbar'][ info[#info] ]
 						t.r, t.g, t.b = r, g, b
 						UF:CreateAndUpdateUF('target')
-					end,
+					end,					
 				},
 				format = {
 					order = 11,
@@ -1739,13 +1739,13 @@ E.Options.args.unitframe.args.target = {
 						['CURRENT'] = L['Current'],
 						['REMAINING'] = L['Remaining'],
 					},
-				},
+				},		
 				spark = {
 					order = 12,
 					type = 'toggle',
 					name = L['Spark'],
 					desc = L['Display a spark texture at the end of the castbar statusbar to help show the differance between castbar and backdrop.'],
-				},
+				},				
 			},
 		},
 		combobar = {
@@ -1765,15 +1765,15 @@ E.Options.args.unitframe.args.target = {
 					order = 2,
 					name = L['Height'],
 					min = 5, max = 15, step = 1,
-				},
+				},	
 				fill = {
 					type = 'select',
 					order = 3,
 					name = L['Fill'],
 					values = fillValues,
-				},
+				},				
 			},
-		},
+		},		
 	},
 }
 
@@ -1804,7 +1804,7 @@ E.Options.args.unitframe.args.targettarget = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('targettarget') end,
-		},
+		},		
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -1816,7 +1816,7 @@ E.Options.args.unitframe.args.targettarget = {
 			name = L['Height'],
 			type = 'range',
 			min = 10, max = 250, step = 1,
-		},
+		},	
 		health = {
 			order = 6,
 			type = 'group',
@@ -1840,7 +1840,7 @@ E.Options.args.unitframe.args.targettarget = {
 					order = 3,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		power = {
@@ -1854,7 +1854,7 @@ E.Options.args.unitframe.args.targettarget = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -1896,9 +1896,9 @@ E.Options.args.unitframe.args.targettarget = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},						
 			},
-		},
+		},	
 		name = {
 			order = 9,
 			type = 'group',
@@ -1916,7 +1916,7 @@ E.Options.args.unitframe.args.targettarget = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		buffs = {
@@ -1941,7 +1941,7 @@ E.Options.args.unitframe.args.targettarget = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -1962,14 +1962,14 @@ E.Options.args.unitframe.args.targettarget = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -1985,14 +1985,14 @@ E.Options.args.unitframe.args.targettarget = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},				
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -2006,22 +2006,22 @@ E.Options.args.unitframe.args.targettarget = {
 						end
 						return filters
 					end,
-				},
+				},		
 				showPlayerOnly = {
 					order = 8,
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 12,
 			type = 'group',
@@ -2044,7 +2044,7 @@ E.Options.args.unitframe.args.targettarget = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -2065,14 +2065,14 @@ E.Options.args.unitframe.args.targettarget = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -2088,14 +2088,14 @@ E.Options.args.unitframe.args.targettarget = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -2122,9 +2122,9 @@ E.Options.args.unitframe.args.targettarget = {
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 	},
 }
 
@@ -2155,7 +2155,7 @@ E.Options.args.unitframe.args.focus = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('focus') end,
-		},
+		},		
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -2167,7 +2167,7 @@ E.Options.args.unitframe.args.focus = {
 			name = L['Height'],
 			type = 'range',
 			min = 10, max = 250, step = 1,
-		},
+		},	
 		healPrediction = {
 			order = 6,
 			name = L['Heal Prediction'],
@@ -2197,7 +2197,7 @@ E.Options.args.unitframe.args.focus = {
 					order = 3,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		power = {
@@ -2211,7 +2211,7 @@ E.Options.args.unitframe.args.focus = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -2253,9 +2253,9 @@ E.Options.args.unitframe.args.focus = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
-		},
+		},	
 		name = {
 			order = 300,
 			type = 'group',
@@ -2273,7 +2273,7 @@ E.Options.args.unitframe.args.focus = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		buffs = {
@@ -2298,7 +2298,7 @@ E.Options.args.unitframe.args.focus = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -2319,14 +2319,14 @@ E.Options.args.unitframe.args.focus = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -2342,14 +2342,14 @@ E.Options.args.unitframe.args.focus = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},				
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -2363,22 +2363,22 @@ E.Options.args.unitframe.args.focus = {
 						end
 						return filters
 					end,
-				},
+				},		
 				showPlayerOnly = {
 					order = 8,
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 500,
 			type = 'group',
@@ -2401,7 +2401,7 @@ E.Options.args.unitframe.args.focus = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -2422,14 +2422,14 @@ E.Options.args.unitframe.args.focus = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -2445,14 +2445,14 @@ E.Options.args.unitframe.args.focus = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -2479,9 +2479,9 @@ E.Options.args.unitframe.args.focus = {
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		castbar = {
 			order = 600,
 			type = 'group',
@@ -2493,17 +2493,17 @@ E.Options.args.unitframe.args.focus = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},	
 				matchsize = {
 					order = 2,
 					type = 'execute',
 					name = L['Match Frame Width'],
 					func = function() E.db.unitframe.units['focus']['castbar']['width'] = E.db.unitframe.units['focus']['width']; UF:CreateAndUpdateUF('focus') end,
-				},
+				},			
 				forceshow = {
 					order = 3,
 					name = SHOW..' / '..HIDE,
-					func = function()
+					func = function() 
 						local castbar = ElvUF_Focus.Castbar
 						if not castbar.oldHide then
 							castbar.oldHide = castbar.Hide
@@ -2512,7 +2512,7 @@ E.Options.args.unitframe.args.focus = {
 						else
 							castbar.Hide = castbar.oldHide
 							castbar.oldHide = nil
-							castbar:Hide()
+							castbar:Hide()						
 						end
 					end,
 					type = 'execute',
@@ -2528,7 +2528,7 @@ E.Options.args.unitframe.args.focus = {
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 85, step = 1,
-				},
+				},		
 				icon = {
 					order = 6,
 					name = L['Icon'],
@@ -2545,7 +2545,7 @@ E.Options.args.unitframe.args.focus = {
 					name = L['Y Offset'],
 					type = 'range',
 					min = -E.screenheight, max = E.screenheight, step = 1,
-				},
+				},				
 				color = {
 					order = 9,
 					type = 'color',
@@ -2559,7 +2559,7 @@ E.Options.args.unitframe.args.focus = {
 						local t = E.db.unitframe.units['focus']['castbar'][ info[#info] ]
 						t.r, t.g, t.b = r, g, b
 						UF:CreateAndUpdateUF('focus')
-					end,
+					end,													
 				},
 				interruptcolor = {
 					order = 10,
@@ -2574,7 +2574,7 @@ E.Options.args.unitframe.args.focus = {
 						local t = E.db.unitframe.units['focus']['castbar'][ info[#info] ]
 						t.r, t.g, t.b = r, g, b
 						UF:CreateAndUpdateUF('focus')
-					end,
+					end,					
 				},
 				format = {
 					order = 11,
@@ -2585,15 +2585,15 @@ E.Options.args.unitframe.args.focus = {
 						['CURRENT'] = L['Current'],
 						['REMAINING'] = L['Remaining'],
 					},
-				},
+				},	
 				spark = {
 					order = 12,
 					type = 'toggle',
 					name = L['Spark'],
 					desc = L['Display a spark texture at the end of the castbar statusbar to help show the differance between castbar and backdrop.'],
-				},
+				},				
 			},
-		},
+		},		
 	},
 }
 
@@ -2624,7 +2624,7 @@ E.Options.args.unitframe.args.focustarget = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('focustarget') end,
-		},
+		},		
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -2636,7 +2636,7 @@ E.Options.args.unitframe.args.focustarget = {
 			name = L['Height'],
 			type = 'range',
 			min = 10, max = 250, step = 1,
-		},
+		},	
 		health = {
 			order = 6,
 			type = 'group',
@@ -2660,7 +2660,7 @@ E.Options.args.unitframe.args.focustarget = {
 					order = 3,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		power = {
@@ -2674,7 +2674,7 @@ E.Options.args.unitframe.args.focustarget = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -2716,9 +2716,9 @@ E.Options.args.unitframe.args.focustarget = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
-		},
+		},	
 		name = {
 			order = 9,
 			type = 'group',
@@ -2736,7 +2736,7 @@ E.Options.args.unitframe.args.focustarget = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		buffs = {
@@ -2761,7 +2761,7 @@ E.Options.args.unitframe.args.focustarget = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -2782,14 +2782,14 @@ E.Options.args.unitframe.args.focustarget = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -2805,14 +2805,14 @@ E.Options.args.unitframe.args.focustarget = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},				
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -2826,22 +2826,22 @@ E.Options.args.unitframe.args.focustarget = {
 						end
 						return filters
 					end,
-				},
+				},		
 				showPlayerOnly = {
 					order = 8,
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 12,
 			type = 'group',
@@ -2864,7 +2864,7 @@ E.Options.args.unitframe.args.focustarget = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -2885,14 +2885,14 @@ E.Options.args.unitframe.args.focustarget = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -2908,14 +2908,14 @@ E.Options.args.unitframe.args.focustarget = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -2942,9 +2942,9 @@ E.Options.args.unitframe.args.focustarget = {
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 	},
 }
 
@@ -2975,7 +2975,7 @@ E.Options.args.unitframe.args.pet = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('pet') end,
-		},
+		},		
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -2987,13 +2987,13 @@ E.Options.args.unitframe.args.pet = {
 			name = L['Height'],
 			type = 'range',
 			min = 10, max = 250, step = 1,
-		},
+		},	
 		healPrediction = {
 			order = 6,
 			name = L['Heal Prediction'],
 			desc = L['Show a incomming heal prediction bar on the unitframe. Also display a slightly different colored bar for incoming overheals.'],
 			type = 'toggle',
-		},
+		},		
 		health = {
 			order = 100,
 			type = 'group',
@@ -3017,7 +3017,7 @@ E.Options.args.unitframe.args.pet = {
 					order = 3,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		power = {
@@ -3031,7 +3031,7 @@ E.Options.args.unitframe.args.pet = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -3073,9 +3073,9 @@ E.Options.args.unitframe.args.pet = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
-		},
+		},	
 		name = {
 			order = 300,
 			type = 'group',
@@ -3093,7 +3093,7 @@ E.Options.args.unitframe.args.pet = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		buffs = {
@@ -3118,7 +3118,7 @@ E.Options.args.unitframe.args.pet = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -3139,14 +3139,14 @@ E.Options.args.unitframe.args.pet = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -3162,14 +3162,14 @@ E.Options.args.unitframe.args.pet = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},				
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -3183,22 +3183,22 @@ E.Options.args.unitframe.args.pet = {
 						end
 						return filters
 					end,
-				},
+				},		
 				showPlayerOnly = {
 					order = 8,
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 500,
 			type = 'group',
@@ -3221,7 +3221,7 @@ E.Options.args.unitframe.args.pet = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -3242,14 +3242,14 @@ E.Options.args.unitframe.args.pet = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -3265,14 +3265,14 @@ E.Options.args.unitframe.args.pet = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -3299,9 +3299,9 @@ E.Options.args.unitframe.args.pet = {
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 	},
 }
 
@@ -3332,7 +3332,7 @@ E.Options.args.unitframe.args.pettarget = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('pettarget') end,
-		},
+		},		
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -3344,7 +3344,7 @@ E.Options.args.unitframe.args.pettarget = {
 			name = L['Height'],
 			type = 'range',
 			min = 10, max = 250, step = 1,
-		},
+		},	
 		health = {
 			order = 6,
 			type = 'group',
@@ -3368,7 +3368,7 @@ E.Options.args.unitframe.args.pettarget = {
 					order = 3,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		power = {
@@ -3382,7 +3382,7 @@ E.Options.args.unitframe.args.pettarget = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -3424,9 +3424,9 @@ E.Options.args.unitframe.args.pettarget = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
-		},
+		},	
 		name = {
 			order = 9,
 			type = 'group',
@@ -3444,7 +3444,7 @@ E.Options.args.unitframe.args.pettarget = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		buffs = {
@@ -3469,7 +3469,7 @@ E.Options.args.unitframe.args.pettarget = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -3490,14 +3490,14 @@ E.Options.args.unitframe.args.pettarget = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -3513,14 +3513,14 @@ E.Options.args.unitframe.args.pettarget = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},				
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -3534,22 +3534,22 @@ E.Options.args.unitframe.args.pettarget = {
 						end
 						return filters
 					end,
-				},
+				},		
 				showPlayerOnly = {
 					order = 8,
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 12,
 			type = 'group',
@@ -3572,7 +3572,7 @@ E.Options.args.unitframe.args.pettarget = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -3593,14 +3593,14 @@ E.Options.args.unitframe.args.pettarget = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -3616,14 +3616,14 @@ E.Options.args.unitframe.args.pettarget = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -3650,9 +3650,9 @@ E.Options.args.unitframe.args.pettarget = {
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 	},
 }
 
@@ -3686,27 +3686,27 @@ E.Options.args.unitframe.args.boss = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('boss') end,
-		},
+		},		
 		width = {
 			order = 4,
 			name = L['Width'],
 			type = 'range',
 			min = 50, max = 500, step = 1,
-			set = function(info, value)
+			set = function(info, value) 
 				if E.db.unitframe.units['boss'].castbar.width == E.db.unitframe.units['boss'][ info[#info] ] then
 					E.db.unitframe.units['boss'].castbar.width = value;
 				end
-
-				E.db.unitframe.units['boss'][ info[#info] ] = value;
+				
+				E.db.unitframe.units['boss'][ info[#info] ] = value; 
 				UF:CreateAndUpdateUFGroup('boss', MAX_BOSS_FRAMES);
-			end,
+			end,			
 		},
 		height = {
 			order = 5,
 			name = L['Height'],
 			type = 'range',
 			min = 10, max = 250, step = 1,
-		},
+		},	
 		growthDirection = {
 			order = 6,
 			name = L['Growth Direction'],
@@ -3739,7 +3739,7 @@ E.Options.args.unitframe.args.boss = {
 					order = 3,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		power = {
@@ -3753,7 +3753,7 @@ E.Options.args.unitframe.args.boss = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -3795,9 +3795,9 @@ E.Options.args.unitframe.args.boss = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
-		},
+		},	
 		name = {
 			order = 9,
 			type = 'group',
@@ -3815,7 +3815,7 @@ E.Options.args.unitframe.args.boss = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		portrait = {
@@ -3848,9 +3848,9 @@ E.Options.args.unitframe.args.boss = {
 					desc = L['How far away the portrait is from the camera.'],
 					order = 4,
 					min = 0.01, max = 4, step = 0.01,
-				},
+				},				
 			},
-		},
+		},	
 		buffs = {
 			order = 11,
 			type = 'group',
@@ -3873,7 +3873,7 @@ E.Options.args.unitframe.args.boss = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -3894,14 +3894,14 @@ E.Options.args.unitframe.args.boss = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -3917,14 +3917,14 @@ E.Options.args.unitframe.args.boss = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},				
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -3938,22 +3938,22 @@ E.Options.args.unitframe.args.boss = {
 						end
 						return filters
 					end,
-				},
+				},		
 				showPlayerOnly = {
 					order = 8,
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 12,
 			type = 'group',
@@ -3976,7 +3976,7 @@ E.Options.args.unitframe.args.boss = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -3997,14 +3997,14 @@ E.Options.args.unitframe.args.boss = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -4020,14 +4020,14 @@ E.Options.args.unitframe.args.boss = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -4054,9 +4054,9 @@ E.Options.args.unitframe.args.boss = {
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		castbar = {
 			order = 13,
 			type = 'group',
@@ -4068,13 +4068,13 @@ E.Options.args.unitframe.args.boss = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},	
 				matchsize = {
 					order = 2,
 					type = 'execute',
 					name = L['Match Frame Width'],
 					func = function() E.db.unitframe.units['boss']['castbar']['width'] = E.db.unitframe.units['boss']['width']; UF:CreateAndUpdateUFGroup('boss', MAX_BOSS_FRAMES) end,
-				},
+				},				
 				width = {
 					order = 3,
 					name = L['Width'],
@@ -4086,7 +4086,7 @@ E.Options.args.unitframe.args.boss = {
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 85, step = 1,
-				},
+				},		
 				icon = {
 					order = 5,
 					name = L['Icon'],
@@ -4105,7 +4105,7 @@ E.Options.args.unitframe.args.boss = {
 						local t = E.db.unitframe.units['boss']['castbar'][ info[#info] ]
 						t.r, t.g, t.b = r, g, b
 						UF:CreateAndUpdateUFGroup('boss', MAX_BOSS_FRAMES)
-					end,
+					end,													
 				},
 				interruptcolor = {
 					order = 8,
@@ -4120,7 +4120,7 @@ E.Options.args.unitframe.args.boss = {
 						local t = E.db.unitframe.units['boss']['castbar'][ info[#info] ]
 						t.r, t.g, t.b = r, g, b
 						UF:CreateAndUpdateUFGroup('boss', MAX_BOSS_FRAMES)
-					end,
+					end,					
 				},
 				format = {
 					order = 9,
@@ -4131,15 +4131,15 @@ E.Options.args.unitframe.args.boss = {
 						['CURRENT'] = L['Current'],
 						['REMAINING'] = L['Remaining'],
 					},
-				},
+				},		
 				spark = {
 					order = 10,
 					type = 'toggle',
 					name = L['Spark'],
 					desc = L['Display a spark texture at the end of the castbar statusbar to help show the differance between castbar and backdrop.'],
-				},
+				},				
 			},
-		},
+		},	
 	},
 }
 
@@ -4173,27 +4173,27 @@ E.Options.args.unitframe.args.arena = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('arena') end,
-		},
+		},		
 		width = {
 			order = 4,
 			name = L['Width'],
 			type = 'range',
 			min = 50, max = 500, step = 1,
-			set = function(info, value)
+			set = function(info, value) 
 				if E.db.unitframe.units['arena'].castbar.width == E.db.unitframe.units['arena'][ info[#info] ] then
 					E.db.unitframe.units['arena'].castbar.width = value;
 				end
-
-				E.db.unitframe.units['arena'][ info[#info] ] = value;
+				
+				E.db.unitframe.units['arena'][ info[#info] ] = value; 
 				UF:CreateAndUpdateUFGroup('arena', 5);
-			end,
+			end,			
 		},
 		height = {
 			order = 5,
 			name = L['Height'],
 			type = 'range',
 			min = 10, max = 250, step = 1,
-		},
+		},	
 		growthDirection = {
 			order = 6,
 			name = L['Growth Direction'],
@@ -4226,7 +4226,7 @@ E.Options.args.unitframe.args.arena = {
 					order = 3,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		power = {
@@ -4240,7 +4240,7 @@ E.Options.args.unitframe.args.arena = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -4282,9 +4282,9 @@ E.Options.args.unitframe.args.arena = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
-		},
+		},	
 		name = {
 			order = 9,
 			type = 'group',
@@ -4302,7 +4302,7 @@ E.Options.args.unitframe.args.arena = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		buffs = {
@@ -4327,7 +4327,7 @@ E.Options.args.unitframe.args.arena = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -4348,14 +4348,14 @@ E.Options.args.unitframe.args.arena = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -4371,14 +4371,14 @@ E.Options.args.unitframe.args.arena = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},				
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -4392,22 +4392,22 @@ E.Options.args.unitframe.args.arena = {
 						end
 						return filters
 					end,
-				},
+				},		
 				showPlayerOnly = {
 					order = 8,
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 12,
 			type = 'group',
@@ -4430,7 +4430,7 @@ E.Options.args.unitframe.args.arena = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -4451,14 +4451,14 @@ E.Options.args.unitframe.args.arena = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -4474,14 +4474,14 @@ E.Options.args.unitframe.args.arena = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -4508,9 +4508,9 @@ E.Options.args.unitframe.args.arena = {
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		castbar = {
 			order = 13,
 			type = 'group',
@@ -4522,13 +4522,13 @@ E.Options.args.unitframe.args.arena = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},	
 				matchsize = {
 					order = 2,
 					type = 'execute',
 					name = L['Match Frame Width'],
 					func = function() E.db.unitframe.units['arena']['castbar']['width'] = E.db.unitframe.units['arena']['width']; UF:CreateAndUpdateUFGroup('arena', 5) end,
-				},
+				},				
 				width = {
 					order = 3,
 					name = L['Width'],
@@ -4540,7 +4540,7 @@ E.Options.args.unitframe.args.arena = {
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 85, step = 1,
-				},
+				},		
 				icon = {
 					order = 5,
 					name = L['Icon'],
@@ -4559,7 +4559,7 @@ E.Options.args.unitframe.args.arena = {
 						local t = E.db.unitframe.units['arena']['castbar'][ info[#info] ]
 						t.r, t.g, t.b = r, g, b
 						UF:CreateAndUpdateUFGroup('arena', 5)
-					end,
+					end,													
 				},
 				interruptcolor = {
 					order = 8,
@@ -4574,7 +4574,7 @@ E.Options.args.unitframe.args.arena = {
 						local t = E.db.unitframe.units['arena']['castbar'][ info[#info] ]
 						t.r, t.g, t.b = r, g, b
 						UF:CreateAndUpdateUFGroup('arena', 5)
-					end,
+					end,					
 				},
 				format = {
 					order = 9,
@@ -4585,15 +4585,15 @@ E.Options.args.unitframe.args.arena = {
 						['CURRENT'] = L['Current'],
 						['REMAINING'] = L['Remaining'],
 					},
-				},
+				},	
 				spark = {
 					order = 10,
 					type = 'toggle',
 					name = L['Spark'],
 					desc = L['Display a spark texture at the end of the castbar statusbar to help show the differance between castbar and backdrop.'],
-				},
+				},				
 			},
-		},
+		},	
 	},
 }
 
@@ -4623,7 +4623,7 @@ E.Options.args.unitframe.args.party = {
 			order = 2,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('party') end,
-		},
+		},		
 		general = {
 			order = 5,
 			type = 'group',
@@ -4634,13 +4634,13 @@ E.Options.args.unitframe.args.party = {
 					name = L['Width'],
 					type = 'range',
 					min = 50, max = 500, step = 1,
-				},
+				},			
 				height = {
 					order = 3,
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 250, step = 1,
-				},
+				},	
 				point = {
 					order = 4,
 					type = 'select',
@@ -4654,7 +4654,7 @@ E.Options.args.unitframe.args.party = {
 					type = 'select',
 					name = L['Column Point'],
 					desc = L['The anchor point for each new column. A value of LEFT will cause the columns to grow to the right.'],
-					values = groupPoints,
+					values = groupPoints,	
 					set = function(info, value) E.db.unitframe.units['party'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('party'); end,
 				},
 				maxColumns = {
@@ -4677,21 +4677,21 @@ E.Options.args.unitframe.args.party = {
 					name = L['Column Spacing'],
 					desc = L['The amount of space (in pixels) between the columns.'],
 					min = 3, max = 10, step = 1,
-				},
+				},		
 				xOffset = {
 					order = 9,
 					type = 'range',
 					name = L['xOffset'],
 					desc = L['An X offset (in pixels) to be used when anchoring new frames.'],
-					min = -15, max = 15, step = 1,
+					min = -15, max = 15, step = 1,		
 				},
 				yOffset = {
 					order = 10,
 					type = 'range',
 					name = L['yOffset'],
 					desc = L['An Y offset (in pixels) to be used when anchoring new frames.'],
-					min = -15, max = 15, step = 1,
-				},
+					min = -15, max = 15, step = 1,		
+				},		
 				showParty = {
 					order = 11,
 					type = 'toggle',
@@ -4703,30 +4703,30 @@ E.Options.args.unitframe.args.party = {
 					type = 'toggle',
 					name = L['Show Raid'],
 					desc = L['When true, the group header is shown when the player is in a raid.'],
-				},
+				},	
 				showSolo = {
 					order = 13,
 					type = 'toggle',
 					name = L['Show Solo'],
-					desc = L['When true, the header is shown when the player is not in any group.'],
+					desc = L['When true, the header is shown when the player is not in any group.'],		
 				},
 				showPlayer = {
 					order = 14,
 					type = 'toggle',
 					name = L['Display Player'],
-					desc = L['When true, the header includes the player when not in a raid.'],
+					desc = L['When true, the header includes the player when not in a raid.'],			
 				},
 				healPrediction = {
 					order = 15,
 					name = L['Heal Prediction'],
 					desc = L['Show a incomming heal prediction bar on the unitframe. Also display a slightly different colored bar for incoming overheals.'],
 					type = 'toggle',
-				},
+				},		
 				--[[groupBy = {
 					order = 16,
 					name = L['Group By'],
 					desc = L['Set the order that the group will sort.'],
-					type = 'select',
+					type = 'select',		
 					values = {
 						['CLASS'] = CLASS,
 						['ROLE'] = ROLE,
@@ -4739,7 +4739,7 @@ E.Options.args.unitframe.args.party = {
 					name = L['Visibility'],
 					desc = L['The following macro must be true in order for the group to be shown, in addition to any filter that may already be set.'],
 					width = 'full',
-				},
+				},				
 			},
 		},
 		health = {
@@ -4765,7 +4765,7 @@ E.Options.args.unitframe.args.party = {
 					order = 3,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},	
 				frequentUpdates = {
 					type = 'toggle',
 					order = 4,
@@ -4781,7 +4781,7 @@ E.Options.args.unitframe.args.party = {
 						['HORIZONTAL'] = L['Horizontal'],
 						['VERTICAL'] = L['Vertical'],
 					},
-				},
+				},		
 			},
 		},
 		power = {
@@ -4795,7 +4795,7 @@ E.Options.args.unitframe.args.party = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -4837,9 +4837,9 @@ E.Options.args.unitframe.args.party = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
-		},
+		},	
 		name = {
 			order = 300,
 			type = 'group',
@@ -4857,7 +4857,7 @@ E.Options.args.unitframe.args.party = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		buffs = {
@@ -4882,7 +4882,7 @@ E.Options.args.unitframe.args.party = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -4903,14 +4903,14 @@ E.Options.args.unitframe.args.party = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -4926,14 +4926,14 @@ E.Options.args.unitframe.args.party = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},				
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -4947,22 +4947,22 @@ E.Options.args.unitframe.args.party = {
 						end
 						return filters
 					end,
-				},
+				},		
 				showPlayerOnly = {
 					order = 8,
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 500,
 			type = 'group',
@@ -4985,7 +4985,7 @@ E.Options.args.unitframe.args.party = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -5006,14 +5006,14 @@ E.Options.args.unitframe.args.party = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -5029,14 +5029,14 @@ E.Options.args.unitframe.args.party = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -5063,9 +5063,9 @@ E.Options.args.unitframe.args.party = {
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		buffIndicator = {
 			order = 600,
 			type = 'group',
@@ -5082,7 +5082,7 @@ E.Options.args.unitframe.args.party = {
 					type = 'toggle',
 					name = L['Color Icons'],
 					desc = L['Color the icon to their set color in the filters section, otherwise use the icon texture.'],
-					order = 2,
+					order = 2,					
 				},
 				size = {
 					type = 'range',
@@ -5104,7 +5104,7 @@ E.Options.args.unitframe.args.party = {
 			type = 'group',
 			name = L['Role Icon'],
 			get = function(info) return E.db.unitframe.units['party']['roleIcon'][ info[#info] ] end,
-			set = function(info, value) E.db.unitframe.units['party']['roleIcon'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('party') end,
+			set = function(info, value) E.db.unitframe.units['party']['roleIcon'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('party') end,	
 			args = {
 				enable = {
 					type = 'toggle',
@@ -5116,7 +5116,7 @@ E.Options.args.unitframe.args.party = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},							
 			},
 		},
 		petsGroup = {
@@ -5124,8 +5124,8 @@ E.Options.args.unitframe.args.party = {
 			type = 'group',
 			name = L['Party Pets'],
 			get = function(info) return E.db.unitframe.units['party']['petsGroup'][ info[#info] ] end,
-			set = function(info, value) E.db.unitframe.units['party']['petsGroup'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('party') end,
-			args = {
+			set = function(info, value) E.db.unitframe.units['party']['petsGroup'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('party') end,	
+			args = {		
 				enable = {
 					type = 'toggle',
 					name = L['Enable'],
@@ -5136,40 +5136,40 @@ E.Options.args.unitframe.args.party = {
 					name = L['Width'],
 					type = 'range',
 					min = 10, max = 500, step = 1,
-				},
+				},			
 				height = {
 					order = 3,
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 250, step = 1,
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 4,
 					name = L['Initial Anchor'],
 					values = petAnchors,
-				},
+				},	
 				anchorPoint = {
 					type = 'select',
 					order = 5,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = petAnchors,
-				},
+					values = petAnchors,				
+				},	
 				xOffset = {
 					order = 6,
 					type = 'range',
 					name = L['xOffset'],
 					desc = L['An X offset (in pixels) to be used when anchoring new frames.'],
-					min = -15, max = 15, step = 1,
+					min = -15, max = 15, step = 1,		
 				},
 				yOffset = {
 					order = 7,
 					type = 'range',
 					name = L['yOffset'],
 					desc = L['An Y offset (in pixels) to be used when anchoring new frames.'],
-					min = -15, max = 15, step = 1,
-				},
+					min = -15, max = 15, step = 1,		
+				},					
 			},
 		},
 		targetsGroup = {
@@ -5177,8 +5177,8 @@ E.Options.args.unitframe.args.party = {
 			type = 'group',
 			name = L['Party Targets'],
 			get = function(info) return E.db.unitframe.units['party']['targetsGroup'][ info[#info] ] end,
-			set = function(info, value) E.db.unitframe.units['party']['targetsGroup'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('party') end,
-			args = {
+			set = function(info, value) E.db.unitframe.units['party']['targetsGroup'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('party') end,	
+			args = {		
 				enable = {
 					type = 'toggle',
 					name = L['Enable'],
@@ -5189,42 +5189,42 @@ E.Options.args.unitframe.args.party = {
 					name = L['Width'],
 					type = 'range',
 					min = 10, max = 500, step = 1,
-				},
+				},			
 				height = {
 					order = 3,
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 250, step = 1,
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 4,
 					name = L['Initial Anchor'],
 					values = petAnchors,
-				},
+				},	
 				anchorPoint = {
 					type = 'select',
 					order = 5,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = petAnchors,
-				},
+					values = petAnchors,				
+				},	
 				xOffset = {
 					order = 6,
 					type = 'range',
 					name = L['xOffset'],
 					desc = L['An X offset (in pixels) to be used when anchoring new frames.'],
-					min = -15, max = 15, step = 1,
+					min = -15, max = 15, step = 1,		
 				},
 				yOffset = {
 					order = 7,
 					type = 'range',
 					name = L['yOffset'],
 					desc = L['An Y offset (in pixels) to be used when anchoring new frames.'],
-					min = -15, max = 15, step = 1,
-				},
+					min = -15, max = 15, step = 1,		
+				},					
 			},
-		},
+		},		
 	},
 }
 
@@ -5247,7 +5247,7 @@ E.Options.args.unitframe.args.raid625 = {
 			order = 2,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('raid625') end,
-		},
+		},			
 		general = {
 			order = 5,
 			type = 'group',
@@ -5258,13 +5258,13 @@ E.Options.args.unitframe.args.raid625 = {
 					name = L['Width'],
 					type = 'range',
 					min = 50, max = 500, step = 1,
-				},
+				},			
 				height = {
 					order = 3,
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 250, step = 1,
-				},
+				},	
 				point = {
 					order = 4,
 					type = 'select',
@@ -5278,7 +5278,7 @@ E.Options.args.unitframe.args.raid625 = {
 					type = 'select',
 					name = L['Column Point'],
 					desc = L['The anchor point for each new column. A value of LEFT will cause the columns to grow to the right.'],
-					values = groupPoints,
+					values = groupPoints,	
 					set = function(info, value) E.db.unitframe.units['raid625'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('raid625'); end,
 				},
 				maxColumns = {
@@ -5301,21 +5301,21 @@ E.Options.args.unitframe.args.raid625 = {
 					name = L['Column Spacing'],
 					desc = L['The amount of space (in pixels) between the columns.'],
 					min = 3, max = 10, step = 1,
-				},
+				},		
 				xOffset = {
 					order = 9,
 					type = 'range',
 					name = L['xOffset'],
 					desc = L['An X offset (in pixels) to be used when anchoring new frames.'],
-					min = -15, max = 15, step = 1,
+					min = -15, max = 15, step = 1,		
 				},
 				yOffset = {
 					order = 10,
 					type = 'range',
 					name = L['yOffset'],
 					desc = L['An Y offset (in pixels) to be used when anchoring new frames.'],
-					min = -15, max = 15, step = 1,
-				},
+					min = -15, max = 15, step = 1,		
+				},		
 				showParty = {
 					order = 11,
 					type = 'toggle',
@@ -5327,43 +5327,43 @@ E.Options.args.unitframe.args.raid625 = {
 					type = 'toggle',
 					name = L['Show Raid'],
 					desc = L['When true, the group header is shown when the player is in a raid.'],
-				},
+				},	
 				showSolo = {
 					order = 13,
 					type = 'toggle',
 					name = L['Show Solo'],
-					desc = L['When true, the header is shown when the player is not in any group.'],
+					desc = L['When true, the header is shown when the player is not in any group.'],		
 				},
 				showPlayer = {
 					order = 14,
 					type = 'toggle',
 					name = L['Display Player'],
-					desc = L['When true, the header includes the player when not in a raid.'],
+					desc = L['When true, the header includes the player when not in a raid.'],			
 				},
 				healPrediction = {
 					order = 15,
 					name = L['Heal Prediction'],
 					desc = L['Show a incomming heal prediction bar on the unitframe. Also display a slightly different colored bar for incoming overheals.'],
 					type = 'toggle',
-				},
+				},	
 				--[[groupBy = {
 					order = 16,
 					name = L['Group By'],
 					desc = L['Set the order that the group will sort.'],
-					type = 'select',
+					type = 'select',		
 					values = {
 						['CLASS'] = CLASS,
 						['ROLE'] = ROLE,
 						['GROUP'] = GROUP,
 					},
-				},]]
+				},]]				
 				visibility = {
 					order = 200,
 					type = 'input',
 					name = L['Visibility'],
 					desc = L['The following macro must be true in order for the group to be shown, in addition to any filter that may already be set.'],
 					width = 'full',
-				},
+				},					
 			},
 		},
 		health = {
@@ -5389,7 +5389,7 @@ E.Options.args.unitframe.args.raid625 = {
 					order = 3,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 				frequentUpdates = {
 					type = 'toggle',
 					order = 4,
@@ -5405,7 +5405,7 @@ E.Options.args.unitframe.args.raid625 = {
 						['HORIZONTAL'] = L['Horizontal'],
 						['VERTICAL'] = L['Vertical'],
 					},
-				},
+				},	
 			},
 		},
 		power = {
@@ -5419,7 +5419,7 @@ E.Options.args.unitframe.args.raid625 = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -5461,9 +5461,9 @@ E.Options.args.unitframe.args.raid625 = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
-		},
+		},	
 		name = {
 			order = 300,
 			type = 'group',
@@ -5481,7 +5481,7 @@ E.Options.args.unitframe.args.raid625 = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		buffs = {
@@ -5506,7 +5506,7 @@ E.Options.args.unitframe.args.raid625 = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -5527,14 +5527,14 @@ E.Options.args.unitframe.args.raid625 = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -5550,14 +5550,14 @@ E.Options.args.unitframe.args.raid625 = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},				
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -5571,22 +5571,22 @@ E.Options.args.unitframe.args.raid625 = {
 						end
 						return filters
 					end,
-				},
+				},		
 				showPlayerOnly = {
 					order = 8,
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 500,
 			type = 'group',
@@ -5609,7 +5609,7 @@ E.Options.args.unitframe.args.raid625 = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -5630,14 +5630,14 @@ E.Options.args.unitframe.args.raid625 = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -5653,14 +5653,14 @@ E.Options.args.unitframe.args.raid625 = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -5687,9 +5687,9 @@ E.Options.args.unitframe.args.raid625 = {
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		buffIndicator = {
 			order = 600,
 			type = 'group',
@@ -5706,7 +5706,7 @@ E.Options.args.unitframe.args.raid625 = {
 					type = 'toggle',
 					name = L['Color Icons'],
 					desc = L['Color the icon to their set color in the filters section, otherwise use the icon texture.'],
-					order = 2,
+					order = 2,					
 				},
 				size = {
 					type = 'range',
@@ -5728,7 +5728,7 @@ E.Options.args.unitframe.args.raid625 = {
 			type = 'group',
 			name = L['Role Icon'],
 			get = function(info) return E.db.unitframe.units['raid625']['roleIcon'][ info[#info] ] end,
-			set = function(info, value) E.db.unitframe.units['raid625']['roleIcon'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('raid625') end,
+			set = function(info, value) E.db.unitframe.units['raid625']['roleIcon'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('raid625') end,	
 			args = {
 				enable = {
 					type = 'toggle',
@@ -5740,9 +5740,9 @@ E.Options.args.unitframe.args.raid625 = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},							
 			},
-		},
+		},		
 		rdebuffs = {
 			order = 800,
 			type = 'group',
@@ -5754,21 +5754,21 @@ E.Options.args.unitframe.args.raid625 = {
 					type = 'toggle',
 					name = L['Enable'],
 					order = 1,
-				},
+				},	
 				size = {
 					type = 'range',
 					name = L['Size'],
 					order = 2,
 					min = 8, max = 35, step = 1,
-				},
+				},				
 				fontsize = {
 					type = 'range',
 					name = L['Font Size'],
 					order = 3,
 					min = 7, max = 22, step = 1,
-				},
+				},				
 			},
-		},
+		},		
 	},
 }
 
@@ -5791,7 +5791,7 @@ E.Options.args.unitframe.args.raid2640 = {
 			order = 2,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('raid2640') end,
-		},
+		},			
 		general = {
 			order = 5,
 			type = 'group',
@@ -5802,13 +5802,13 @@ E.Options.args.unitframe.args.raid2640 = {
 					name = L['Width'],
 					type = 'range',
 					min = 50, max = 500, step = 1,
-				},
+				},			
 				height = {
 					order = 3,
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 250, step = 1,
-				},
+				},	
 				point = {
 					order = 4,
 					type = 'select',
@@ -5822,7 +5822,7 @@ E.Options.args.unitframe.args.raid2640 = {
 					type = 'select',
 					name = L['Column Point'],
 					desc = L['The anchor point for each new column. A value of LEFT will cause the columns to grow to the right.'],
-					values = groupPoints,
+					values = groupPoints,	
 					set = function(info, value) E.db.unitframe.units['raid2640'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('raid2640'); end,
 				},
 				maxColumns = {
@@ -5845,21 +5845,21 @@ E.Options.args.unitframe.args.raid2640 = {
 					name = L['Column Spacing'],
 					desc = L['The amount of space (in pixels) between the columns.'],
 					min = 3, max = 10, step = 1,
-				},
+				},		
 				xOffset = {
 					order = 9,
 					type = 'range',
 					name = L['xOffset'],
 					desc = L['An X offset (in pixels) to be used when anchoring new frames.'],
-					min = -15, max = 15, step = 1,
+					min = -15, max = 15, step = 1,		
 				},
 				yOffset = {
 					order = 10,
 					type = 'range',
 					name = L['yOffset'],
 					desc = L['An Y offset (in pixels) to be used when anchoring new frames.'],
-					min = -15, max = 15, step = 1,
-				},
+					min = -15, max = 15, step = 1,		
+				},		
 				showParty = {
 					order = 11,
 					type = 'toggle',
@@ -5871,43 +5871,43 @@ E.Options.args.unitframe.args.raid2640 = {
 					type = 'toggle',
 					name = L['Show Raid'],
 					desc = L['When true, the group header is shown when the player is in a raid.'],
-				},
+				},	
 				showSolo = {
 					order = 13,
 					type = 'toggle',
 					name = L['Show Solo'],
-					desc = L['When true, the header is shown when the player is not in any group.'],
+					desc = L['When true, the header is shown when the player is not in any group.'],		
 				},
 				showPlayer = {
 					order = 14,
 					type = 'toggle',
 					name = L['Display Player'],
-					desc = L['When true, the header includes the player when not in a raid.'],
+					desc = L['When true, the header includes the player when not in a raid.'],			
 				},
 				healPrediction = {
 					order = 15,
 					name = L['Heal Prediction'],
 					desc = L['Show a incomming heal prediction bar on the unitframe. Also display a slightly different colored bar for incoming overheals.'],
 					type = 'toggle',
-				},
+				},		
 				--[[groupBy = {
 					order = 16,
 					name = L['Group By'],
 					desc = L['Set the order that the group will sort.'],
-					type = 'select',
+					type = 'select',		
 					values = {
 						['CLASS'] = CLASS,
 						['ROLE'] = ROLE,
 						['GROUP'] = GROUP,
 					},
-				},]]
+				},]]				
 				visibility = {
 					order = 200,
 					type = 'input',
 					name = L['Visibility'],
 					desc = L['The following macro must be true in order for the group to be shown, in addition to any filter that may already be set.'],
 					width = 'full',
-				},
+				},					
 			},
 		},
 		health = {
@@ -5933,7 +5933,7 @@ E.Options.args.unitframe.args.raid2640 = {
 					order = 3,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 				frequentUpdates = {
 					type = 'toggle',
 					order = 4,
@@ -5949,7 +5949,7 @@ E.Options.args.unitframe.args.raid2640 = {
 						['HORIZONTAL'] = L['Horizontal'],
 						['VERTICAL'] = L['Vertical'],
 					},
-				},
+				},	
 			},
 		},
 		power = {
@@ -5963,7 +5963,7 @@ E.Options.args.unitframe.args.raid2640 = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				text = {
 					type = 'toggle',
 					order = 2,
@@ -6005,9 +6005,9 @@ E.Options.args.unitframe.args.raid2640 = {
 					order = 8,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
-		},
+		},	
 		name = {
 			order = 300,
 			type = 'group',
@@ -6025,7 +6025,7 @@ E.Options.args.unitframe.args.raid2640 = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},					
 			},
 		},
 		buffs = {
@@ -6050,7 +6050,7 @@ E.Options.args.unitframe.args.raid2640 = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -6071,14 +6071,14 @@ E.Options.args.unitframe.args.raid2640 = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -6094,14 +6094,14 @@ E.Options.args.unitframe.args.raid2640 = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},				
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -6115,22 +6115,22 @@ E.Options.args.unitframe.args.raid2640 = {
 						end
 						return filters
 					end,
-				},
+				},		
 				showPlayerOnly = {
 					order = 8,
 					type = 'toggle',
 					name = L['Personal Auras'],
 					desc = L['If set only auras belonging to yourself in addition to any aura that passes the set filter may be shown.'],
-				},
+				},	
 				durationLimit = {
 					order = 9,
 					name = L['Duration Limit'],
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		debuffs = {
 			order = 500,
 			type = 'group',
@@ -6153,7 +6153,7 @@ E.Options.args.unitframe.args.raid2640 = {
 					type = 'range',
 					order = 3,
 					name = L['Num Rows'],
-					min = 1, max = 4, step = 1,
+					min = 1, max = 4, step = 1,					
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -6174,14 +6174,14 @@ E.Options.args.unitframe.args.raid2640 = {
 						['UP'] = L['Up'],
 						['DOWN'] = L["Down"],
 					},
-				},
+				},	
 				initialAnchor = {
 					type = 'select',
 					order = 6,
 					name = L['Initial Anchor'],
 					desc = L['The initial anchor point of the buffs on the frame'],
 					values = auraAnchors,
-				},
+				},	
 				attachTo = {
 					type = 'select',
 					order = 7,
@@ -6197,14 +6197,14 @@ E.Options.args.unitframe.args.raid2640 = {
 					order = 8,
 					name = L['Anchor Point'],
 					desc = L['What point to anchor to the frame you set to attach to.'],
-					values = auraAnchors,
+					values = auraAnchors,				
 				},
 				fontsize = {
 					order = 6,
 					name = L["Font Size"],
 					type = "range",
 					min = 6, max = 22, step = 1,
-				},
+				},	
 				useFilter = {
 					order = 7,
 					name = L['Use Filter'],
@@ -6231,9 +6231,9 @@ E.Options.args.unitframe.args.raid2640 = {
 					desc = L['The aura must be below this duration for the buff to show, set to 0 to disable. Note: This is in seconds.'],
 					type = 'range',
 					min = 0, max = 3600, step = 60,
-				},
+				},					
 			},
-		},
+		},	
 		buffIndicator = {
 			order = 600,
 			type = 'group',
@@ -6250,7 +6250,7 @@ E.Options.args.unitframe.args.raid2640 = {
 					type = 'toggle',
 					name = L['Color Icons'],
 					desc = L['Color the icon to their set color in the filters section, otherwise use the icon texture.'],
-					order = 2,
+					order = 2,					
 				},
 				size = {
 					type = 'range',
@@ -6266,13 +6266,13 @@ E.Options.args.unitframe.args.raid2640 = {
 					min = 7, max = 22, step = 1,
 				},
 			},
-		},
+		},	
 		roleIcon = {
 			order = 700,
 			type = 'group',
 			name = L['Role Icon'],
 			get = function(info) return E.db.unitframe.units['raid625']['roleIcon'][ info[#info] ] end,
-			set = function(info, value) E.db.unitframe.units['raid625']['roleIcon'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('raid625') end,
+			set = function(info, value) E.db.unitframe.units['raid625']['roleIcon'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('raid625') end,	
 			args = {
 				enable = {
 					type = 'toggle',
@@ -6284,9 +6284,9 @@ E.Options.args.unitframe.args.raid2640 = {
 					order = 2,
 					name = L['Position'],
 					values = positionValues,
-				},
+				},							
 			},
-		},
+		},		
 		rdebuffs = {
 			order = 800,
 			type = 'group',
@@ -6298,21 +6298,21 @@ E.Options.args.unitframe.args.raid2640 = {
 					type = 'toggle',
 					name = L['Enable'],
 					order = 1,
-				},
+				},	
 				size = {
 					type = 'range',
 					name = L['Size'],
 					order = 2,
 					min = 8, max = 35, step = 1,
-				},
+				},				
 				fontsize = {
 					type = 'range',
 					name = L['Font Size'],
 					order = 3,
 					min = 7, max = 22, step = 1,
-				},
+				},				
 			},
-		},
+		},		
 	},
 }
 
@@ -6334,7 +6334,7 @@ E.Options.args.unitframe.args.tank = {
 			order = 2,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('tank') end,
-		},
+		},		
 		general = {
 			order = 3,
 			type = 'group',
@@ -6346,15 +6346,15 @@ E.Options.args.unitframe.args.tank = {
 					name = L['Width'],
 					type = 'range',
 					min = 50, max = 500, step = 1,
-				},
+				},			
 				height = {
 					order = 3,
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 250, step = 1,
-				},
+				},					
 			},
-		},
+		},	
 	},
 }
 
@@ -6376,7 +6376,7 @@ E.Options.args.unitframe.args.assist = {
 			order = 2,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('assist') end,
-		},
+		},		
 		general = {
 			order = 3,
 			type = 'group',
@@ -6388,14 +6388,14 @@ E.Options.args.unitframe.args.assist = {
 					name = L['Width'],
 					type = 'range',
 					min = 50, max = 500, step = 1,
-				},
+				},			
 				height = {
 					order = 3,
 					name = L['Height'],
 					type = 'range',
 					min = 10, max = 250, step = 1,
-				},
+				},					
 			},
-		},
+		},	
 	},
 }
