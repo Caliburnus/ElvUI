@@ -71,9 +71,8 @@ function CH:StyleChat(frame)
 	tab:SetAlpha(1)
 	tab.SetAlpha = UIFrameFadeRemoveFrame
 
-
 	tab.text = _G[name.."TabText"]
-	tab.text:FontTemplate()
+	tab.text:FontTemplate(E['media'].pixelFont, 10, 'OUTLINE')
 	tab.text:SetTextColor(unpack(E["media"].rgbvaluecolor))
 	tab.text.OldSetTextColor = tab.text.SetTextColor
 	tab.text.SetTextColor = E.noop
@@ -853,6 +852,15 @@ function CH:Initialize()
 	close:EnableMouse(true)
 
 	S:HandleCloseButton(close)
+
+	local SoundSys = CreateFrame("Frame")
+	SoundSys:RegisterEvent("CHAT_MSG_WHISPER")
+	SoundSys:RegisterEvent("CHAT_MSG_BN_WHISPER")
+	SoundSys:HookScript("OnEvent", function(self, event, ...)
+		if event == "CHAT_MSG_WHISPER" or "CHAT_MSG_BN_WHISPER" then
+			PlaySoundFile(E.media.whispersound, "Master")
+		end
+	end)
 end
 
 E:RegisterModule(CH:GetName())

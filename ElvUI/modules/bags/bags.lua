@@ -56,11 +56,9 @@ function B:BagFrameSlotNew(frame, slot, nonAllInOne)
 
 	if not nonAllInOne then
 		ret.frame:HookScript("OnEnter", function()
-			local bag
 			for ind, val in ipairs(B.buttons) do
 				if val.bagOwner == ret.slot then
 					val.frame:SetAlpha(1)
-					--E:Print('Matched Bag Slot: '..val.bagOwner..' to button: '..ind)
 				else
 					val.frame:SetAlpha(0.2)
 				end
@@ -243,7 +241,6 @@ function B:SlotNew(bag, slot)
 
 	return ret, true
 end
-
 
 function B:Layout(isBank)
 	if E.global.bags.enable ~= true then return end
@@ -490,7 +487,6 @@ local function OpenEditbox(self)
 	self:GetParent().editBox:SetText(SEARCH)
 	self:GetParent().editBox:HighlightText()
 end
-
 
 local function Tooltip_Hide(self)
 	if self.backdropTexture then
@@ -989,10 +985,12 @@ local function BagToUse(item, bags)
 		endBag = #bags
 		nextBag = 1
 	end
+
 	for i = initialBag, endBag, nextBag do
 		if not bags[i].full then
 			-- Get the bag's family
 			local bagFamily = select(2, GetContainerNumFreeSlots(bags[i].bag))
+
 			if bagFamily == 0 or bit.band(itemFamily, bagFamily) > 0 then
 				idx = i
 				break
@@ -1184,6 +1182,7 @@ function B:SortBags(frame)
 			})
 		end
 	end
+
 	nextSlot = (E.db.bags.sortOrientation == 'BOTTOM-TOP') and -1 or 1
 
 	if #bs < 1 then
@@ -1216,10 +1215,7 @@ function B:SortBags(frame)
 					srcSlot = v,
 					sslot = v.slot,
 					sbag = v.bag,
-					--sort = q .. iL .. c1 .. c2 .. rL .. Sl .. n .. i,
-					--sort = q .. iL .. c1 .. c2 .. rL .. Sl .. n .. (#self.buttons - i),
 					sort = itemFamily .. q .. c1 .. c2 .. rL .. n .. iL .. Sl .. (#self.buttons - i),
-					--sort = q .. (#self.buttons - i) .. n,
 				})
 			end
 		end
@@ -1245,18 +1241,23 @@ function B:SortBags(frame)
 			limitValue = 5
 		end
 		dbag = bs[idx]
+
 		for i, v in ipairs (st) do
 			v.dbag = dbag
 			v.dslot = dslot
 			v.dstSlot = self:SlotNew(dbag, dslot)
 			dslot = dslot + nextSlot
+
 			if dslot == endSlot then
 				while true do
 					idx = idx + nextSlot
+
 					if idx == endBag then
 						break
 					end
+
 					dbag = bs[idx]
+
 					-- The original last check for dbag is dbag < 1 (for Top-Bottom sort direction), or dbag > 4 (for Top-Bottom)
 					if dbag and (B:BagType(dbag) == ST_NORMAL or B:BagType(dbag) == ST_SPECIAL or dbag == limitValue) then
 						break
@@ -1278,10 +1279,12 @@ function B:SortBags(frame)
 		end
 	else -- Special sort
 		local b
+
 		for i, v in ipairs (st) do
 			-- We need to determine the bag we'll place the item into. This is to prevent an endless cycle
 			-- when there are different special bags in the backpack or the bank.
 			b = BagToUse(GetContainerItemID(v.sbag, v.sslot), bs)
+
 			if b then -- An available bag was found.
 				v.dbag = bs[b].bag
 				v.dslot = bs[b].slot
