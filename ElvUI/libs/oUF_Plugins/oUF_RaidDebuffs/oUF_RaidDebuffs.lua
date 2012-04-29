@@ -26,7 +26,7 @@ local function add(spell)
 	if addon.MatchBySpellName and type(spell) == 'number' then
 		spell = GetSpellInfo(spell)
 	end
-
+	
 	debuff_data[spell] = addon.priority
 	addon.priority = addon.priority + 1
 end
@@ -84,7 +84,7 @@ do
 			['Poison'] = true,
 		},
 	}
-
+	
 	DispellFilter = dispellClasses[select(2, UnitClass('player'))] or {}
 end
 
@@ -111,30 +111,30 @@ local function CheckForKnownTalent(spellid)
 end
 
 local function CheckSpec(self, event, levels)
-	-- Not interested in gained points from leveling
+	-- Not interested in gained points from leveling	
 	if event == "CHARACTER_POINTS_CHANGED" and levels > 0 then return end
-
+	
 	--Check for certain talents to see if we can dispel magic or not
 	if select(2, UnitClass('player')) == "PALADIN" then
 		--Check to see if we have the 'Sacred Cleansing' talent.
 		if CheckForKnownTalent(53551) then
 			DispellFilter.Magic = true
 		else
-			DispellFilter.Magic = false
+			DispellFilter.Magic = false	
 		end
 	elseif select(2, UnitClass('player')) == "SHAMAN" then
 		--Check to see if we have the 'Improved Cleanse Spirit' talent.
 		if CheckForKnownTalent(77130) then
 			DispellFilter.Magic = true
 		else
-			DispellFilter.Magic = false
+			DispellFilter.Magic = false	
 		end
 	elseif select(2, UnitClass('player')) == "DRUID" then
 		--Check to see if we have the 'Nature's Cure' talent.
 		if CheckForKnownTalent(88423) then
 			DispellFilter.Magic = true
 		else
-			DispellFilter.Magic = false
+			DispellFilter.Magic = false	
 		end
 	end
 end
@@ -173,7 +173,7 @@ local function UpdateDebuff(self, name, icon, count, debuffType, duration, endTi
 		f.icon:SetTexture(icon)
 		f.icon:Show()
 		f.duration = duration
-
+		
 		if f.count then
 			if count and (count > 1) then
 				f.count:SetText(count)
@@ -183,13 +183,13 @@ local function UpdateDebuff(self, name, icon, count, debuffType, duration, endTi
 				f.count:Hide()
 			end
 		end
-
+		
 		if spellId and select(1, unpack(ElvUI)).ReverseTimer[spellId] then
 			f.reverse = true
 		else
 			f.reverse = nil
 		end
-
+		
 		if f.time then
 			if duration and (duration > 0) then
 				f.endTime = endTime
@@ -201,7 +201,7 @@ local function UpdateDebuff(self, name, icon, count, debuffType, duration, endTi
 				f.time:Hide()
 			end
 		end
-
+		
 		if f.cd then
 			if duration and (duration > 0) then
 				f.cd:SetCooldown(endTime - duration, duration)
@@ -210,10 +210,10 @@ local function UpdateDebuff(self, name, icon, count, debuffType, duration, endTi
 				f.cd:Hide()
 			end
 		end
-
+		
 		local c = DispellColor[debuffType] or DispellColor.none
 		f:SetBackdropBorderColor(c[1], c[2], c[3])
-
+		
 		f:Show()
 	else
 		f:Hide()
@@ -227,7 +227,7 @@ local blackList = {
 local highPriority = {
 	[106199] = true, -- Blood Corruption: Death
 }
-
+	
 local function Update(self, event, unit)
 	if unit ~= self.unit then return end
 	local _name, _icon, _count, _dtype, _duration, _endTime, _spellId
@@ -252,22 +252,22 @@ local function Update(self, event, unit)
 				_priority, _name, _icon, _count, _dtype, _duration, _endTime, _spellId = priority, name, icon, count, debuffType, duration, expirationTime, spellId
 			end
 		end
-
+		
 		priority = debuff_data[addon.MatchBySpellName and name or spellId]
 		if priority and not blackList[spellId] and (priority > _priority) then
 			_priority, _name, _icon, _count, _dtype, _duration, _endTime, _spellId = priority, name, icon, count, debuffType, duration, expirationTime, spellId
 		end
 	end
-
+	
 	UpdateDebuff(self, _name, _icon, _count, _dtype, _duration, _endTime, _spellId)
-
+	
 	--Reset the DispellPriority
 	DispellPriority = {
 		['Magic']	= 4,
 		['Curse']	= 3,
 		['Disease']	= 2,
 		['Poison']	= 1,
-	}
+	}	
 end
 
 local function Enable(self)

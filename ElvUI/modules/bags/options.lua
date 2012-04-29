@@ -19,7 +19,7 @@ E.Options.args.bags = {
 			desc = L['Enable/Disable the all-in-one bag.'],
 			get = function(info) return E.global.bags.enable end,
 			set = function(info, value) E.global.bags.enable = value; StaticPopup_Show("GLOBAL_RL") end
-		},
+		},	
 		BagBarEnable = {
 			order = 3,
 			type = "toggle",
@@ -28,14 +28,14 @@ E.Options.args.bags = {
 			get = function(info) return E.global.bags.bagBar.enable end,
 			set = function(info, value) E.global.bags.bagBar.enable = value; StaticPopup_Show("GLOBAL_RL") end,
 			disabled = function() return E.bags end,
-		},
+		},				
 		general = {
 			order = 4,
 			type = "group",
 			name = L["General"],
 			guiInline = true,
 			disabled = function() return not E.bags end,
-			args = {
+			args = {			
 				bagCols = {
 					order = 1,
 					type = 'range',
@@ -67,14 +67,14 @@ E.Options.args.bags = {
 					type = 'range',
 					name = L["X Offset"],
 					min = -5, max = 600, step = 1,
-					set = function(info, value) E.db.bags[ info[#info] ] = value; B:PositionBagFrames(); end,
-				},
+					set = function(info, value) E.db.bags[ info[#info] ] = value; B:PositionBagFrames(); end,				
+				},				
 				yOffset = {
 					order = 5,
 					type = 'range',
 					name = L["Y Offset"],
 					min = 0, max = 600, step = 1,
-					set = function(info, value) E.db.bags[ info[#info] ] = value; B:PositionBagFrames(); end,
+					set = function(info, value) E.db.bags[ info[#info] ] = value; B:PositionBagFrames(); end,				
 				},
 			},
 		},
@@ -99,7 +99,7 @@ E.Options.args.bags = {
 					type = 'range',
 					name = L['Button Spacing'],
 					desc = L['The spacing between buttons.'],
-					min = 1, max = 10, step = 1,
+					min = 1, max = 10, step = 1,			
 				},
 				showBackdrop = {
 					order = 3,

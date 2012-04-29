@@ -121,7 +121,7 @@ local function LoadSkin()
 	for i = 1, #buttons do
 		_G[buttons[i]]:StripTextures()
 		S:HandleButton(_G[buttons[i]])
-	end
+	end	
 
 	for i=1, NUM_LFD_CHOICE_BUTTONS do
 		S:HandleCheckBox(_G["LFDQueueFrameSpecificListButton"..i.."EnableButton"])
