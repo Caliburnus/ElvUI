@@ -72,7 +72,7 @@ function UF:Construct_HealthBar(frame, bg, text, textPos)
 	health.colorTapping = true	
 	health.colorDisconnected = true
 	health:CreateBackdrop('Default')	
-	
+
 	return health
 end
 
@@ -280,6 +280,11 @@ function UF:Construct_DeathKnightResourceBar(frame)
 		
 		runes[i]:CreateBackdrop('Default')
 		runes[i].backdrop:SetParent(runes)
+		
+		runes[i].bg = runes[i]:CreateTexture(nil, 'BORDER')
+		runes[i].bg:SetAllPoints()
+		runes[i].bg:SetTexture(E['media'].blankTex)
+		runes[i].bg.multiplier = 0.2
 	end
 	
 	return runes
