@@ -1,4 +1,4 @@
-local E, L, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, ProfileDB, GlobalDB
+local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local B = E:NewModule('Bags', 'AceHook-3.0', 'AceEvent-3.0');
 
 local ST_NORMAL = 1
@@ -243,7 +243,7 @@ function B:SlotNew(bag, slot)
 end
 
 function B:Layout(isBank)
-	if E.global.bags.enable ~= true then return end
+	if E.private.bags.enable ~= true then return end
 	local slots = 0
 	local rows = 0
 	local offset = 26
@@ -1472,7 +1472,7 @@ function B:INVENTORY_SEARCH_UPDATE()
 end
 
 function B:Initialize()
-	if not E.global.bags.enable then
+	if not E.private.bags.enable then
 		self:LoadBagBar()
 		return
 	end
