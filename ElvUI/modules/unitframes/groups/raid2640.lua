@@ -83,7 +83,7 @@ function UF:Update_Raid2640Header(header, db)
 	self:ChangeVisibility(header, 'custom '..db.visibility)
 	
 	if db.groupBy == 'CLASS' then
-		header:SetAttribute("groupingOrder", "DEATHKNIGHT, DRUID, HUNTER, MAGE, PALADIN, PRIEST, SHAMAN, WARLOCK, WARRIOR")
+		header:SetAttribute("groupingOrder", "DEATHKNIGHT,DRUID,HUNTER,MAGE,PALADIN,PRIEST,SHAMAN,WARLOCK,WARRIOR")
 		header:SetAttribute('sortMethod', 'NAME')
 	elseif db.groupBy == 'TANK' then
 		header:SetAttribute("groupingOrder", "MAINTANK,MAINASSIST,1,2,3,4,5,6,7,8")
@@ -333,15 +333,14 @@ function UF:Update_Raid2640Frames(frame, db)
 		else
 			buffs:SetWidth(UNIT_WIDTH)
 		end
+
+		buffs.num = db.buffs.perrow * rows
+		buffs.size = db.buffs.sizeOverride ~= 0 and db.buffs.sizeOverride or ((((buffs:GetWidth() - (buffs.spacing*(buffs.num/rows - 1))) / buffs.num)) * rows)
 		
-		if db.buffs.initialAnchor == "RIGHT" or db.buffs.initialAnchor == "LEFT" then
-			rows = 1;
-			buffs:SetWidth(UNIT_WIDTH / 2)
+		if db.buffs.sizeOverride and db.buffs.sizeOverride > 0 then
+			buffs:SetWidth(db.buffs.perrow * db.buffs.sizeOverride)
 		end
 		
-		buffs.num = db.buffs.perrow * rows
-		buffs.size = ((((buffs:GetWidth() - (buffs.spacing*(buffs.num/rows - 1))) / buffs.num)) * rows)
-
 		local x, y = self:GetAuraOffset(db.buffs.initialAnchor, db.buffs.anchorPoint)
 		local attachTo = self:GetAuraAnchorFrame(frame, db.buffs.attachTo)
 
@@ -368,15 +367,14 @@ function UF:Update_Raid2640Frames(frame, db)
 		else
 			debuffs:SetWidth(UNIT_WIDTH)
 		end
+
+		debuffs.num = db.debuffs.perrow * rows
+		debuffs.size = db.debuffs.sizeOverride ~= 0 and db.debuffs.sizeOverride or ((((debuffs:GetWidth() - (debuffs.spacing*(debuffs.num/rows - 1))) / debuffs.num)) * rows)
 		
-		if db.debuffs.initialAnchor == "RIGHT" or db.debuffs.initialAnchor == "LEFT" then
-			rows = 1;
-			debuffs:SetWidth(UNIT_WIDTH / 2)
+		if db.debuffs.sizeOverride and db.debuffs.sizeOverride > 0 then
+			debuffs:SetWidth(db.debuffs.perrow * db.debuffs.sizeOverride)
 		end
 		
-		debuffs.num = db.debuffs.perrow * rows
-		debuffs.size = ((((debuffs:GetWidth() - (debuffs.spacing*(debuffs.num/rows - 1))) / debuffs.num)) * rows)
-
 		local x, y = self:GetAuraOffset(db.debuffs.initialAnchor, db.debuffs.anchorPoint)
 		local attachTo = self:GetAuraAnchorFrame(frame, db.debuffs.attachTo, db.buffs.attachTo == 'DEBUFFS' and db.debuffs.attachTo == 'BUFFS')
 

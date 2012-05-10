@@ -31,6 +31,21 @@ function R:PlayerHasFilteredBuff(frame, db, checkPersonal)
 	return false;
 end
 
+function R:PlayerHasFilteredDebuff(frame, db)
+	for debuff, value in pairs(db) do
+		if value == true then
+			local name = GetSpellInfo(debuff);
+			local _, _, icon, _, _, _, _, unitCaster, _, _, _ = UnitDebuff("player", name)
+		
+			if (name and icon) then
+				return true;
+			end
+		end
+	end
+	
+	return false;
+end
+
 function R:CanSpellBeUsed(id)
 	local name = GetSpellInfo(id);
 	local start, duration, enabled = GetSpellCooldown(name)
@@ -71,17 +86,26 @@ function R:ReminderIcon_OnUpdate(elapsed)
 				
 		if db.CDSpell then
 			local filterCheck = R:FilterCheck(self)
+			local name = GetSpellInfo(db.CDSpell);
+			local start, duration, enabled = GetSpellCooldown(name)
+			if(duration and duration > 0) then
+				self.cooldown:SetCooldown(start, duration)
+				self.cooldown:Show()
+			else
+				self.cooldown:Hide()
+			end
+					
 			if R:CanSpellBeUsed(db.CDSpell) and filterCheck then				
-				if db.OnCooldown == "SHOW" then
+				if db.OnCooldown == "HIDE" then				
 					R:UpdateColors(self, db.CDSpell)
 					R.ReminderIcon_OnEvent(self)
 				else
 					self:SetAlpha(db.cdFade or 0)
 				end
 			elseif filterCheck then
-				if db.OnCooldown == "SHOW" then
+				if db.OnCooldown == "HIDE" then
 					self:SetAlpha(db.cdFade or 0)
-				else
+				else					
 					R:UpdateColors(self, db.CDSpell)
 					R.ReminderIcon_OnEvent(self)
 				end
@@ -95,7 +119,7 @@ function R:ReminderIcon_OnUpdate(elapsed)
 	
 		if db.spellGroup then
 			for buff, value in pairs(db.spellGroup) do
-				if value == true and R:CanSpellBeUsed(buff) then
+				if value == true and R:CanSpellBeUsed(buff) then				
 					self:SetScript("OnUpdate", nil)
 					R.ReminderIcon_OnEvent(self)
 				end
@@ -108,7 +132,7 @@ function R:ReminderIcon_OnUpdate(elapsed)
 	end
 end
 
-function R:FilterCheck(frame)
+function R:FilterCheck(frame, isReverse)
 	local _, instanceType = IsInInstance();
 	local roleCheck, treeCheck, combatCheck, instanceCheck, PVPCheck;
 	
@@ -161,7 +185,9 @@ function R:FilterCheck(frame)
 		instanceCheck = true;
 	end
 	
-	if roleCheck and treeCheck and combatCheck and (instanceCheck or PVPCheck) then
+	if isReverse and combatCheck and (instanceCheck or PVPCheck) then
+		return true;
+	elseif roleCheck and treeCheck and combatCheck and (instanceCheck or PVPCheck) then
 		return true;
 	else
 		return false;
@@ -173,10 +199,20 @@ function R:ReminderIcon_OnEvent(event, unit)
 	
 	local db = E.global.reminder.filters[E.myclass][self.groupName];
 	
+	self.cooldown:Hide()
 	self:SetAlpha(0)
 	self.icon:SetTexture(nil);
-	
-	if not db or not db.enable or (not db.spellGroup and not db.weaponCheck and not db.CDSpell) or UnitIsDeadOrGhost('player') then return; end
+
+	if not db or not db.enable or (not db.spellGroup and not db.weaponCheck and not db.CDSpell) or UnitIsDeadOrGhost('player') then 
+		self:SetScript('OnUpdate', nil)
+		self:SetAlpha(0)
+		self.icon:SetTexture(nil);	
+		
+		if not db then
+			R.CreatedReminders[self.groupName] = nil;
+		end
+		return; 
+	end
 	
 	--Level Check
 	if db.level and UnitLevel('player') < db.level and not self.ForceShow then return; end
@@ -186,12 +222,13 @@ function R:ReminderIcon_OnEvent(event, unit)
 	
 	local hasOffhandWeapon = OffhandHasWeapon();
 	local hasMainHandEnchant, _, _, hasOffHandEnchant, _, _ = GetWeaponEnchantInfo();
+	local hasBuff, hasDebuff;
 	if db.spellGroup and not db.CDSpell then
 		for buff, value in pairs(db.spellGroup) do
 			if value == true then
 				local name = GetSpellInfo(buff);
 				local usable, nomana = IsUsableSpell(name);
-				if not R:CanSpellBeUsed(buff) then
+				if usable and not R:CanSpellBeUsed(buff) then
 					self:SetScript("OnUpdate", R.ReminderIcon_OnUpdate)
 					return
 				end
@@ -224,6 +261,8 @@ function R:ReminderIcon_OnEvent(event, unit)
 				self:RegisterEvent("UNIT_INVENTORY_CHANGED");
 			end
 		end	
+		
+		hasBuff, hasDebuff = R:PlayerHasFilteredBuff(self, db.spellGroup, db.personal), R:PlayerHasFilteredDebuff(self, db.spellGroup)
 	end
 	
 	if db.weaponCheck then
@@ -257,6 +296,11 @@ function R:ReminderIcon_OnEvent(event, unit)
 	end
 	
 	if db.CDSpell then
+		if type(db.CDSpell) == "boolean" then return; end
+		local name = GetSpellInfo(db.CDSpell);
+		local usable, nomana = IsUsableSpell(name);
+		if not usable then return; end
+		
 		self:SetScript("OnUpdate", R.ReminderIcon_OnUpdate)
 		
 		self.icon:SetTexture(select(3, GetSpellInfo(db.CDSpell)));
@@ -272,11 +316,12 @@ function R:ReminderIcon_OnEvent(event, unit)
 		return;
 	end
 	
-	local filterCheck = R:FilterCheck(self)
-	if db.reverseCheck and not (db.role or db.tree) then db.reverseCheck = nil; end
 	if not self.icon:GetTexture() or UnitInVehicle("player") then return; end
 	
 	R:SetIconPosition(self.groupName)
+
+	local filterCheck = R:FilterCheck(self)
+	local reverseCheck = R:FilterCheck(self, true)
 	
 	if db.CDSpell then
 		if filterCheck then
@@ -285,10 +330,13 @@ function R:ReminderIcon_OnEvent(event, unit)
 		return;
 	end
 	
+	local activeTree = GetPrimaryTalentTree()
 	if db.spellGroup and not db.weaponCheck then
-		if filterCheck and not R:PlayerHasFilteredBuff(self, db.spellGroup, db.personal) then
+		if filterCheck and ((not hasBuff) and (not hasDebuff)) and not db.reverseCheck then
 			self:SetAlpha(1);
-		elseif combatCheck and (instanceCheck or PVPCheck) and db.reverseCheck and (not roleCheck or not treeCheck) and R:PlayerHasFilteredBuff(self, db.spellGroup, db.personal) and not db.talentTreeException == GetPrimaryTalentTree() then
+		elseif reverseCheck and db.reverseCheck and (hasBuff or hasDebuff) and not (db.talentTreeException == activeTree) then
+			self:SetAlpha(1);
+		elseif reverseCheck and db.reverseCheck and ((not hasBuff) and (not hasDebuff)) and (db.talentTreeException == activeTree) then
 			self:SetAlpha(1);
 		end
 	elseif db.weaponCheck then
@@ -310,7 +358,7 @@ function R:ReminderIcon_OnEvent(event, unit)
 	if not db.disableSound and self:GetAlpha() == 1 then
 		if not R.SoundThrottled then
 			R.SoundThrottled = true;
-			PlaySoundFile(LSM:Fetch("sound", E.global['reminder'].sound));
+			PlaySoundFile(LSM:Fetch("sound", E.private['reminder'].sound));
 			R:ScheduleTimer('ThrottleSound', 10);
 		end
 	end
@@ -364,6 +412,10 @@ function R:CreateReminder(name, index)
 	frame.icon:Point('TOPLEFT', 2, -2);
 	frame.icon:Point('BOTTOMRIGHT', -2, 2);
 	frame:SetAlpha(0);
+	
+	local cd = CreateFrame("Cooldown", nil, frame)
+	cd:SetAllPoints(frame.icon)	
+	frame.cooldown = cd
 
 	frame:RegisterEvent("UNIT_AURA");
 	frame:RegisterEvent("PLAYER_ENTERING_WORLD");
