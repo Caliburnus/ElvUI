@@ -33,9 +33,11 @@ local function UpdateFilterGroup()
 					type = 'input',
 					get = function(info) return "" end,
 					set = function(info, value) 
-						if not GetSpellInfo(value) then
+						if not tonumber(value) then
+							E:Print(L["Value must be a number"])					
+						elseif not GetSpellInfo(value) then
 							E:Print(L["Not valid spell id"])
-						else
+						else	
 							table.insert(E.global.unitframe.buffwatch[E.myclass], {["enabled"] = true, ["id"] = tonumber(value), ["point"] = "TOPRIGHT", ["color"] = {["r"] = 1, ["g"] = 0, ["b"] = 0}, ["anyUnit"] = false})
 							UpdateFilterGroup();
 							UF:Update_AllFrames();
@@ -50,9 +52,11 @@ local function UpdateFilterGroup()
 					type = 'input',
 					get = function(info) return "" end,
 					set = function(info, value) 
-						if not GetSpellInfo(value) then
+						if not tonumber(value) then
+							E:Print(L["Value must be a number"])
+						elseif not GetSpellInfo(value) then
 							E:Print(L["Not valid spell id"])
-						else
+						else	
 							local match
 							for x, y in pairs(E.global.unitframe.buffwatch[E.myclass]) do
 								if y["id"] == tonumber(value) then
@@ -84,8 +88,10 @@ local function UpdateFilterGroup()
 						end			
 						
 						for _, spell in pairs(buffs) do
-							local name = GetSpellInfo(spell.id)
-							values[spell.id] = name;
+							if spell.id then
+								local name = GetSpellInfo(spell.id)
+								values[spell.id] = name;
+							end
 						end
 						return values
 					end,
@@ -165,6 +171,7 @@ local function UpdateFilterGroup()
 	else
 		if not selectedFilter or not E.global.unitframe['aurafilters'][selectedFilter] then
 			E.Options.args.unitframe.args.filters.args.filterGroup = nil
+			E.Options.args.unitframe.args.filters.args.spellGroup = nil
 			return
 		end
 	
@@ -172,7 +179,7 @@ local function UpdateFilterGroup()
 			type = 'group',
 			name = selectedFilter,
 			guiInline = true,
-			order = -10,
+			order = 10,
 			args = {
 				addSpell = {
 					order = 1,
@@ -181,7 +188,12 @@ local function UpdateFilterGroup()
 					type = 'input',
 					get = function(info) return "" end,
 					set = function(info, value) 
-						E.global.unitframe['aurafilters'][selectedFilter]['spells'][value] = true;
+						if not E.global.unitframe['aurafilters'][selectedFilter]['spells'][value] then
+							E.global.unitframe['aurafilters'][selectedFilter]['spells'][value] = { 
+								['enable'] = true,
+								['priority'] = 0,
+							}
+						end
 						UpdateFilterGroup();
 						UF:Update_AllFrames();
 					end,					
@@ -195,7 +207,7 @@ local function UpdateFilterGroup()
 					set = function(info, value) 
 						if G['unitframe']['aurafilters'][selectedFilter] then
 							if G['unitframe']['aurafilters'][selectedFilter]['spells'][value] then
-								E.global.unitframe['aurafilters'][selectedFilter]['spells'][value] = false;
+								E.global.unitframe['aurafilters'][selectedFilter]['spells'][value].enable = false;
 								E:Print(L['You may not remove a spell from a default filter that is not customly added. Setting spell to false instead.'])
 							else
 								E.global.unitframe['aurafilters'][selectedFilter]['spells'][value] = nil;
@@ -207,13 +219,7 @@ local function UpdateFilterGroup()
 						UpdateFilterGroup();
 						UF:Update_AllFrames();
 					end,				
-				},
-				spacer = {
-					order = 3,
-					type = "description",
-					name = "",
-					width = 'full',
-				},			
+				},		
 				filterType = {
 					order = 4,
 					name = L['Filter Type'],
@@ -226,24 +232,54 @@ local function UpdateFilterGroup()
 					get = function() return E.global.unitframe['aurafilters'][selectedFilter].type end,
 					set = function(info, value) E.global.unitframe['aurafilters'][selectedFilter].type = value; UF:Update_AllFrames(); end,
 				},	
-				spellGroup = {
-					name = SPELLS,
-					type = 'group',
+				selectSpell = {
+					name = L["Select Spell"],
+					type = 'select',
+					order = -9,
 					guiInline = true,
-					args = {},
-				},
+					get = function(info) return selectedSpell end,
+					set = function(info, value) selectedSpell = value; UpdateFilterGroup() end,							
+					values = function()
+						local filters = {}
+						filters[''] = ''
+						for filter in pairs(E.global.unitframe['aurafilters'][selectedFilter]['spells']) do
+							filters[filter] = filter
+						end
+
+						return filters
+					end,
+				},			
 			},	
 		}
-		
-
-		for spell, value in pairs(E.global.unitframe['aurafilters'][selectedFilter]['spells']) do
-			E.Options.args.unitframe.args.filters.args.filterGroup.args.spellGroup.args[spell] = {
-				name = spell,
-				type = 'toggle',
-				get = function() return E.global.unitframe['aurafilters'][selectedFilter]['spells'][spell] end,
-				set = function(info, value) E.global.unitframe['aurafilters'][selectedFilter]['spells'][spell] = value; UpdateFilterGroup(); UF:Update_AllFrames(); end,
-			}
+	
+		if not selectedSpell or not E.global.unitframe['aurafilters'][selectedFilter]['spells'][selectedSpell] then
+			E.Options.args.unitframe.args.filters.args.spellGroup = nil
+			return
 		end
+		
+		E.Options.args.unitframe.args.filters.args.spellGroup = {
+			type = "group",
+			name = selectedSpell,
+			order = 15,
+			guiInline = true,
+			args = {
+				enable = {
+					name = L["Enable"],
+					type = "toggle",
+					get = function() return E.global.unitframe['aurafilters'][selectedFilter]['spells'][selectedSpell].enable end,
+					set = function(info, value) E.global.unitframe['aurafilters'][selectedFilter]['spells'][selectedSpell].enable = value; UpdateFilterGroup(); UF:Update_AllFrames(); end
+				},
+				priority = {
+					name = L["Priority"],
+					type = "range",
+					get = function() return E.global.unitframe['aurafilters'][selectedFilter]['spells'][selectedSpell].priority end,
+					set = function(info, value) E.global.unitframe['aurafilters'][selectedFilter]['spells'][selectedSpell].priority = value; UpdateFilterGroup(); UF:Update_AllFrames(); end,
+					min = 0, max = 10, step = 1,
+					desc = L["Set the priority order of the spell, please note that prioritys are only used for the raid debuff module, not the standard buff/debuff module. If you want to disable set to zero."],
+				},			
+			},
+		}
+		
 	end
 end
 
@@ -567,6 +603,7 @@ E.Options.args.unitframe = {
 						else
 							E.global.unitframe['aurafilters'][value] = nil;
 							selectedFilter = nil;
+							selectedSpell = nil;
 							E.Options.args.unitframe.args.filters.args.filterGroup = nil;
 						end
 					end,				
@@ -576,7 +613,7 @@ E.Options.args.unitframe = {
 					type = 'select',
 					name = L['Select Filter'],
 					get = function(info) return selectedFilter end,
-					set = function(info, value) selectedFilter = value; UpdateFilterGroup() end,							
+					set = function(info, value) if value == '' then selectedFilter = nil; selectedSpell = nil; else selectedFilter = value end; UpdateFilterGroup() end,							
 					values = function()
 						filters = {}
 						filters[''] = ''
@@ -908,6 +945,13 @@ E.Options.args.unitframe.args.player = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -1010,6 +1054,13 @@ E.Options.args.unitframe.args.player = {
 					order = 3,
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
+				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
 				},
 				['growth-x'] = {
 					type = 'select',
@@ -1461,6 +1512,13 @@ E.Options.args.unitframe.args.target = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -1564,6 +1622,13 @@ E.Options.args.unitframe.args.target = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -1950,6 +2015,13 @@ E.Options.args.unitframe.args.targettarget = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -2053,6 +2125,13 @@ E.Options.args.unitframe.args.targettarget = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -2307,6 +2386,13 @@ E.Options.args.unitframe.args.focus = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -2410,6 +2496,13 @@ E.Options.args.unitframe.args.focus = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -2770,6 +2863,13 @@ E.Options.args.unitframe.args.focustarget = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -2872,7 +2972,14 @@ E.Options.args.unitframe.args.focustarget = {
 					order = 3,
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
-				},
+				},	
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -3127,6 +3234,13 @@ E.Options.args.unitframe.args.pet = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -3230,6 +3344,13 @@ E.Options.args.unitframe.args.pet = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -3478,6 +3599,13 @@ E.Options.args.unitframe.args.pettarget = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -3581,6 +3709,13 @@ E.Options.args.unitframe.args.pettarget = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -3693,7 +3828,14 @@ E.Options.args.unitframe.args.boss = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('boss') end,
-		},		
+		},	
+		displayFrames = {
+			type = 'execute',
+			order = 3,
+			name = L['Display Frames'],
+			desc = L['Force the frames to show, they will act as if they are the player frame.'],
+			func = function() UF:ToggleForceShowGroupFrames('boss', 4) end,
+		},
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -3882,6 +4024,13 @@ E.Options.args.unitframe.args.boss = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -3985,6 +4134,13 @@ E.Options.args.unitframe.args.boss = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -4181,6 +4337,13 @@ E.Options.args.unitframe.args.arena = {
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('arena') end,
 		},		
+		displayFrames = {
+			type = 'execute',
+			order = 3,
+			name = L['Display Frames'],
+			desc = L['Force the frames to show, they will act as if they are the player frame.'],
+			func = function() UF:ToggleForceShowGroupFrames('arena', 5) end,
+		},		
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -4336,6 +4499,13 @@ E.Options.args.unitframe.args.arena = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -4439,6 +4609,13 @@ E.Options.args.unitframe.args.arena = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -4736,7 +4913,7 @@ E.Options.args.unitframe.args.party = {
 					type = 'select',		
 					values = {
 						['CLASS'] = CLASS,
-						['TANK'] = L["Tanks First"],
+						['TANK'] = L["MT, MA First"],
 						['GROUP'] = GROUP,
 					},
 				},
@@ -4897,6 +5074,13 @@ E.Options.args.unitframe.args.party = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -5000,6 +5184,13 @@ E.Options.args.unitframe.args.party = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -5366,7 +5557,7 @@ E.Options.args.unitframe.args.raid625 = {
 					type = 'select',		
 					values = {
 						['CLASS'] = CLASS,
-						['TANK'] = L["Tanks First"],
+						['TANK'] = L["MT, MA First"],
 						['GROUP'] = GROUP,
 					},
 				},			
@@ -5527,6 +5718,13 @@ E.Options.args.unitframe.args.raid625 = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -5630,6 +5828,13 @@ E.Options.args.unitframe.args.raid625 = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -5916,7 +6121,7 @@ E.Options.args.unitframe.args.raid2640 = {
 					type = 'select',		
 					values = {
 						['CLASS'] = CLASS,
-						['TANK'] = L["Tanks First"],
+						['TANK'] = L["MT, MA First"],
 						['GROUP'] = GROUP,
 					},
 				},		
@@ -6077,6 +6282,13 @@ E.Options.args.unitframe.args.raid2640 = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
@@ -6180,6 +6392,13 @@ E.Options.args.unitframe.args.raid2640 = {
 					name = L['Num Rows'],
 					min = 1, max = 4, step = 1,					
 				},
+				sizeOverride = {
+					type = 'range',
+					order = 3,
+					name = L['Size Override'],
+					desc = L['If not set to 0 then override the size of the aura icon to this.'],
+					min = 0, max = 60, step = 1,
+				},				
 				['growth-x'] = {
 					type = 'select',
 					order = 4,
