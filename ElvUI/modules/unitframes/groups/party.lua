@@ -52,7 +52,7 @@ function UF:Construct_PartyFrames(unitGroup)
 end
 
 function UF:PartySmartVisibility(event)
-	if not self.db or not self.SetAttribute or (self.db and not self.db.enable) or (UF.db and not UF.db.smartRaidFilter) then return; end
+	if not self.db or not self.SetAttribute or (self.db and not self.db.enable) or (UF.db and not UF.db.smartRaidFilter) or self.isForced then return; end
 	local inInstance, instanceType = IsInInstance()
 	local _, _, _, _, maxPlayers, _, _ = GetInstanceInfo()
 	if event == "PLAYER_REGEN_ENABLED" then self:UnregisterEvent("PLAYER_REGEN_ENABLED") end
@@ -71,10 +71,13 @@ function UF:PartySmartVisibility(event)
 end
 
 function UF:Update_PartyHeader(header, db)
-	header:Hide()
+	if not header.isForced then
+		header:Hide()
+		header:SetAttribute('oUF-initialConfigFunction', ([[self:SetWidth(%d); self:SetHeight(%d); self:SetFrameLevel(5)]]):format(db.width, db.height))
+	end
+	
 	header.db = db
-	header:SetAttribute('oUF-initialConfigFunction', ([[self:SetWidth(%d); self:SetHeight(%d); self:SetFrameLevel(5)]]):format(db.width, db.height))
-
+	
 	--User Error Check
 	if UF['badHeaderPoints'][db.point] == db.columnAnchorPoint then
 		db.columnAnchorPoint = db.point
@@ -83,11 +86,13 @@ function UF:Update_PartyHeader(header, db)
 	
 	UF:ClearChildPoints(header:GetChildren())
 	
-	if not header.mover then
-		self:ChangeVisibility(header, 'custom [@raid6,exists] hide;show') --fucking retarded bug fix
+	if not header.isForced then
+		if not header.mover then
+			self:ChangeVisibility(header, 'custom [@raid6,exists] hide;show') --fucking retarded bug fix
+		end
+		
+		self:ChangeVisibility(header, 'custom '..db.visibility)
 	end
-	
-	self:ChangeVisibility(header, 'custom '..db.visibility)
 	
 	if db.groupBy == 'CLASS' then
 		header:SetAttribute("groupingOrder", "DEATHKNIGHT,DRUID,HUNTER,MAGE,PALADIN,PRIEST,SHAMAN,WARLOCK,WARRIOR")
@@ -102,10 +107,12 @@ function UF:Update_PartyHeader(header, db)
 	
 	header:SetAttribute("groupBy", db.groupBy)
 	
-	header:SetAttribute("showParty", db.showParty)
-	header:SetAttribute("showRaid", db.showRaid)
-	header:SetAttribute("showSolo", db.showSolo)
-	header:SetAttribute("showPlayer", db.showPlayer)
+	if not header.isForced then
+		header:SetAttribute("showParty", db.showParty)
+		header:SetAttribute("showRaid", db.showRaid)
+		header:SetAttribute("showSolo", db.showSolo)
+		header:SetAttribute("showPlayer", db.showPlayer)
+	end
 	
 	header:SetAttribute('columnAnchorPoint', db.columnAnchorPoint)
 	header:SetAttribute("maxColumns", db.maxColumns)
@@ -398,6 +405,7 @@ function UF:Update_PartyFrames(frame, db)
 				buffs:SetWidth(UNIT_WIDTH)
 			end
 
+			buffs.forceShow = frame:GetParent().forceShowAuras
 			buffs.num = db.buffs.perrow * rows
 			buffs.size = db.buffs.sizeOverride ~= 0 and db.buffs.sizeOverride or ((((buffs:GetWidth() - (buffs.spacing*(buffs.num/rows - 1))) / buffs.num)) * rows)
 			
@@ -432,6 +440,7 @@ function UF:Update_PartyFrames(frame, db)
 				debuffs:SetWidth(UNIT_WIDTH)
 			end
 
+			debuffs.forceShow = frame:GetParent().forceShowAuras
 			debuffs.num = db.debuffs.perrow * rows
 			debuffs.size = db.debuffs.sizeOverride ~= 0 and db.debuffs.sizeOverride or ((((debuffs:GetWidth() - (debuffs.spacing*(debuffs.num/rows - 1))) / debuffs.num)) * rows)
 			

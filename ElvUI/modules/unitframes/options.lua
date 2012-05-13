@@ -705,7 +705,7 @@ E.Options.args.unitframe.args.player = {
 			order = 2,
 			name = L['Copy From'],
 			desc = L['Select a unit to copy settings from.'],
-			values = UF['handledunits'],
+			values = UF['units'],
 			set = function(info, value) UF:MergeUnitSettings(value, 'player'); end,
 		},
 		resetSettings = {
@@ -714,6 +714,21 @@ E.Options.args.unitframe.args.player = {
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('player') end,
 		},
+		showAuras = {
+			order = 4,
+			type = 'execute',
+			name = L['Show Auras'],
+			func = function() 
+				local frame = ElvUF_Player
+				if frame.forceShowAuras then
+					frame.forceShowAuras = nil; 
+				else
+					frame.forceShowAuras = true; 
+				end
+				
+				UF:CreateAndUpdateUF('player') 
+			end,
+		},			
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -932,7 +947,7 @@ E.Options.args.unitframe.args.player = {
 					type = 'toggle',
 					order = 1,
 					name = L['Enable'],
-				},
+				},			
 				perrow = {
 					type = 'range',
 					order = 2,
@@ -1318,7 +1333,7 @@ E.Options.args.unitframe.args.target = {
 			order = 2,
 			name = L['Copy From'],
 			desc = L['Select a unit to copy settings from.'],
-			values = UF['handledunits'],
+			values = UF['units'],
 			set = function(info, value) UF:MergeUnitSettings(value, 'target'); end,
 		},
 		resetSettings = {
@@ -1327,6 +1342,21 @@ E.Options.args.unitframe.args.target = {
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('target') end,
 		},		
+		showAuras = {
+			order = 4,
+			type = 'execute',
+			name = L['Show Auras'],
+			func = function() 
+				local frame = ElvUF_Target
+				if frame.forceShowAuras then
+					frame.forceShowAuras = nil; 
+				else
+					frame.forceShowAuras = true; 
+				end
+				
+				UF:CreateAndUpdateUF('target') 
+			end,
+		},			
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -1868,7 +1898,7 @@ E.Options.args.unitframe.args.targettarget = {
 			order = 2,
 			name = L['Copy From'],
 			desc = L['Select a unit to copy settings from.'],
-			values = UF['handledunits'],
+			values = UF['units'],
 			set = function(info, value) UF:MergeUnitSettings(value, 'targettarget'); end,
 		},
 		resetSettings = {
@@ -1876,7 +1906,22 @@ E.Options.args.unitframe.args.targettarget = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('targettarget') end,
-		},		
+		},	
+		showAuras = {
+			order = 4,
+			type = 'execute',
+			name = L['Show Auras'],
+			func = function() 
+				local frame = ElvUF_TargetTarget
+				if frame.forceShowAuras then
+					frame.forceShowAuras = nil; 
+				else
+					frame.forceShowAuras = true; 
+				end
+				
+				UF:CreateAndUpdateUF('targettarget') 
+			end,
+		},			
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -2233,7 +2278,7 @@ E.Options.args.unitframe.args.focus = {
 			order = 2,
 			name = L['Copy From'],
 			desc = L['Select a unit to copy settings from.'],
-			values = UF['handledunits'],
+			values = UF['units'],
 			set = function(info, value) UF:MergeUnitSettings(value, 'focus'); end,
 		},
 		resetSettings = {
@@ -2241,7 +2286,22 @@ E.Options.args.unitframe.args.focus = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('focus') end,
-		},		
+		},	
+		showAuras = {
+			order = 4,
+			type = 'execute',
+			name = L['Show Auras'],
+			func = function() 
+				local frame = ElvUF_Focus
+				if frame.forceShowAuras then
+					frame.forceShowAuras = nil; 
+				else
+					frame.forceShowAuras = true; 
+				end
+				
+				UF:CreateAndUpdateUF('focus') 
+			end,
+		},			
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -2716,7 +2776,7 @@ E.Options.args.unitframe.args.focustarget = {
 			order = 2,
 			name = L['Copy From'],
 			desc = L['Select a unit to copy settings from.'],
-			values = UF['handledunits'],
+			values = UF['units'],
 			set = function(info, value) UF:MergeUnitSettings(value, 'focustarget'); end,
 		},
 		resetSettings = {
@@ -2724,7 +2784,22 @@ E.Options.args.unitframe.args.focustarget = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('focustarget') end,
-		},		
+		},	
+		showAuras = {
+			order = 4,
+			type = 'execute',
+			name = L['Show Auras'],
+			func = function() 
+				local frame = ElvUF_FocusTarget
+				if frame.forceShowAuras then
+					frame.forceShowAuras = nil; 
+				else
+					frame.forceShowAuras = true; 
+				end
+				
+				UF:CreateAndUpdateUF('focustarget') 
+			end,
+		},			
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -3081,7 +3156,7 @@ E.Options.args.unitframe.args.pet = {
 			order = 2,
 			name = L['Copy From'],
 			desc = L['Select a unit to copy settings from.'],
-			values = UF['handledunits'],
+			values = UF['units'],
 			set = function(info, value) UF:MergeUnitSettings(value, 'pet'); end,
 		},
 		resetSettings = {
@@ -3089,7 +3164,22 @@ E.Options.args.unitframe.args.pet = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('pet') end,
-		},		
+		},
+		showAuras = {
+			order = 4,
+			type = 'execute',
+			name = L['Show Auras'],
+			func = function() 
+				local frame = ElvUF_Pet
+				if frame.forceShowAuras then
+					frame.forceShowAuras = nil; 
+				else
+					frame.forceShowAuras = true; 
+				end
+				
+				UF:CreateAndUpdateUF('pet') 
+			end,
+		},			
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -3452,7 +3542,7 @@ E.Options.args.unitframe.args.pettarget = {
 			order = 2,
 			name = L['Copy From'],
 			desc = L['Select a unit to copy settings from.'],
-			values = UF['handledunits'],
+			values = UF['units'],
 			set = function(info, value) UF:MergeUnitSettings(value, 'pettarget'); end,
 		},
 		resetSettings = {
@@ -3460,7 +3550,22 @@ E.Options.args.unitframe.args.pettarget = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('pettarget') end,
-		},		
+		},	
+		showAuras = {
+			order = 4,
+			type = 'execute',
+			name = L['Show Auras'],
+			func = function() 
+				local frame = ElvUF_PetTarget
+				if frame.forceShowAuras then
+					frame.forceShowAuras = nil; 
+				else
+					frame.forceShowAuras = true; 
+				end
+				
+				UF:CreateAndUpdateUF('pettarget') 
+			end,
+		},			
 		width = {
 			order = 4,
 			name = L['Width'],
@@ -3828,7 +3933,7 @@ E.Options.args.unitframe.args.boss = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('boss') end,
-		},	
+		},		
 		displayFrames = {
 			type = 'execute',
 			order = 3,
@@ -4336,7 +4441,7 @@ E.Options.args.unitframe.args.arena = {
 			order = 3,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('arena') end,
-		},		
+		},			
 		displayFrames = {
 			type = 'execute',
 			order = 3,
@@ -4808,6 +4913,14 @@ E.Options.args.unitframe.args.party = {
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('party') end,
 		},		
+		configureToggle = {
+			order = 4,
+			type = 'execute',
+			name = L['Display Frames'],
+			func = function() 
+				UF:HeaderConfig(ElvUF_Party, ElvUF_Party.forceShow ~= true or nil)
+			end,
+		},			
 		general = {
 			order = 5,
 			type = 'group',
@@ -5451,7 +5564,15 @@ E.Options.args.unitframe.args.raid625 = {
 			order = 2,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('raid625') end,
-		},			
+		},		
+		configureToggle = {
+			order = 4,
+			type = 'execute',
+			name = L['Display Frames'],
+			func = function() 
+				UF:HeaderConfig(ElvUF_Raid625, ElvUF_Raid625.forceShow ~= true or nil)
+			end,
+		},		
 		general = {
 			order = 5,
 			type = 'group',
@@ -6015,7 +6136,15 @@ E.Options.args.unitframe.args.raid2640 = {
 			order = 2,
 			name = L['Restore Defaults'],
 			func = function(info, value) UF:ResetUnitSettings('raid2640') end,
-		},			
+		},	
+		configureToggle = {
+			order = 4,
+			type = 'execute',
+			name = L['Display Frames'],
+			func = function() 
+				UF:HeaderConfig(ElvUF_Raid2640, ElvUF_Raid2640.forceShow ~= true or nil)
+			end,
+		},		
 		general = {
 			order = 5,
 			type = 'group',
