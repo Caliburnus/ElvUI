@@ -674,11 +674,11 @@ P['unitframe'] = {
 				['showPlayerOnly'] = false,
 				['useFilter'] = '',
 				['durationLimit'] = 0,
-				['sizeOverride'] = 45,
+				['sizeOverride'] = 46,
 			},
 			['debuffs'] = {
 				['enable'] = true,
-				['perrow'] = 3,
+				['perrow'] = 1,
 				['numrows'] = 1,
 				['growth-x'] = 'RIGHT',
 				['growth-y'] = 'DOWN',
@@ -689,7 +689,7 @@ P['unitframe'] = {
 				['showPlayerOnly'] = true,
 				['useFilter'] = '',
 				['durationLimit'] = 0,
-				['sizeOverride'] = 44,
+				['sizeOverride'] = 46,
 			},
 			['castbar'] = {
 				['enable'] = true,
@@ -740,11 +740,11 @@ P['unitframe'] = {
 				['showPlayerOnly'] = false,
 				['useFilter'] = 'TurtleBuffs',
 				['durationLimit'] = 0,
-				['sizeOverride'] = 45,
+				['sizeOverride'] = 46,
 			},
 			['debuffs'] = {
 				['enable'] = true,
-				['perrow'] = 3,
+				['perrow'] = 1,
 				['numrows'] = 1,
 				['growth-x'] = 'RIGHT',
 				['growth-y'] = 'DOWN',
@@ -755,7 +755,7 @@ P['unitframe'] = {
 				['showPlayerOnly'] = false,
 				['useFilter'] = 'CCDebuffs',
 				['durationLimit'] = 0,
-				['sizeOverride'] = 44,
+				['sizeOverride'] = 46,
 			},
 			['castbar'] = {
 				['enable'] = true,
@@ -947,7 +947,7 @@ P['unitframe'] = {
 			},
 			['roleIcon'] = {
 				['enable'] = false,
-				['position'] = 'BOTTOM',
+				['position'] = 'BOTTOMRIGHT',
 			},
 		},
 		['raid2640'] = {
@@ -1025,7 +1025,7 @@ P['unitframe'] = {
 			},
 			['roleIcon'] = {
 				['enable'] = false,
-				['position'] = 'BOTTOM',
+				['position'] = 'BOTTOMRIGHT',
 			},
 			['buffIndicator'] = {
 				['enable'] = true,
