@@ -79,6 +79,9 @@ function CH:StyleChat(frame)
 
 	frame:SetClampRectInsets(0,0,0,0)
 	frame:SetClampedToScreen(false)
+	if frame:IsMovable() then
+		frame:SetUserPlaced(true)
+	end
 	frame:StripTextures(true)
 	_G[name..'ButtonFrame']:Kill()
 
