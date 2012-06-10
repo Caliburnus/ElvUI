@@ -430,6 +430,10 @@ end
 function B:Bags_OnShow()
 	B:PLAYERBANKSLOTS_CHANGED()
 	B:Layout()
+	
+	for _, x in ipairs(BAGS_BACKPACK) do
+		B:BagSlotUpdate(x)
+	end	
 end
 
 function B:Bags_OnHide()
