@@ -640,7 +640,7 @@ function CH:CHAT_MSG_YELL(event, message, author, ...)
 		if msg == nil then return CH.FindURL(self, event, message, author, ...) end
 
 		-- ignore player messages
-		if author == UnitName("player") then return CH.FindURL(self, ...) end
+		if author == UnitName("player") then return CH.FindURL(self, event, message, author, ...) end
 		if msgList[msg] and msgCount[msg] > 1 and CH.db.throttleInterval ~= 0 then
 			if difftime(time(), msgTime[msg]) <= CH.db.throttleInterval then
 				blockFlag = true
@@ -895,7 +895,7 @@ function CH:Initialize()
 		local text = self:GetText()
 
 		for _, size in pairs(sizes) do
-			if string.find(text, size) then
+			if string.find(text, size) and not string.find(text, size.."]") then
 				self:SetText(string.gsub(text, size, ":12:12"))
 			end
 		end
