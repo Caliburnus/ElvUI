@@ -56,7 +56,10 @@ function E:UpdateMedia()
 	self["media"].glossTex = LSM:Fetch("statusbar", self.private['general'].glossTex)
 
 	--Border Color
-	local border = self.db['general'].bordercolor
+	local border = E.db['general'].bordercolor
+	if E.db.theme == 'class' then
+		border = RAID_CLASS_COLORS[E.myclass]
+	end
 	self["media"].bordercolor = {border.r, border.g, border.b}
 
 	--Backdrop Color
@@ -69,6 +72,9 @@ function E:UpdateMedia()
 
 	--Value Color
 	local value = self.db['general'].valuecolor
+	if E.db.theme == 'class' then
+		value = RAID_CLASS_COLORS[E.myclass]
+	end
 	self["media"].hexvaluecolor = self:RGBToHex(value.r, value.g, value.b)
 	self["media"].rgbvaluecolor = {value.r, value.g, value.b}
 
@@ -78,6 +84,12 @@ function E:UpdateMedia()
 
 		RightChatPanel.tex:SetTexture(E.db.general.panelBackdropNameRight)
 		RightChatPanel.tex:SetAlpha(E.db.general.backdropfadecolor.a - 0.55 > 0 and E.db.general.backdropfadecolor.a - 0.55 or 0.5)
+	end
+
+	if E.db.theme == 'class' then
+		local classColor = RAID_CLASS_COLORS[E.myclass]
+		E.db.classtimer.player.buffcolor = E:GetColor(classColor.r, classColor.b, classColor.g)
+		E.db.classtimer.target.buffcolor = E:GetColor(classColor.r, classColor.b, classColor.g)
 	end
 
 	self:ValueFuncCall()
@@ -170,7 +182,7 @@ function E:CheckRole()
 	local tree = GetPrimaryTalentTree();
 	local resilience;
 	local resilperc = GetCombatRatingBonus(COMBAT_RATING_RESILIENCE_PLAYER_DAMAGE_TAKEN)
-	if resilperc > GetDodgeChance() and resilperc > GetParryChance() then
+	if resilperc > GetDodgeChance() and resilperc > GetParryChance() and UnitLevel('player') == MAX_PLAYER_LEVEL then
 		resilience = true;
 	else
 		resilience = false;
@@ -396,7 +408,7 @@ local function SendRecieve(self, event, prefix, message, channel, sender)
 	end
 end
 
-function E:UpdateAll()
+function E:UpdateAll(ignoreInstall)
 	self.data = LibStub("AceDB-3.0"):New("ElvData", self.DF);
 	self.data.RegisterCallback(self, "OnProfileChanged", "UpdateAll")
 	self.data.RegisterCallback(self, "OnProfileCopied", "UpdateAll")
@@ -404,8 +416,6 @@ function E:UpdateAll()
 	self.db = self.data.profile;
 	self.global = self.data.global;
 
-	self:UpdateMedia()
-	self:UpdateFrameTemplates()
 	self:SetMoversPositions()
 
 	local CH = self:GetModule('Chat')
@@ -429,6 +439,7 @@ function E:UpdateAll()
 	CT.db = self.db.classtimer
 	CT:PositionTimers()
 	CT:ToggleTimers()
+	CT:UpdateFiltersAndColors()
 
 	local DT = self:GetModule('DataTexts')
 	DT.db = self.db.datatexts
@@ -445,13 +456,18 @@ function E:UpdateAll()
 	self:GetModule('Auras').db = self.db.auras
 	self:GetModule('Tooltip').db = self.db.tooltip
 
-	if self.db.install_complete == nil or (self.db.install_complete and type(self.db.install_complete) == 'boolean') or (self.db.install_complete and type(tonumber(self.db.install_complete)) == 'number' and tonumber(self.db.install_complete) <= 3.05) then
-		self:Install()
+	if self.db.install_complete == nil or (self.db.install_complete and type(self.db.install_complete) == 'boolean') or (self.db.install_complete and type(tonumber(self.db.install_complete)) == 'number' and tonumber(self.db.install_complete) <= 3.83) then
+		if not ignoreInstall then
+			self:Install()
+		end
 	end
 
 	self:GetModule('Minimap'):UpdateSettings()
 
-	--self:LoadKeybinds()
+	self:UpdateMedia()
+	self:UpdateBorderColors()
+	self:UpdateBackdropColors()
+	self:UpdateFrameTemplates()
 
 	collectgarbage('collect');
 end
@@ -517,7 +533,7 @@ function E:Initialize()
 
 	self.initialized = true
 
-	if self.db.install_complete == nil or (self.db.install_complete and type(self.db.install_complete) == 'boolean') or (self.db.install_complete and type(tonumber(self.db.install_complete)) == 'number' and tonumber(self.db.install_complete) <= 3.05) then
+	if self.db.install_complete == nil or (self.db.install_complete and type(self.db.install_complete) == 'boolean') or (self.db.install_complete and type(tonumber(self.db.install_complete)) == 'number' and tonumber(self.db.install_complete) <= 3.83) then
 		self:Install()
 	end
 

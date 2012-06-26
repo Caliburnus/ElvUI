@@ -803,7 +803,9 @@ function CH:UpdateChatKeywords()
 			stringValue = E.myname;
 		end
 
-		CH.Keywords[stringValue] = true;
+		if stringValue ~= '' then
+			CH.Keywords[stringValue] = true;
+		end
 	end
 end
 
