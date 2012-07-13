@@ -24,7 +24,7 @@ V['classtimer'] = {
 }
 
 V['reminder'] = {
-	['enable'] = true,
+	['enable'] = false,
 	['sound'] = "ElvUI Warning",
 }
 

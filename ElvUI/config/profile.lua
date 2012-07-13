@@ -141,7 +141,7 @@ P['datatexts'] = {
 		['RightChatDataPanel'] = {
 			['left'] = 'System',
 			['middle'] = 'Time',
-			['right'] = 'Gold',
+			['right'] = 'Bags',
 		},
 		['LeftMiniPanel'] = 'Guild',
 		['RightMiniPanel'] = 'Friends',
