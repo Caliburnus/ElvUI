@@ -1,4 +1,4 @@
-local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
+local E, L, V, P, G, _ = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
 local B = E:NewModule('Bags', 'AceHook-3.0', 'AceEvent-3.0');
 
 local ST_NORMAL = 1
@@ -83,8 +83,7 @@ function B:BagFrameSlotNew(frame, slot, nonAllInOne)
 	ret.frame:SetNormalTexture("")
 	ret.frame:SetCheckedTexture(nil)
 	t:SetTexCoord(unpack(E.TexCoords))
-	t:Point("TOPLEFT", ret.frame, 2, -2)
-	t:Point("BOTTOMRIGHT", ret.frame, -2, 2)
+	t:SetInside()
 
 	return ret
 end
@@ -156,15 +155,23 @@ function B:SlotUpdate(b)
 		end
 	end
 
+	b.frame.questIcon:Hide()
+
+
 	if(clink) then
 		local iType
 		b.name, _, b.rarity, _, _, iType = GetItemInfo(clink)
 
+		local isQuestItem, questId, isActiveQuest = GetContainerItemQuestInfo(b.bag, b.slot);
+
 		-- color slot according to item quality
-		if not b.frame.lock and b.rarity and b.rarity > 1 then
-			b.frame:SetBackdropBorderColor(GetItemQualityColor(b.rarity))
-		elseif GetContainerItemQuestInfo(b.bag, b.slot) then
+		if questId and not isActive then
 			b.frame:SetBackdropBorderColor(1.0, 0.3, 0.3)
+			b.frame.questIcon:Show()
+		elseif questId or isQuestItem then
+			b.frame:SetBackdropBorderColor(1.0, 0.3, 0.3)
+		elseif not b.frame.lock and b.rarity and b.rarity > 1 then
+			b.frame:SetBackdropBorderColor(GetItemQualityColor(b.rarity))
 		end
 	else
 		b.name, b.rarity = nil, nil
@@ -220,14 +227,20 @@ function B:SlotNew(bag, slot)
 		ret.frame = CreateFrame("CheckButton", "ElvUINormBag" .. bag .. "_" .. slot, self.bags[bag], tpl)
 		ret.frame:StyleButton()
 		ret.frame:SetTemplate('Default', true)
+		ret.frame.count:ClearAllPoints()
+		ret.frame.count:Point('BOTTOMRIGHT', 0, 2)
+		_G[ret.frame:GetName().."IconQuestTexture"]:SetTexture(TEXTURE_ITEM_QUEST_BANG)
+		_G[ret.frame:GetName().."IconQuestTexture"]:SetInside(ret.frame)
+		_G[ret.frame:GetName().."IconQuestTexture"]:SetTexCoord(unpack(E.TexCoords))
+		_G[ret.frame:GetName().."IconQuestTexture"]:Hide()
+		ret.frame.questIcon = _G[ret.frame:GetName().."IconQuestTexture"]
 
 		local t = _G[ret.frame:GetName().."IconTexture"]
 		ret.frame:SetNormalTexture(nil)
 		ret.frame:SetCheckedTexture(nil)
 
 		t:SetTexCoord(unpack(E.TexCoords))
-		t:Point("TOPLEFT", ret.frame, 2, -2)
-		t:Point("BOTTOMRIGHT", ret.frame, -2, 2)
+		t:SetInside(ret.frame)
 	end
 
 	ret.bag = bag
@@ -253,8 +266,8 @@ function B:Layout(isBank)
 	if not isBank then
 		bs = BAGS_BACKPACK
 		if E.db.bags.bagCols == 0 then
-			cols = floor((E.db.general.panelWidth - 10)/370 * 10)
-			bagWidth = E.db.general.panelWidth - 10
+			cols = floor((E.db.chat.panelWidth - 10)/370 * 10)
+			bagWidth = E.db.chat.panelWidth - 10
 		else
 			cols = E.db.bags.bagCols
 			bagWidth = 35 * cols
@@ -265,8 +278,8 @@ function B:Layout(isBank)
 	else
 		bs = BAGS_BANK
 		if E.db.bags.bankCols == 0 then
-			cols = floor((E.db.general.panelWidth - 10)/370 * 10)
-			bagWidth = E.db.general.panelWidth - 10
+			cols = floor((E.db.chat.panelWidth - 10)/370 * 10)
+			bagWidth = E.db.chat.panelWidth - 10
 		else
 			cols = E.db.bags.bankCols
 			bagWidth = 35 * cols
@@ -299,7 +312,6 @@ function B:Layout(isBank)
 			b.frame:ClearAllPoints()
 			b.frame:Point("LEFT", f.ContainerHolder, "LEFT", xOff, 0)
 			b.frame:Size(bSize)
-			b.frame:FixDimensions()
 
 			if isBank then
 				BankFrameItemButton_Update(b.frame)
@@ -336,7 +348,6 @@ function B:Layout(isBank)
 	f.HolderFrame:SetWidth(33.5 * cols)
 	f.HolderFrame:SetHeight(f:GetHeight() - 8)
 	f.HolderFrame:SetPoint("BOTTOM", f, "BOTTOM")
-	f.HolderFrame:FixDimensions()
 
 	--Fun Part, Position Actual Bag Buttons
 	local idx = 0
@@ -373,7 +384,6 @@ function B:Layout(isBank)
 				b.frame:ClearAllPoints()
 				b.frame:Point("TOPLEFT", f.HolderFrame, "TOPLEFT", xOff, yOff)
 				b.frame:Size(bSize)
-				b.frame:FixDimensions()
 				b.frame.lock = false
 				b.frame:SetAlpha(1)
 
@@ -430,17 +440,17 @@ end
 function B:Bags_OnShow()
 	B:PLAYERBANKSLOTS_CHANGED()
 	B:Layout()
-	
+	E:GetModule('Tooltip'):GameTooltip_SetDefaultAnchor(GameTooltip)
 	for _, x in ipairs(BAGS_BACKPACK) do
 		B:BagSlotUpdate(x)
-	end	
+	end
 end
 
 function B:Bags_OnHide()
 	if bankFrame then
 		bankFrame:Hide()
 	end
-
+	E:GetModule('Tooltip'):GameTooltip_SetDefaultAnchor(GameTooltip)
 	if B.buttons then
 		for _, v in ipairs(allButtons) do
 			v.frame.lock = false
@@ -722,9 +732,9 @@ function B:InitBank()
 	f.purchaseBagButton:SetScript("OnClick", function()
 		local _, full = GetNumBankSlots()
 		if not full then
-			StaticPopup_Show("BUY_BANK_SLOT")
+			E:StaticPopup_Show("BUY_BANK_SLOT")
 		else
-			StaticPopup_Show("CANNOT_BUY_BANK_SLOT")
+			E:StaticPopup_Show("CANNOT_BUY_BANK_SLOT")
 		end
 	end)
 
@@ -771,7 +781,7 @@ function B:InitBank()
 		if numSlots >= 1 then
 			ToggleFrame(f.ContainerHolder)
 		else
-			StaticPopup_Show("NO_BANK_BAGS")
+			E:StaticPopup_Show("NO_BANK_BAGS")
 		end
 	end)
 
@@ -932,7 +942,7 @@ end
 
 function B:VendorGrayCheck()
 	if IsShiftKeyDown() then
-		StaticPopup_Show('DELETE_GRAYS')
+		E:StaticPopup_Show('DELETE_GRAYS')
 	else
 		self:VendorGrays()
 	end
@@ -1377,7 +1387,7 @@ function B:Sort(frame, args, bank)
 end
 
 --Frame Anchors
-hooksecurefunc("updateContainerFrameAnchors", function()
+hooksecurefunc("UpdateContainerFrameAnchors", function()
 	local frame, xOffset, yOffset, screenHeight, freeScreenHeight, leftMostPoint, column;
 	local screenWidth = GetScreenWidth();
 	local containerScale = 1;
@@ -1473,8 +1483,9 @@ function B:INVENTORY_SEARCH_UPDATE()
 end
 
 function B:Initialize()
+	self:LoadBagBar()
+
 	if not E.private.bags.enable then
-		self:LoadBagBar()
 		return
 	end
 	self:InitBags()
