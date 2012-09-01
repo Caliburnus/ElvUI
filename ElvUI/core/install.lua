@@ -1,7 +1,7 @@
 local E, L, V, P, G, _ = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
 
 local CURRENT_PAGE = 0
-local MAX_PAGE = 7
+local MAX_PAGE = 8
 
 local function SetupChat()
 	InstallStepComplete.message = L["Chat Set"]
@@ -181,6 +181,7 @@ function E:SetupTheme(theme, noDisplayMsg)
 
 		E.db.unitframe.colors.healthclass = false
 		E.db.unitframe.colors.health = E:GetColor(.31, .31, .31)
+		E.db.unitframe.colors.auraBarBuff = E:GetColor(.31, .31, .31)
 		E.db.unitframe.units.player.castbar.color = E:GetColor(.31, .31, .31)
 		E.db.unitframe.units.target.castbar.color = E:GetColor(.31, .31, .31)
 		E.db.unitframe.units.focus.castbar.color = E:GetColor(.31, .31, .31)
@@ -191,7 +192,7 @@ function E:SetupTheme(theme, noDisplayMsg)
 		E.db.general.bordercolor = E:GetColor(classColor.r, classColor.b, classColor.g)
 		E.db.general.backdropcolor = E:GetColor(.1, .1, .1)
 		E.db.general.backdropfadecolor = E:GetColor(.06, .06, .06, .8)
-
+		E.db.unitframe.colors.auraBarBuff = E:GetColor(classColor.r, classColor.b, classColor.g)
 		E.db.unitframe.colors.healthclass = true
 		E.db.unitframe.units.player.castbar.color = E:GetColor(classColor.r, classColor.b, classColor.g)
 		E.db.unitframe.units.target.castbar.color = E:GetColor(classColor.r, classColor.b, classColor.g)
@@ -202,7 +203,7 @@ function E:SetupTheme(theme, noDisplayMsg)
 		E.db.general.bordercolor = E:GetColor(.1, .1, .1)
 		E.db.general.backdropcolor = E:GetColor(.1, .1, .1)
 		E.db.general.backdropfadecolor = E:GetColor(.054, .054, .054, .8)
-
+		E.db.unitframe.colors.auraBarBuff = E:GetColor(.1, .1, .1)
 		E.db.unitframe.colors.healthclass = false
 		E.db.unitframe.colors.health = E:GetColor(.1, .1, .1)
 		E.db.unitframe.units.player.castbar.color = E:GetColor(.1, .1, .1)
@@ -219,7 +220,9 @@ function E:SetupTheme(theme, noDisplayMsg)
 		E.db.general.valuecolor = E:GetColor(.09, .819, .513)
 	end
 
-	E:UpdateAll(true)
+	if not noDisplayMsg then
+		E:UpdateAll(true)
+	end
 
 	InstallStatus:SetStatusBarColor(unpack(E['media'].rgbvaluecolor))
 
@@ -474,6 +477,45 @@ function E:SetupLayout(layout, noDataReset)
 	DT:LoadDataTexts()
 end
 
+
+local function SetupAuras(useAuraBars)
+	E:CopyTable(E.db.unitframe.units.player.buffs, P.unitframe.units.player.buffs)
+	E:CopyTable(E.db.unitframe.units.player.debuffs, P.unitframe.units.player.debuffs)
+	E:CopyTable(E.db.unitframe.units.player.aurabar, P.unitframe.units.player.aurabar)
+
+	E:CopyTable(E.db.unitframe.units.target.buffs, P.unitframe.units.target.buffs)
+	E:CopyTable(E.db.unitframe.units.target.debuffs, P.unitframe.units.target.debuffs)
+	E:CopyTable(E.db.unitframe.units.target.aurabar, P.unitframe.units.target.aurabar)
+	E.db.unitframe.units.target.smartAuraDisplay = P.unitframe.units.target.smartAuraDisplay
+
+	E:CopyTable(E.db.unitframe.units.focus.buffs, P.unitframe.units.focus.buffs)
+	E:CopyTable(E.db.unitframe.units.focus.debuffs, P.unitframe.units.focus.debuffs)
+	E:CopyTable(E.db.unitframe.units.focus.aurabar, P.unitframe.units.focus.aurabar)
+	E.db.unitframe.units.focus.smartAuraDisplay = P.unitframe.units.focus.smartAuraDisplay
+
+	if not useAuraBars then
+		--PLAYER
+		E.db.unitframe.units.player.buffs.enable = true;
+		E.db.unitframe.units.player.buffs.attachTo = 'FRAME';
+		E.db.unitframe.units.player.buffs.noDuration = 'NONE';
+
+		E.db.unitframe.units.player.debuffs.attachTo = 'BUFFS';
+
+		E.db.unitframe.units.player.aurabar.enable = false;
+
+		--TARGET
+		E.db.unitframe.units.target.smartAuraDisplay = 'DISABLED';
+		E.db.unitframe.units.target.debuffs.enable = true;
+		E.db.unitframe.units.target.aurabar.enable = false;
+	end
+
+	E:GetModule('UnitFrames'):Update_AllFrames()
+	if InstallStepComplete then
+		InstallStepComplete.message = L["Auras Set"]
+		InstallStepComplete:Show()
+	end
+end
+
 local function InstallComplete()
 	E.db.install_complete = E.version
 
@@ -507,6 +549,7 @@ local function ResetAll()
 end
 
 local function SetPage(PageNum)
+	CURRENT_PAGE = PageNum
 	ResetAll()
 	InstallStatus:SetValue(PageNum)
 
@@ -599,6 +642,18 @@ local function SetPage(PageNum)
 		InstallOption4Button:SetScript('OnClick', function() E.db.layoutSet = nil; E:SetupLayout('dpsCaster') end)
 		InstallOption4Button:SetText(L['Caster DPS'])
 	elseif PageNum == 7 then
+		f.SubTitle:SetText(L["Auras System"])
+		f.Desc1:SetText(L["Select the type of aura system you want to use with ElvUI's unitframes. The integrated system utilizes both aura-bars and aura-icons. The icons only system will display only icons and aurabars won't be used."])
+		f.Desc2:SetText(L["If you have an icon or aurabar that you don't want to display simply hold down shift and right click the icon for it to disapear."])
+		f.Desc3:SetText(L["Importance: |cffD3CF00Medium|r"])
+		InstallOption1Button:Show()
+		InstallOption1Button:SetScript('OnClick', function() SetupAuras(true) end)
+		InstallOption1Button:SetText(L['Integrated'])
+		InstallOption2Button:Show()
+		InstallOption2Button:SetScript('OnClick', function() SetupAuras() end)
+		InstallOption2Button:SetText(L['Icons Only'])
+
+	elseif PageNum == 8 then
 		f.SubTitle:SetText(L["Installation Complete"])
 		f.Desc1:SetText(L["You are now finished with the installation process. If you are in need of technical support please visit us at http://www.tukui.org."])
 		f.Desc2:SetText(L["Please click the button below so you can setup variables and ReloadUI."])
@@ -681,6 +736,7 @@ function E:Install()
 	--Create Frame
 	if not ElvUIInstallFrame then
 		local f = CreateFrame("Button", "ElvUIInstallFrame", E.UIParent)
+		f.SetPage = SetPage
 		f:Size(550, 400)
 		f:SetTemplate("Transparent")
 		f:CreateShadow("Default")

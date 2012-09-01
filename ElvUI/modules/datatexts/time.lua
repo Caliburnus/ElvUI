@@ -20,7 +20,7 @@ local Update, lastPanel; -- UpValue
 local function ValueColorUpdate(hex, r, g, b)
 	europeDisplayFormat = string.join("", "%02d", hex, ":|r%02d")
 	ukDisplayFormat = string.join("", "", "%d", hex, ":|r%02d", hex, " %s|r")
-	
+
 	if lastPanel ~= nil then
 		Update(lastPanel, 20000)
 	end
@@ -43,7 +43,7 @@ local function CalculateTimeValues(tt)
 					AmPm = 2
 				end
 				return Hr, Min, AmPm
-			end			
+			end
 		else
 			local Hr24 = tonumber(date("%H"))
 			Hr = tonumber(date("%I"))
@@ -80,7 +80,7 @@ local function CalculateTimeValues(tt)
 				end
 				return Hr, Min, AmPm
 			end
-		end	
+		end
 	end
 end
 
@@ -88,7 +88,7 @@ local function CalculateTimeLeft(time)
 	local hour = floor(time / 3600)
 	local min = floor(time / 60 - (hour*60))
 	local sec = time - (hour * 3600) - (min * 60)
-	
+
 	return hour, min, sec
 end
 
@@ -97,15 +97,15 @@ local function formatResetTime(sec)
 	if not type(d) == 'number' or not type(h)== 'number' or not type(m) == 'number' or not type(s) == 'number' then
 		return 'N/A'
 	end
-	
-	if d > 0 and lockoutFormatString[h>10 and 1 or 2] then 
+
+	if d > 0 and lockoutFormatString[h>10 and 1 or 2] then
 		return format(lockoutFormatString[h>10 and 1 or 2], d, h, m)
 	end
 	if h > 0 and lockoutFormatString[h>10 and 3 or 4] then
 		return format(lockoutFormatString[h>10 and 3 or 4], h, m)
 	end
-	if m > 0 and lockoutFormatString[m>10 and 5 or 6] then 
-		return format(lockoutFormatString[m>10 and 5 or 6], m) 
+	if m > 0 and lockoutFormatString[m>10 and 5 or 6] then
+		return format(lockoutFormatString[m>10 and 5 or 6], m)
 	end
 end
 
@@ -132,15 +132,15 @@ local function OnEnter(self)
 				startTime = QUEUE_TIME_UNAVAILABLE
 			else
 				local hour, min, sec = CalculateTimeLeft(startTime)
-				if hour > 0 then 
-					startTime = string.format(timerLongFormat, hour, min, sec) 
-				else 
+				if hour > 0 then
+					startTime = string.format(timerLongFormat, hour, min, sec)
+				else
 					startTime = string.format(timerShortFormat, min, sec)
 				end
 			end
-			GameTooltip:AddDoubleLine(format(formatBattleGroundInfo, localizedName), startTime, 1, 1, 1, lockoutColorNormal.r, lockoutColorNormal.g, lockoutColorNormal.b)	
+			GameTooltip:AddDoubleLine(format(formatBattleGroundInfo, localizedName), startTime, 1, 1, 1, lockoutColorNormal.r, lockoutColorNormal.g, lockoutColorNormal.b)
 		end
-	end	
+	end
 
 	local timeText
 	local Hr, Min, AmPm = CalculateTimeValues(true)
@@ -156,7 +156,8 @@ local function OnEnter(self)
 	local oneraid, lockoutColor
 	for i = 1, GetNumSavedInstances() do
 		local name, _, reset, difficulty, locked, extended, _, isRaid, maxPlayers, _, numEncounters, encounterProgress  = GetSavedInstanceInfo(i)
-		if locked or extended then
+		if (locked or extended) and name then
+		--if isRaid and (locked or extended) and name then
 			local tr,tg,tb,diff
 			if not oneraid then
 				GameTooltip:AddLine(" ")
@@ -164,29 +165,32 @@ local function OnEnter(self)
 				oneraid = true
 			end
 			if extended then lockoutColor = lockoutColorExtended else lockoutColor = lockoutColorNormal end
-			GameTooltip:AddDoubleLine(format(lockoutInfoFormat, maxPlayers, difficultyInfo[difficulty], name, encounterProgress, numEncounters), formatResetTime(reset), 1,1,1, lockoutColor.r,lockoutColor.g,lockoutColor.b)
+			local formatTime = formatResetTime(reset)
+			if difficultyInfo[difficulty] and encounterProgress and numEncounters and formatTime and lockoutColor then
+				GameTooltip:AddDoubleLine(format(lockoutInfoFormat, maxPlayers, difficultyInfo[difficulty], name, encounterProgress, numEncounters), formatTime, 1,1,1, lockoutColor.r,lockoutColor.g,lockoutColor.b)
+			end
 		end
-	end	
-	
+	end
+
 	GameTooltip:Show()
 end
 
 local int = 1
 function Update(self, t)
 	int = int - t
-	
+
 	if enteredFrame then
 		OnEnter(self)
 	end
-	
+
 	--[[if GameTimeFrame.flashInvite then
 		E:Flash(self, 0.53)
 	else
 		E:StopFlash(self)
 	end]]
-	
+
 	if int > 0 then return end
-	
+
 	local Hr, Min, AmPm = CalculateTimeValues(false)
 
 	-- no update quick exit
@@ -194,11 +198,11 @@ function Update(self, t)
 		int = 2
 		return
 	end
-	
+
 	curHr = Hr
 	curMin = Min
 	curAmPm = AmPm
-		
+
 	if AmPm == -1 then
 		self.text:SetFormattedText(europeDisplayFormat, Hr, Min)
 	else
@@ -210,9 +214,9 @@ end
 
 --[[
 	DT:RegisterDatatext(name, events, eventFunc, updateFunc, clickFunc, onEnterFunc, onLeaveFunc)
-	
+
 	name - name of the datatext (required)
-	events - must be a table with string values of event names to register 
+	events - must be a table with string values of event names to register
 	eventFunc - function that gets fired when an event gets triggered
 	updateFunc - onUpdate script target function
 	click - function to fire when clicking the datatext

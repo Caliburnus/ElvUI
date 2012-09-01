@@ -6,6 +6,7 @@ local abs = math.abs
 local _, ns = ...
 local ElvUF = ns.oUF
 assert(ElvUF, "ElvUI was unable to locate oUF.")
+local USING_DX11 = (GetCVar("gxapi") == "D3D11" or IsMacClient())
 
 local function CheckFilter(type, isFriend)
 	if type == 'ALL' or (type == 'FRIENDLY' and isFriend) or (type == 'ENEMY' and not isFriend) then
@@ -130,18 +131,20 @@ function UF:PortraitUpdate(unit)
 	
 	if not db then return end
 	
-	if db['portrait'].enable and db['portrait'].overlay then
+	if db['portrait'].enable and db['portrait'].overlay and USING_DX11 then
 		self:SetAlpha(0) self:SetAlpha(0.35) 
 	else
 		self:SetAlpha(1)
 	end
 	
-	if self:GetModel() and self:GetModel().find and self:GetModel():find("worgenmale") then
-		self:SetCamera(1)
-	end	
+	if self:GetObjectType() ~= 'Texture' then
+		if self:GetModel() and self:GetModel().find and self:GetModel():find("worgenmale") then
+			self:SetCamera(1)
+		end	
 
-	self:SetCamDistanceScale(db['portrait'].camDistanceScale - 0.01 >= 0.01 and db['portrait'].camDistanceScale - 0.01 or 0.01) --Blizzard bug fix
-	self:SetCamDistanceScale(db['portrait'].camDistanceScale)
+		self:SetCamDistanceScale(db['portrait'].camDistanceScale - 0.01 >= 0.01 and db['portrait'].camDistanceScale - 0.01 or 0.01) --Blizzard bug fix
+		self:SetCamDistanceScale(db['portrait'].camDistanceScale)
+	end
 end
 
 local day, hour, minute, second = 86400, 3600, 60, 1
@@ -196,7 +199,7 @@ function UF:UpdateAuraTimer(elapsed)
 end
 
 function UF:PostUpdateAura(unit, button, index, offset, filter, isDebuff, duration, timeLeft)
-	local name, _, _, _, dtype, duration, expirationTime, unitCaster, _, _, spellID = UnitAura(unit, index, button.filter)
+	local name, _, _, _, dtype, duration, expirationTime, unitCaster, isStealable, _, spellID = UnitAura(unit, index, button.filter)
 
 	local db = self:GetParent().db
 	
@@ -224,13 +227,14 @@ function UF:PostUpdateAura(unit, button, index, offset, filter, isDebuff, durati
 			button.icon:SetDesaturated(false)
 		end
 	else
-		if (button.isStealable or ((E.myclass == "PRIEST" or E.myclass == "SHAMAN" or E.myclass == "MAGE") and dtype == "Magic")) and not UnitIsFriend("player", unit) then
+		if (isStealable) and not UnitIsFriend("player", unit) then
 			button:SetBackdropBorderColor(237/255, 234/255, 142/255)
 		else
 			button:SetBackdropBorderColor(unpack(E["media"].bordercolor))		
 		end	
 	end
 	
+	button.isStealable = isStealable
 	button.duration = duration
 	button.timeLeft = expirationTime
 	button.first = true	
@@ -499,35 +503,63 @@ end
 function UF:UpdateHoly(event, unit, powerType)
 	if(self.unit ~= unit or (powerType and powerType ~= 'HOLY_POWER')) then return end
 	local db = self.db
-
+	
+	local BORDER = 2
 	local numHolyPower = UnitPower('player', SPELL_POWER_HOLY_POWER);
 	local maxHolyPower = UnitPowerMax('player', SPELL_POWER_HOLY_POWER);	
+	local MAX_HOLY_POWER = UF['classMaxResourceBar'][E.myclass]
+	local USE_MINI_CLASSBAR = db.classbar.fill == "spaced" and db.classbar.enable
+	local USE_PORTRAIT = db.portrait.enable
+	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT and USING_DX11
+	local PORTRAIT_WIDTH = db.portrait.width
+	local USE_POWERBAR_OFFSET = db.power.offset ~= 0 and db.power.enable
 	
-	for i = 1, maxHolyPower do
+	if USE_PORTRAIT_OVERLAY or not USE_PORTRAIT then
+		PORTRAIT_WIDTH = 0		
+	end	
+	
+	local CLASSBAR_WIDTH = db.width - 4
+	if USE_PORTRAIT then
+		CLASSBAR_WIDTH = math.ceil((db.width - (BORDER*2)) - PORTRAIT_WIDTH)
+	end
+	
+	if USE_POWERBAR_OFFSET then
+		CLASSBAR_WIDTH = CLASSBAR_WIDTH - db.power.offset
+	end
+		
+	if USE_MINI_CLASSBAR then
+		CLASSBAR_WIDTH = CLASSBAR_WIDTH * (maxHolyPower - 1) / maxHolyPower
+	end
+	
+	self.HolyPower:Width(CLASSBAR_WIDTH)
+	
+	for i = 1, MAX_HOLY_POWER do
 		if(i <= numHolyPower) then
 			self.HolyPower[i]:SetAlpha(1)
-			
-			if i == 3 and db.classbar.fill == 'spaced' then
-				for h = 1, maxHolyPower do
-					self.HolyPower[h].backdrop.shadow:Show()
-					self.HolyPower[h]:SetScript('OnUpdate', function(self)
-						E:Flash(self.backdrop.shadow, 0.6)
-					end)
-				end
-			else
-				for h = 1, maxHolyPower do
-					self.HolyPower[h].backdrop.shadow:Hide()
-					self.HolyPower[h]:SetScript('OnUpdate', nil)
-				end
-			end
 		else
 			self.HolyPower[i]:SetAlpha(.2)
-			for h = 1, maxHolyPower do
-				self.HolyPower[h].backdrop.shadow:Hide()
-				self.HolyPower[h]:SetScript('OnUpdate', nil)
-			end		
 		end
-	end
+		
+		self.HolyPower[i]:SetWidth(E:Scale(self.HolyPower:GetWidth() - 2)/maxHolyPower)	
+		self.HolyPower[i]:ClearAllPoints()
+		if i == 1 then
+			self.HolyPower[i]:SetPoint("LEFT", self.HolyPower)
+		else
+			if USE_MINI_CLASSBAR then
+				self.HolyPower[i]:Point("LEFT", self.HolyPower[i-1], "RIGHT", maxHolyPower == 5 and 7 or 13, 0)
+			else
+				self.HolyPower[i]:Point("LEFT", self.HolyPower[i-1], "RIGHT", 1, 0)
+			end
+		end
+
+		if i > maxHolyPower then
+			self.HolyPower[i]:Hide()
+			self.HolyPower[i].backdrop:SetAlpha(0)
+		else
+			self.HolyPower[i]:Show()
+			self.HolyPower[i].backdrop:SetAlpha(1)
+		end		
+	end	
 end	
 
 function UF:UpdateShadowOrbs(event, unit, powerType)
@@ -577,7 +609,7 @@ function UF:UpdateHarmony()
 	local BORDER = 2
 	local SPACING = 1
 	local USE_PORTRAIT = db.portrait.enable
-	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT
+	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT and USING_DX11
 	local PORTRAIT_WIDTH = db.portrait.width
 	local POWERBAR_OFFSET = db.power.offset
 	local USE_POWERBAR = db.power.enable
@@ -854,7 +886,7 @@ function UF:UpdateComboDisplay(event, unit)
 	local USE_MINI_COMBOBAR = db.combobar.fill == "spaced" and USE_COMBOBAR
 	local COMBOBAR_HEIGHT = db.combobar.height
 	local USE_PORTRAIT = db.portrait.enable
-	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT	
+	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT and USING_DX11
 	local PORTRAIT_WIDTH = db.portrait.width
 	
 
@@ -891,12 +923,12 @@ function UF:AuraFilter(unit, icon, name, rank, texture, count, dtype, duration, 
 	icon.owner = caster
 	icon.name = name
 
-	if db and db[self.type] and E.global['unitframe']['aurafilters']['Blacklist'].spells[name] and CheckFilter(db[self.type].useBlacklist, isFriend) then
+	if db and db[self.type] and E.global['unitframe']['aurafilters']['Blacklist'].spells[name] and E.global['unitframe']['aurafilters']['Blacklist'].spells[name].enable and CheckFilter(db[self.type].useBlacklist, isFriend) then
 		return false
 	end	
 	
-	if db and db[self.type] and E.global['unitframe']['aurafilters']['Whitelist'].spells[name] and CheckFilter(db[self.type].useWhitelist, isFriend) then
-			return true
+	if db and db[self.type] and E.global['unitframe']['aurafilters']['Whitelist'].spells[name] and E.global['unitframe']['aurafilters']['Whitelist'].spells[name].enable and CheckFilter(db[self.type].useWhitelist, isFriend) then
+		return true
 	end
 	
 	if db and db[self.type] and (duration == 0 or not duration) and CheckFilter(db[self.type].noDuration, isFriend) then
@@ -963,80 +995,82 @@ function UF:UpdateAuraWatch(frame)
 		local icon;
 		if spell["id"] then
 			local name, _, image = GetSpellInfo(spell["id"]);
-			if not auras.icons[spell.id] then
-				icon = CreateFrame("Frame", nil, auras);
-			else
-				icon = auras.icons[spell.id];
-			end
-			icon.name = name
-			icon.image = image
-			icon.spellID = spell["id"];
-			icon.anyUnit = spell["anyUnit"];
-			icon.onlyShowMissing = spell["onlyShowMissing"];
-			if spell["onlyShowMissing"] then
-				icon.presentAlpha = 0;
-				icon.missingAlpha = 1;
-			else
-				icon.presentAlpha = 1;
-				icon.missingAlpha = 0;		
-			end		
-			icon:Width(db.size);
-			icon:Height(db.size);
-			icon:ClearAllPoints()
-			icon:SetPoint(spell["point"], 0, 0);
-
-			if not icon.icon then
-				icon.icon = icon:CreateTexture(nil, "OVERLAY");
-				icon.icon:SetAllPoints(icon);
-			end
-			
-			if db.colorIcons then
-				icon.icon:SetDrawLayer('OVERLAY');
-				icon.icon:SetTexture(E["media"].blankTex);
-				
-				if (spell["color"]) then
-					icon.icon:SetVertexColor(spell["color"].r, spell["color"].g, spell["color"].b);
+			if name then
+				if not auras.icons[spell.id] then
+					icon = CreateFrame("Frame", nil, auras);
 				else
-					icon.icon:SetVertexColor(0.8, 0.8, 0.8);
-				end			
-			else
-				icon.icon:SetDrawLayer('ARTWORK');
-				icon.icon:SetTexCoord(.18, .82, .18, .82);
-				icon.icon:SetTexture(icon.image);
-			end
-			
-			if not icon.cd then
-				icon.cd = CreateFrame("Cooldown", nil, icon)
-				icon.cd:SetAllPoints(icon)
-				icon.cd:SetReverse(true)
-			end
-			
-			if not icon.border then
-				icon.border = icon:CreateTexture(nil, "BACKGROUND");
-				icon.border:Point("TOPLEFT", -E.mult, E.mult);
-				icon.border:Point("BOTTOMRIGHT", E.mult, -E.mult);
-				icon.border:SetTexture(E["media"].blankTex);
-				icon.border:SetVertexColor(0, 0, 0);
-			end
-			
-			if not icon.count then
-				icon.count = icon:CreateFontString(nil, "OVERLAY", 7);
-				icon.count:SetPoint("CENTER", unpack(counterOffsets[spell["point"]]));
-			end
-			icon.count:FontTemplate(LSM:Fetch("font", E.db['unitframe'].font), db.fontSize, 'OUTLINE');
-			
-			if spell["enabled"] then
-				auras.icons[spell.id] = icon;
-				if auras.watched then
-					auras.watched[name..image] = icon;
+					icon = auras.icons[spell.id];
 				end
-			else	
-				auras.icons[spell.id] = nil;
-				if auras.watched then
-					auras.watched[name..image] = nil;
+				icon.name = name
+				icon.image = image
+				icon.spellID = spell["id"];
+				icon.anyUnit = spell["anyUnit"];
+				icon.onlyShowMissing = spell["onlyShowMissing"];
+				if spell["onlyShowMissing"] then
+					icon.presentAlpha = 0;
+					icon.missingAlpha = 1;
+				else
+					icon.presentAlpha = 1;
+					icon.missingAlpha = 0;		
+				end		
+				icon:Width(db.size);
+				icon:Height(db.size);
+				icon:ClearAllPoints()
+				icon:SetPoint(spell["point"], 0, 0);
+
+				if not icon.icon then
+					icon.icon = icon:CreateTexture(nil, "OVERLAY");
+					icon.icon:SetAllPoints(icon);
 				end
-				icon:Hide();
-				icon = nil;
+				
+				if db.colorIcons then
+					icon.icon:SetDrawLayer('OVERLAY');
+					icon.icon:SetTexture(E["media"].blankTex);
+					
+					if (spell["color"]) then
+						icon.icon:SetVertexColor(spell["color"].r, spell["color"].g, spell["color"].b);
+					else
+						icon.icon:SetVertexColor(0.8, 0.8, 0.8);
+					end			
+				else
+					icon.icon:SetDrawLayer('ARTWORK');
+					icon.icon:SetTexCoord(.18, .82, .18, .82);
+					icon.icon:SetTexture(icon.image);
+				end
+				
+				if not icon.cd then
+					icon.cd = CreateFrame("Cooldown", nil, icon)
+					icon.cd:SetAllPoints(icon)
+					icon.cd:SetReverse(true)
+				end
+				
+				if not icon.border then
+					icon.border = icon:CreateTexture(nil, "BACKGROUND");
+					icon.border:Point("TOPLEFT", -E.mult, E.mult);
+					icon.border:Point("BOTTOMRIGHT", E.mult, -E.mult);
+					icon.border:SetTexture(E["media"].blankTex);
+					icon.border:SetVertexColor(0, 0, 0);
+				end
+				
+				if not icon.count then
+					icon.count = icon:CreateFontString(nil, "OVERLAY", 7);
+					icon.count:SetPoint("CENTER", unpack(counterOffsets[spell["point"]]));
+				end
+				icon.count:FontTemplate(LSM:Fetch("font", E.db['unitframe'].font), db.fontSize, 'OUTLINE');
+				
+				if spell["enabled"] then
+					auras.icons[spell.id] = icon;
+					if auras.watched then
+						auras.watched[name..image] = icon;
+					end
+				else	
+					auras.icons[spell.id] = nil;
+					if auras.watched then
+						auras.watched[name..image] = nil;
+					end
+					icon:Hide();
+					icon = nil;
+				end
 			end
 		end
 	end
@@ -1118,11 +1152,11 @@ function UF:AuraBarFilter(unit, name, rank, icon, count, debuffType, duration, e
 	if unitCaster == 'player' or unitCaster == 'vehicle' then isPlayer = true end
 	if UnitIsFriend('player', unit) then isFriend = true end
 
-	if E.global['unitframe']['aurafilters']['Blacklist'].spells[name] and CheckFilter(db.useBlacklist, isFriend) then
+	if E.global['unitframe']['aurafilters']['Blacklist'].spells[name] and E.global['unitframe']['aurafilters']['Blacklist'].spells[name].enable and CheckFilter(db.useBlacklist, isFriend) then
 		return false
 	end	
 	
-	if E.global['unitframe']['aurafilters']['Whitelist'].spells[name] and CheckFilter(db.useWhitelist, isFriend) then
+	if E.global['unitframe']['aurafilters']['Whitelist'].spells[name] and E.global['unitframe']['aurafilters']['Whitelist'].spells[name].enable and CheckFilter(db.useWhitelist, isFriend) then
 		return true
 	end
 
@@ -1209,7 +1243,7 @@ function UF:SmartAuraDisplay()
 		local x, y = E:GetXYOffset(db.buffs.anchorPoint)
 		
 		buffs:ClearAllPoints()
-		buffs:Point(E.InversePoints[db.buffs.anchorPoint], self, db.buffs.anchorPoint, x, y)
+		buffs:Point(E.InversePoints[db.buffs.anchorPoint], self, db.buffs.anchorPoint, x + db.buffs.xOffset, y + db.buffs.yOffset)
 		
 		local anchorPoint, anchorTo = 'BOTTOM', 'TOP'
 		if db.aurabar.anchorPoint == 'BELOW' then
@@ -1224,7 +1258,7 @@ function UF:SmartAuraDisplay()
 		local x, y = E:GetXYOffset(db.debuffs.anchorPoint)
 		
 		debuffs:ClearAllPoints()
-		debuffs:Point(E.InversePoints[db.debuffs.anchorPoint], self, db.debuffs.anchorPoint, x, y)	
+		debuffs:Point(E.InversePoints[db.debuffs.anchorPoint], self, db.debuffs.anchorPoint, x + db.debuffs.xOffset, y + db.debuffs.yOffset)	
 
 		local anchorPoint, anchorTo = 'BOTTOM', 'TOP'
 		if db.aurabar.anchorPoint == 'BELOW' then

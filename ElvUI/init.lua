@@ -97,7 +97,7 @@ function AddOn:OnProfileReset()
 end
 
 function AddOn:OnProfileCopied(arg1, arg2, arg3)
-	E:StaticPopup_Show("COPY_PROFILE")
+	self:StaticPopup_Show("COPY_PROFILE")
 end
 
 function AddOn:LoadConfig()	

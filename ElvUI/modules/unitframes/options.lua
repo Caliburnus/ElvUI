@@ -6,7 +6,7 @@ local ElvUF = ns.oUF
 local selectedSpell;
 local selectedFilter;
 local filters;
-
+local USING_DX11 = (GetCVar("gxapi") == "D3D11" or IsMacClient())
 function UF:CreateCustomTextGroup(unit, objectName)
 	if E.Options.args.unitframe.args[unit].args[objectName] then return end
 	
@@ -759,7 +759,45 @@ E.Options.args.unitframe = {
 									type = 'color',
 								},									
 							},
-						},						
+						},	
+						auraBars = {
+							order = 9,
+							type = 'group',
+							guiInline = true,
+							name = L['Aura Bars'],
+							args = {
+								BUFFS = {
+									order = 1,
+									name = L['Buffs'],
+									type = 'color',
+									get = function(info)
+										local t = E.db.unitframe.colors.auraBarBuff
+										return t.r, t.g, t.b, t.a
+									end,
+									set = function(info, r, g, b)
+										E.db.general[ info[#info] ] = {}
+										local t = E.db.unitframe.colors.auraBarBuff
+										t.r, t.g, t.b = r, g, b
+										UF:Update_AllFrames()
+									end,										
+								},	
+								DEBUFFS = {
+									order = 2,
+									name = L['Debuffs'],
+									type = 'color',
+									get = function(info)
+										local t = E.db.unitframe.colors.auraBarDebuff
+										return t.r, t.g, t.b, t.a
+									end,
+									set = function(info, r, g, b)
+										E.db.general[ info[#info] ] = {}
+										local t = E.db.unitframe.colors.auraBarDebuff
+										t.r, t.g, t.b = r, g, b
+										UF:Update_AllFrames()
+									end,										
+								},									
+							},
+						},							
 					},
 				},
 			},
@@ -1121,6 +1159,11 @@ E.Options.args.unitframe.args.player = {
 			get = function(info) return E.db.unitframe.units['player']['portrait'][ info[#info] ] end,
 			set = function(info, value) E.db.unitframe.units['player']['portrait'][ info[#info] ] = value; UF:CreateAndUpdateUF('player') end,
 			args = {
+				intro = {
+					order = 0,
+					type = "description",
+					name = L['Portraits are temporarily forced to 2d for non directx 11 users.'],
+				},
 				enable = {
 					type = 'toggle',
 					order = 1,
@@ -1137,6 +1180,7 @@ E.Options.args.unitframe.args.player = {
 					name = L['Overlay'],
 					desc = L['Overlay the healthbar'],
 					order = 3,
+					disabled = function() return not USING_DX11 end,
 				},
 				camDistanceScale = {
 					type = 'range',
@@ -1847,6 +1891,11 @@ E.Options.args.unitframe.args.target = {
 			get = function(info) return E.db.unitframe.units['target']['portrait'][ info[#info] ] end,
 			set = function(info, value) E.db.unitframe.units['target']['portrait'][ info[#info] ] = value; UF:CreateAndUpdateUF('target') end,
 			args = {
+				intro = {
+					order = 0,
+					type = "description",
+					name = L['Portraits are temporarily forced to 2d for non directx 11 users.'],
+				},			
 				enable = {
 					type = 'toggle',
 					order = 1,
@@ -1863,6 +1912,7 @@ E.Options.args.unitframe.args.target = {
 					name = L['Overlay'],
 					desc = L['Overlay the healthbar'],
 					order = 3,
+					disabled = function() return not USING_DX11 end,
 				},
 				camDistanceScale = {
 					type = 'range',
@@ -4879,6 +4929,11 @@ E.Options.args.unitframe.args.boss = {
 			get = function(info) return E.db.unitframe.units['boss']['portrait'][ info[#info] ] end,
 			set = function(info, value) E.db.unitframe.units['boss']['portrait'][ info[#info] ] = value; UF:CreateAndUpdateUFGroup('boss', MAX_BOSS_FRAMES) end,
 			args = {
+				intro = {
+					order = 0,
+					type = "description",
+					name = L['Portraits are temporarily forced to 2d for non directx 11 users.'],
+				},			
 				enable = {
 					type = 'toggle',
 					order = 1,
@@ -4895,6 +4950,7 @@ E.Options.args.unitframe.args.boss = {
 					name = L['Overlay'],
 					desc = L['Overlay the healthbar'],
 					order = 3,
+					disabled = function() return not USING_DX11 end,
 				},
 				camDistanceScale = {
 					type = 'range',

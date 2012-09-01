@@ -56,7 +56,6 @@ P['general'] = {
 		['sortDirection'] = 'ASCENDING',
 		['size'] = 40,
 		['spacing'] = 4,
-		['showBackdrop'] = false,
 	}
 };
 
@@ -212,6 +211,8 @@ P['unitframe'] = {
 		['health_backdrop'] = { r = .8,g = .01,b = .01 },
 		['tapped'] = { r = 0.55, g = 0.57, b = 0.61},
 		['disconnected'] = { r = 0.84, g = 0.75, b = 0.65},
+		['auraBarBuff'] = P.general.bordercolor,
+		['auraBarDebuff'] = {r = 0.8, g = 0.1, b = 0.1},
 		['power'] = {
 			["MANA"] = {r = 0.31, g = 0.45, b = 0.63},
 			["RAGE"] = {r = 0.78, g = 0.25, b = 0.25},
@@ -384,10 +385,10 @@ P['unitframe'] = {
 				['anchorPoint'] = 'TOPRIGHT',
 				['fontSize'] = 10,
 				['playerOnly'] = 'FRIENDLY',
-				['noConsolidated'] = 'FRIENDLY',
+				['noConsolidated'] = 'NONE',
 				['useBlacklist'] = 'ALL',
 				['useWhitelist'] = 'NONE',
-				['noDuration'] = 'FRIENDLY',
+				['noDuration'] = 'NONE',
 				['useFilter'] = '',
 				['xOffset'] = 0,
 				['yOffset'] = 0,
@@ -1305,7 +1306,7 @@ P["actionbar"] = {
 		['paging'] = {
 			["DRUID"] = "[bonusbar:1,nostealth] 7; [bonusbar:1,stealth] 8; [bonusbar:2] 8; [bonusbar:3] 9; [bonusbar:4] 10;",
 			["PRIEST"] = "[bonusbar:1] 7;",
-			["ROGUE"] = "[stance:1] 7; [stance:3] 7;", -- set to "[stance:1] 7; [stance:3] 10;" if you want a shadow dance bar
+			["ROGUE"] = "[stance:1] 7;  [stance:2] 7; [stance:3] 7;", -- set to "[stance:1] 7; [stance:3] 10;" if you want a shadow dance bar
 			["MONK"] = "[bonusbar:1] 7; [bonusbar:2] 8; [bonusbar:3] 9;"
 		},
 		['visibility'] = "[petbattle] hide; show",

@@ -6,6 +6,7 @@ local UF = E:GetModule('UnitFrames');
 local _, ns = ...
 local ElvUF = ns.oUF
 assert(ElvUF, "ElvUI was unable to locate oUF.")
+local USING_DX11 = (GetCVar("gxapi") == "D3D11" or IsMacClient())
 
 function UF:Construct_TargetFrame(frame)	
 	frame.Health = self:Construct_HealthBar(frame, true, true, 'RIGHT')
@@ -59,7 +60,7 @@ function UF:Update_TargetFrame(frame, db)
 	local COMBOBAR_WIDTH = db.width - (BORDER*2)
 	
 	local USE_PORTRAIT = db.portrait.enable
-	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT
+	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT and USING_DX11
 	local PORTRAIT_WIDTH = db.portrait.width
 	
 	local unit = self.unit
@@ -228,10 +229,11 @@ function UF:Update_TargetFrame(frame, db)
 				portrait:SetAllPoints(frame.Health)
 				portrait:SetAlpha(0.3)
 				portrait:Show()		
+				portrait.backdrop:Hide()
 			else
 				portrait:SetAlpha(1)
 				portrait:Show()
-				
+				portrait.backdrop:Show()
 				portrait.backdrop:ClearAllPoints()
 				portrait.backdrop:SetPoint("TOPRIGHT", frame, "TOPRIGHT")
 						
@@ -248,6 +250,7 @@ function UF:Update_TargetFrame(frame, db)
 			if frame:IsElementEnabled('Portrait') then
 				frame:DisableElement('Portrait')
 				portrait:Hide()
+				portrait.backdrop:Hide()
 			end		
 		end
 	end
@@ -324,7 +327,7 @@ function UF:Update_TargetFrame(frame, db)
 		end
 		
 		local x, y = E:GetXYOffset(db.debuffs.anchorPoint)
-		local attachTo = self:GetAuraAnchorFrame(frame, db.debuffs.attachTo, db.debuffs.attachTo == 'BUFFS' and db.buffs.attachTo == 'DEBUFFS' and db.buffs.enable)
+		local attachTo = self:GetAuraAnchorFrame(frame, db.debuffs.attachTo, db.debuffs.attachTo == 'BUFFS' and db.buffs.attachTo == 'DEBUFFS')
 		
 		debuffs:Point(E.InversePoints[db.debuffs.anchorPoint], attachTo, db.debuffs.anchorPoint, x + db.debuffs.xOffset, y + db.debuffs.yOffset)
 		debuffs:Height(debuffs.size * rows)
@@ -487,9 +490,10 @@ function UF:Update_TargetFrame(frame, db)
 			end
 			auraBars:Show()
 			auraBars.friendlyAuraType = db.aurabar.friendlyAuraType
-			auraBars.enemyAuraType = db.aurabar.enemyAuraType			
+			auraBars.enemyAuraType = db.aurabar.enemyAuraType
 			
-			local healthColor = UF.db.colors.health
+			local buffColor = UF.db.colors.auraBarBuff
+			local debuffColor = UF.db.colors.auraBarDebuff
 			local attachTo = frame
 			
 			if db.aurabar.attachTo == 'BUFFS' then
@@ -506,7 +510,9 @@ function UF:Update_TargetFrame(frame, db)
 			auraBars:ClearAllPoints()
 			auraBars:SetPoint(anchorPoint..'LEFT', attachTo, anchorTo..'LEFT', POWERBAR_OFFSET, 0)
 			auraBars:SetPoint(anchorPoint..'RIGHT', attachTo, anchorTo..'RIGHT')
-			auraBars.buffColor = {healthColor.r, healthColor.b, healthColor.g}
+
+			auraBars.buffColor = {buffColor.r, buffColor.g, buffColor.b}
+			auraBars.debuffColor = {debuffColor.r, debuffColor.g, debuffColor.b}
 			auraBars.down = db.aurabar.anchorPoint == 'BELOW'
 			auraBars:SetAnchors()
 		else

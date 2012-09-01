@@ -482,6 +482,11 @@ function E:UpdateAll(ignoreInstall)
 	bags:PositionBagFrames()
 	bags:SizeAndPositionBagBar()
 
+	local totems = E:GetModule('Totems');
+	totems.db = self.db.general.totems
+	totems:PositionAndSize()
+	totems:ToggleEnable()
+
 	self:GetModule('Layout'):ToggleChatPanels()
 
 	local DT = self:GetModule('DataTexts')
@@ -596,6 +601,15 @@ function E:InitializeModules()
 	end
 end
 
+local invalidValues = {
+	['current-percent'] = true,
+	['current-max'] = true,
+	['current'] = true,
+	['percent'] = true,
+	['deficit'] = true,
+	['blank'] = true,
+}
+
 function E:Initialize()
 	table.wipe(self.db)
 	table.wipe(self.global)
@@ -612,6 +626,27 @@ function E:Initialize()
 	self.global = self.data.global;
 	self:CheckIncompatible()
 
+	--DATABASE CONVERSIONS
+	if type(self.db.unitframe.units.arena.pvpTrinket) == 'boolean' then
+		self.db.unitframe.units.arena.pvpTrinket = table.copy(self.DF["profile"].unitframe.units.arena.pvpTrinket, true)
+	end
+
+	for unit, _ in pairs(self.db.unitframe.units) do
+		if self.db.unitframe.units[unit] and type(self.db.unitframe.units[unit]) == 'table' then
+			for optionGroup, _ in pairs(self.db.unitframe.units[unit]) do
+				if self.db.unitframe.units[unit][optionGroup] and type(self.db.unitframe.units[unit][optionGroup]) == 'table' then
+					if self.db.unitframe.units[unit][optionGroup].text_format and invalidValues[self.db.unitframe.units[unit][optionGroup].text_format] then
+						if P.unitframe.units[unit] then
+							self.db.unitframe.units[unit][optionGroup].text_format = P.unitframe.units[unit][optionGroup].text_format
+						else
+							P.unitframe.units[unit] = nil; --this is old old code that shoulda been removed.. pre 3.5 code
+						end
+					end
+				end
+			end
+		end
+	end
+
 	self:CheckRole()
 	self:UIScale('PLAYER_LOGIN');
 
@@ -622,8 +657,12 @@ function E:Initialize()
 
 	self.initialized = true
 
-	if self.db.install_complete == nil or (self.db.install_complete and type(self.db.install_complete) == 'boolean') or (self.db.install_complete and type(tonumber(self.db.install_complete)) == 'number' and tonumber(self.db.install_complete) <= 3.83) then
+	if self.db.install_complete == nil then
 		self:Install()
+	elseif (self.db.install_complete and type(self.db.install_complete) == 'boolean') or (self.db.install_complete and type(tonumber(self.db.install_complete)) == 'number' and tonumber(self.db.install_complete) <= 4.15) then
+		self:Install()
+		ElvUIInstallFrame.SetPage(7)
+		self:StaticPopup_Show('CONFIGAURA_SET')
 	end
 
 	if not string.find(date(), '04/01/') then

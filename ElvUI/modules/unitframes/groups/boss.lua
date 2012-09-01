@@ -4,6 +4,7 @@ local UF = E:GetModule('UnitFrames');
 local _, ns = ...
 local ElvUF = ns.oUF
 assert(ElvUF, "ElvUI was unable to locate oUF.")
+local USING_DX11 = (GetCVar("gxapi") == "D3D11" or IsMacClient())
 
 local BossHeader = CreateFrame('Frame', 'BossHeader', UIParent)
 function UF:Construct_BossFrames(frame)	
@@ -45,7 +46,7 @@ function UF:Update_BossFrames(frame, db)
 	local POWERBAR_WIDTH = db.width - (BORDER*2)
 		
 	local USE_PORTRAIT = db.portrait.enable
-	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT
+	local USE_PORTRAIT_OVERLAY = db.portrait.overlay and USE_PORTRAIT and USING_DX11
 	local PORTRAIT_WIDTH = db.portrait.width
 	
 	local unit = self.unit
@@ -198,10 +199,11 @@ function UF:Update_BossFrames(frame, db)
 				portrait:SetAllPoints(frame.Health)
 				portrait:SetAlpha(0.3)
 				portrait:Show()		
+				portrait.backdrop:Show()
 			else
 				portrait:SetAlpha(1)
 				portrait:Show()
-				
+				portrait.backdrop:Hide()
 				portrait.backdrop:ClearAllPoints()
 				portrait.backdrop:SetPoint("TOPRIGHT", frame, "TOPRIGHT")
 						
@@ -218,6 +220,7 @@ function UF:Update_BossFrames(frame, db)
 			if frame:IsElementEnabled('Portrait') then
 				frame:DisableElement('Portrait')
 				portrait:Hide()
+				portrait.backdrop:Hide()
 			end		
 		end
 	end
@@ -294,7 +297,7 @@ function UF:Update_BossFrames(frame, db)
 		end
 		
 		local x, y = E:GetXYOffset(db.debuffs.anchorPoint)
-		local attachTo = self:GetAuraAnchorFrame(frame, db.debuffs.attachTo, db.debuffs.attachTo == 'BUFFS' and db.buffs.attachTo == 'DEBUFFS' and db.buffs.enable)
+		local attachTo = self:GetAuraAnchorFrame(frame, db.debuffs.attachTo, db.debuffs.attachTo == 'BUFFS' and db.buffs.attachTo == 'DEBUFFS')
 		
 		debuffs:Point(E.InversePoints[db.debuffs.anchorPoint], attachTo, db.debuffs.anchorPoint, x + db.debuffs.xOffset, y + db.debuffs.yOffset)
 		debuffs:Height(debuffs.size * rows)
