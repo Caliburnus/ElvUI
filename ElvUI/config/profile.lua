@@ -430,7 +430,7 @@ P['unitframe'] = {
 				['playerOnly'] = 'ALL',
 				['useBlacklist'] = 'ALL',
 				['useWhitelist'] = 'NONE',
-				['noDuration'] = 'ENEMY',
+				['noDuration'] = 'ALL',
 				['noConsolidated'] = 'ALL',
 				['useFilter'] = '',
 				['friendlyAuraType'] = 'HELPFUL',
@@ -672,6 +672,12 @@ P['unitframe'] = {
 				['useFilter'] = '',
 				['xOffset'] = 0,
 				['yOffset'] = 0,
+			},
+			['buffIndicator'] = {
+				['enable'] = true,
+				['size'] = 8,
+				['fontSize'] = 10,
+				['colorIcons'] = true,
 			},
 		},
 		['pettarget'] = {
@@ -944,8 +950,8 @@ P['unitframe'] = {
 			},
 			['buffIndicator'] = {
 				['enable'] = true,
-				['size'] = 6,
-				['fontSize'] = 8,
+				['size'] = 8,
+				['fontSize'] = 10,
 				['colorIcons'] = true,
 			},
 			['roleIcon'] = {
@@ -1043,8 +1049,8 @@ P['unitframe'] = {
 			},
 			['buffIndicator'] = {
 				['enable'] = true,
-				['size'] = 6,
-				['fontSize'] = 8,
+				['size'] = 8,
+				['fontSize'] = 10,
 				['colorIcons'] = true,
 			},
 			['rdebuffs'] = {
@@ -1131,8 +1137,8 @@ P['unitframe'] = {
 			},
 			['buffIndicator'] = {
 				['enable'] = true,
-				['size'] = 6,
-				['fontSize'] = 8,
+				['size'] = 8,
+				['fontSize'] = 10,
 				['colorIcons'] = true,
 			},
 			['rdebuffs'] = {
@@ -1232,8 +1238,8 @@ P['unitframe'] = {
 			},
 			['buffIndicator'] = {
 				['enable'] = true,
-				['size'] = 6,
-				['fontSize'] = 8,
+				['size'] = 8,
+				['fontSize'] = 10,
 				['colorIcons'] = true,
 			},
 		},
