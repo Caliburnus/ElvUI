@@ -17,6 +17,7 @@ P['general'] = {
 
 	["fontSize"] = 11,
 	["font"] = "ElvUI Font",
+	["pixelfont"] = "ElvUI Pixel",
 
 	["bordercolor"] = { r = 0.1,g = 0.1,b = 0.1 },
 	["backdropcolor"] = { r = 0.1,g = 0.1,b = 0.1 },

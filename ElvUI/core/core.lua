@@ -140,7 +140,6 @@ function E:UpdateMedia()
 	self["media"].normFont = LSM:Fetch("font", self.db['general'].font)
 	self["media"].combatFont = LSM:Fetch("font", self.db['general'].dmgfont)
 	self["media"].pixelFont = LSM:Fetch("font", self.db["general"].pixelfont)
-	self["media"].kbFont = LSM:Fetch("font", self.db["general"].kbfont)
 
 
 	--Textures
