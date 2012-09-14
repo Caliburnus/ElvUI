@@ -61,7 +61,7 @@ function UF:PostUpdateHealth(unit, min, max)
 end
 
 function UF:PostNamePosition(frame, unit)
-	if frame.Power.value:GetText() and UnitIsPlayer(unit) and frame.Power.value:IsShown() then
+	if --[[frame.Power.value:GetText() and]] UnitIsPlayer(unit) and frame.Power.value:IsShown() then
 		local db = frame.db
 		
 		local position = db.name.position
@@ -207,7 +207,13 @@ function UF:PostUpdateAura(unit, button, index, offset, filter, isDebuff, durati
 	if db and db[self.type] then
 		button.text:FontTemplate(LSM:Fetch("font", E.db['unitframe'].font), db[self.type].fontSize, 'OUTLINE')
 		button.count:FontTemplate(LSM:Fetch("font", E.db['unitframe'].font), db[self.type].fontSize, 'OUTLINE')
-	end
+		
+		if db[self.type].clickThrough and button:IsMouseEnabled() then
+			button:EnableMouse(false)
+		elseif not db[self.type].clickThrough and not button:IsMouseEnabled() then
+			button:EnableMouse(true)
+		end
+	end	
 	
 	if button.isDebuff then
 		if(not UnitIsFriend("player", unit) and button.owner ~= "player" and button.owner ~= "vehicle") --[[and (not E.isDebuffWhiteList[name])]] then
@@ -918,7 +924,7 @@ function UF:AuraFilter(unit, icon, name, rank, texture, count, dtype, duration, 
 	if not db or not db[self.type] then return true; end
 	
 	db = db[self.type]
-	
+
 	local returnValue = true;
 	local returnValueChanged = false;
 	if caster == 'player' or caster == 'vehicle' then isPlayer = true end
@@ -933,6 +939,15 @@ function UF:AuraFilter(unit, icon, name, rank, texture, count, dtype, duration, 
 	
 	if CheckFilter(db.playerOnly, isFriend) then
 		if isPlayer then
+			returnValue = true;
+		elseif not returnValueChanged then
+			returnValue = false;
+		end
+		returnValueChanged = true;
+	end
+	
+	if CheckFilter(db.onlyDispellable, isFriend) then
+		if (self.type == 'buffs' and isStealable) or (self.type == 'debuffs' and dtype and E:IsDispellableByMe(dtype)) then
 			returnValue = true;
 		elseif not returnValueChanged then
 			returnValue = false;
@@ -1184,9 +1199,15 @@ function UF:AuraBarFilter(unit, name, rank, icon, count, debuffType, duration, e
 	local returnValue = true;
 	local returnValueChanged = false
 	local isPlayer, isFriend
+	local auraType
 
 	if unitCaster == 'player' or unitCaster == 'vehicle' then isPlayer = true end
 	if UnitIsFriend('player', unit) then isFriend = true end
+	if isFriend then
+		auraType = db.friendlyAuraType
+	else
+		auraType = db.enemyAuraType
+	end
 	
 	--This should be sorted as least priority checked first
 	--most priority last
@@ -1199,6 +1220,15 @@ function UF:AuraBarFilter(unit, name, rank, icon, count, debuffType, duration, e
 		end
 		returnValueChanged = true;
 	end
+	
+	if CheckFilter(db.onlyDispellable, isFriend) then
+		if (auraType == 'HELPFUL' and isStealable) or (auraType == 'HARMFUL' and debuffType and E:IsDispellableByMe(debuffType)) then
+			returnValue = true;
+		elseif not returnValueChanged then
+			returnValue = false;
+		end
+		returnValueChanged = true;
+	end	
 	
 	if CheckFilter(db.noConsolidated, isFriend) then
 		if shouldConsolidate == 1 then
