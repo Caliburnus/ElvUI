@@ -59,6 +59,9 @@ function UF:Construct_UF(frame, unit)
 	
 	frame:SetFrameLevel(5)
 	
+	frame.RaisedElementParent = CreateFrame('Frame', nil, frame)
+	frame.RaisedElementParent:SetFrameLevel(frame:GetFrameLevel() + 10)	
+	
 	if not self['groupunits'][unit] then
 		local stringTitle = E:StringTitle(unit)
 		if stringTitle:find('target') then
@@ -668,7 +671,14 @@ function UF:ToggleForceShowGroupFrames(unitGroup, numGroup)
 end
 
 local ignoreSettings = {
-	['position'] = true
+	['position'] = true,
+	['playerOnly'] = true,
+	['noConsolidated'] = true,
+	['useBlacklist'] = true,
+	['useWhitelist'] = true,
+	['noDuration'] = true,
+	['onlyDispellable'] = true,
+	['useFilter'] = true,
 }
 function UF:MergeUnitSettings(fromUnit, toUnit)
 	local db = self.db['units']
@@ -686,7 +696,7 @@ function UF:MergeUnitSettings(fromUnit, toUnit)
 							if db[toUnit][option] ~= nil and db[toUnit][option][opt] ~= nil then
 								db[toUnit][option][opt] = val
 							end				
-						elseif not ignoreSettings[o] then
+						elseif not ignoreSettings[opt] then
 							if type(val) == 'table' then
 								for o, v in pairs(db[fromUnit][option][opt]) do
 									if not ignoreSettings[o] then

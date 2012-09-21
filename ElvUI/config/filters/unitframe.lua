@@ -641,7 +641,7 @@ end
 G.unitframe.buffwatch = {
 	PRIEST = {
 		ClassBuff(6788, "TOPRIGHT", {1, 0, 0}, true),	 -- Weakened Soul
-		ClassBuff(33076, "BOTTOMRIGHT", {0.2, 0.7, 0.2}),	 -- Prayer of Mending
+		ClassBuff(41635, "BOTTOMRIGHT", {0.2, 0.7, 0.2}),	 -- Prayer of Mending
 		ClassBuff(139, "BOTTOMLEFT", {0.4, 0.7, 0.2}), -- Renew
 		ClassBuff(17, "TOPLEFT", {0.81, 0.85, 0.1}, true),	 -- Power Word: Shield
 		ClassBuff(10060 , "RIGHT", {227/255, 23/255, 13/255}), -- Power Infusion
@@ -651,7 +651,7 @@ G.unitframe.buffwatch = {
 	DRUID = {
 		ClassBuff(774, "TOPRIGHT", {0.8, 0.4, 0.8}),	 -- Rejuvenation
 		ClassBuff(8936, "BOTTOMLEFT", {0.2, 0.8, 0.2}),	 -- Regrowth
-		ClassBuff(94447, "TOPLEFT", {0.4, 0.8, 0.2}),	 -- Lifebloom
+		ClassBuff(33763, "TOPLEFT", {0.4, 0.8, 0.2}),	 -- Lifebloom
 		ClassBuff(48438, "BOTTOMRIGHT", {0.8, 0.4, 0}),	 -- Wild Growth
 	},
 	PALADIN = {
@@ -735,4 +735,8 @@ G.unitframe.HastedChannelTicks = {
 G.unitframe.AuraBarColors = {
 	[SpellName(2825)] = {169/255, 98/255, 181/255},
 	[SpellName(32182)] = {169/255, 98/255, 181/255},
+}
+
+G.unitframe.InvalidSpells = {
+	[65148] = true,
 }

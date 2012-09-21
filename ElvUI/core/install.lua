@@ -491,13 +491,13 @@ local function SetupAuras(style)
 	E:CopyTable(E.db.unitframe.units.focus.buffs, P.unitframe.units.focus.buffs)
 	E:CopyTable(E.db.unitframe.units.focus.debuffs, P.unitframe.units.focus.debuffs)
 	E:CopyTable(E.db.unitframe.units.focus.aurabar, P.unitframe.units.focus.aurabar)
-	E.db.unitframe.units.focus.smartAuraDisplay = P.unitframe.units.focus.smartAuraDisplay		
-	
+	E.db.unitframe.units.focus.smartAuraDisplay = P.unitframe.units.focus.smartAuraDisplay
+
 	if not style then
 		--PLAYER
 		E.db.unitframe.units.player.buffs.enable = true;
 		E.db.unitframe.units.player.buffs.attachTo = 'FRAME';
-		E.db.unitframe.units.player.buffs.noDuration = 'NONE';
+		E.db.unitframe.units.player.buffs.noDuration = false;
 
 		E.db.unitframe.units.player.debuffs.attachTo = 'BUFFS';
 
@@ -510,7 +510,7 @@ local function SetupAuras(style)
 	elseif style == 'classic' then
 		--seriosly is this fucking hard??
 		E.db.unitframe.units.target.smartAuraDisplay = 'DISABLED';
-		E.db.unitframe.units.target.buffs.playerOnly = 'NONE';
+		E.db.unitframe.units.target.buffs.playerOnly = {friendly = false, enemy = false};
 		E.db.unitframe.units.target.debuffs.enable = true;
 		E.db.unitframe.units.target.aurabar.attachTo = 'DEBUFFS';
 	end
@@ -660,7 +660,7 @@ local function SetPage(PageNum)
 		InstallOption2Button:SetText(L['Icons Only'])
 		InstallOption3Button:Show()
 		InstallOption3Button:SetScript('OnClick', function() SetupAuras('classic') end)
-		InstallOption3Button:SetText(L['Classic'])		
+		InstallOption3Button:SetText(L['Classic'])
 	elseif PageNum == 8 then
 		f.SubTitle:SetText(L["Installation Complete"])
 		f.Desc1:SetText(L["You are now finished with the installation process. If you are in need of technical support please visit us at http://www.tukui.org."])

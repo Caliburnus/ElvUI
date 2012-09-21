@@ -17,7 +17,6 @@ function A:FormatTime(s)
 end
 
 function A:UpdateTime(elapsed)
-	self.expiration = self.expiration
 	if(self.expiration) then	
 		self.expiration = math.max(self.expiration - elapsed, 0)
 		if(self.expiration <= 0) then
@@ -134,7 +133,7 @@ function A:UpdateHeader(header)
 	local db = self.db.debuffs
 	if header:GetAttribute('filter') == 'HELPFUL' then
 		db = self.db.buffs
-		header:SetAttribute("consolidateTo", self.db.consolidedBuffs == true and E.private.general.minimap.enable == true and 1 or 0)
+		header:SetAttribute("consolidateTo", self.db.consolidatedBuffs.enable == true and E.private.general.minimap.enable == true and 1 or 0)
 		header:SetAttribute("separateOwn", self.db.seperateOwn)
 		header:SetAttribute('consolidateDuration', -1)
 	end
@@ -260,12 +259,14 @@ end
 
 function A:Initialize()
 	if self.db then return; end --IDK WHY BUT THIS IS GETTING CALLED TWICE FROM SOMEWHERE...
+	
 	self.db = E.db.auras
 
 	BuffFrame:Kill()
 	ConsolidatedBuffs:Kill()
 	InterfaceOptionsFrameCategoriesButton12:SetScale(0.0001)
 	
+	self:Construct_ConsolidatedBuffs()
 	if E.private.auras.enable ~= true then TemporaryEnchantFrame:Kill(); return end
 	
 	local holder = CreateFrame("Frame", "AurasHolder", E.UIParent)
@@ -297,9 +298,6 @@ function A:Initialize()
 
 	E:CreateMover(AurasHolder, "AurasMover", "Auras Frame", false, nil, A.PostDrag)
 	E:CreateMover(self.EnchantHeader, 'TempEnchantMover', 'Weapons', nil, nil, A.WeaponPostDrag)
-	
-	
-	self:Construct_ConsolidatedBuffs()
 end
 
 E:RegisterModule(A:GetName())
