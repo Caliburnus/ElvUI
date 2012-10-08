@@ -238,6 +238,8 @@ function M:Initialize()
 	Minimap:ClearAllPoints()
 	Minimap:Point("TOPLEFT", mmholder, "TOPLEFT", 2, -2)
 	Minimap:SetMaskTexture('Interface\\ChatFrame\\ChatFrameBackground')
+	Minimap:SetQuestBlobRingAlpha(0)
+	Minimap:SetArchBlobRingAlpha(0)
 	Minimap:CreateBackdrop('Default')
 	Minimap:HookScript('OnEnter', function(self)
 		if E.db.general.minimap.locationText ~= 'MOUSEOVER' or not E.private.general.minimap.enable then return; end

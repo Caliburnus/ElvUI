@@ -182,11 +182,7 @@ function E:SetupTheme(theme, noDisplayMsg)
 		E.db.unitframe.colors.healthclass = false
 		E.db.unitframe.colors.health = E:GetColor(.31, .31, .31)
 		E.db.unitframe.colors.auraBarBuff = E:GetColor(.31, .31, .31)
-		E.db.unitframe.units.player.castbar.color = E:GetColor(.31, .31, .31)
-		E.db.unitframe.units.target.castbar.color = E:GetColor(.31, .31, .31)
-		E.db.unitframe.units.focus.castbar.color = E:GetColor(.31, .31, .31)
-		E.db.unitframe.units.boss.castbar.color = E:GetColor(.31, .31, .31)
-		E.db.unitframe.units.arena.castbar.color = E:GetColor(.31, .31, .31)
+		E.db.unitframe.colors.castColor = E:GetColor(.31, .31, .31)
 
 	elseif theme == "class" then
 		E.db.general.bordercolor = E:GetColor(classColor.r, classColor.b, classColor.g)
@@ -194,11 +190,7 @@ function E:SetupTheme(theme, noDisplayMsg)
 		E.db.general.backdropfadecolor = E:GetColor(.06, .06, .06, .8)
 		E.db.unitframe.colors.auraBarBuff = E:GetColor(classColor.r, classColor.b, classColor.g)
 		E.db.unitframe.colors.healthclass = true
-		E.db.unitframe.units.player.castbar.color = E:GetColor(classColor.r, classColor.b, classColor.g)
-		E.db.unitframe.units.target.castbar.color = E:GetColor(classColor.r, classColor.b, classColor.g)
-		E.db.unitframe.units.focus.castbar.color = E:GetColor(classColor.r, classColor.b, classColor.g)
-		E.db.unitframe.units.boss.castbar.color = E:GetColor(classColor.r, classColor.b, classColor.g)
-		E.db.unitframe.units.arena.castbar.color = E:GetColor(classColor.r, classColor.b, classColor.g)
+		E.db.unitframe.colors.castColor = E:GetColor(classColor.r, classColor.b, classColor.g)
 	else
 		E.db.general.bordercolor = E:GetColor(.1, .1, .1)
 		E.db.general.backdropcolor = E:GetColor(.1, .1, .1)
@@ -206,11 +198,7 @@ function E:SetupTheme(theme, noDisplayMsg)
 		E.db.unitframe.colors.auraBarBuff = E:GetColor(.1, .1, .1)
 		E.db.unitframe.colors.healthclass = false
 		E.db.unitframe.colors.health = E:GetColor(.1, .1, .1)
-		E.db.unitframe.units.player.castbar.color = E:GetColor(.1, .1, .1)
-		E.db.unitframe.units.target.castbar.color = E:GetColor(.1, .1, .1)
-		E.db.unitframe.units.focus.castbar.color = E:GetColor(.1, .1, .1)
-		E.db.unitframe.units.boss.castbar.color = E:GetColor(.1, .1, .1)
-		E.db.unitframe.units.arena.castbar.color = E:GetColor(.1, .1, .1)
+		E.db.unitframe.colors.castColor = E:GetColor(.1, .1, .1)
 	end
 
 	--Value Color
@@ -224,11 +212,13 @@ function E:SetupTheme(theme, noDisplayMsg)
 		E:UpdateAll(true)
 	end
 
-	InstallStatus:SetStatusBarColor(unpack(E['media'].rgbvaluecolor))
+	if InstallStatus then
+		InstallStatus:SetStatusBarColor(unpack(E['media'].rgbvaluecolor))
 
-	if InstallStepComplete and not noDisplayMsg then
-		InstallStepComplete.message = L["Theme Set"]
-		InstallStepComplete:Show()
+		if InstallStepComplete and not noDisplayMsg then
+			InstallStepComplete.message = L["Theme Set"]
+			InstallStepComplete:Show()
+		end
 	end
 end
 

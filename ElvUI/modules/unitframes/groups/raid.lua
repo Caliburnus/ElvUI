@@ -94,6 +94,9 @@ for i=10, 40, 15 do
 		elseif db.groupBy == 'ROLE' then
 			header:SetAttribute("groupingOrder", "MAINTANK,MAINASSIST,1,2,3,4,5,6,7,8")
 			header:SetAttribute('sortMethod', 'NAME')
+		elseif db.groupBy == 'NAME' then
+			header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
+			header:SetAttribute('sortMethod', 'NAME')	
 		else
 			header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
 			header:SetAttribute('sortMethod', 'INDEX')
@@ -397,6 +400,23 @@ for i=10, 40, 15 do
 			end
 		end
 
+		--Raid Icon
+		do
+			local RI = frame.RaidIcon
+			if db.raidicon.enable then
+				frame:EnableElement('RaidIcon')
+				RI:Show()
+				RI:Size(db.raidicon.size)
+				
+				local x, y = self:GetPositionOffset(db.raidicon.attachTo)
+				RI:ClearAllPoints()
+				RI:Point(db.raidicon.attachTo, frame, db.raidicon.attachTo, x + db.raidicon.xOffset, y + db.raidicon.yOffset)	
+			else
+				frame:DisableElement('RaidIcon')	
+				RI:Hide()
+			end
+		end			
+		
 		--Debuff Highlight
 		do
 			local dbh = frame.DebuffHighlight

@@ -358,8 +358,7 @@ function UF:PostCastStart(unit, name, rank, castid)
 	end
 
 	self.Spark:Height(self:GetHeight() * 2)
-	
-	local color		
+		
 	self.unit = unit
 
 	if db.castbar.ticks and unit == "player" then
@@ -415,21 +414,22 @@ function UF:PostCastStart(unit, name, rank, castid)
 	
 	if self.interrupt and unit ~= "player" then
 		if UnitCanAttack("player", unit) then
-			color = db['castbar']['interruptcolor']		
-			self:SetStatusBarColor(color.r, color.g, color.b)
+			self:SetStatusBarColor(unpack(ElvUF.colors.castNoInterrupt))
 		else
-			color = db['castbar']['color']
 			if E.db.theme == 'class' then
-				color = RAID_CLASS_COLORS[E.myclass]
+				local color = RAID_CLASS_COLORS[E.myclass]
+				self:SetStatusBarColor(color.r, color.g, color.b)
+			else
+				self:SetStatusBarColor(unpack(ElvUF.colors.castColor))
 			end					
-			self:SetStatusBarColor(color.r, color.g, color.b)
 		end
 	else
-		color = db['castbar']['color']
 		if E.db.theme == 'class' then
-			color = RAID_CLASS_COLORS[E.myclass]
-		end				
-		self:SetStatusBarColor(color.r, color.g, color.b)
+			local color = RAID_CLASS_COLORS[E.myclass]
+			self:SetStatusBarColor(color.r, color.g, color.b)
+		else
+			self:SetStatusBarColor(unpack(ElvUF.colors.castColor))
+		end	
 	end
 end
 
@@ -494,27 +494,18 @@ function UF:PostChannelUpdate(unit, name)
 end
 
 function UF:PostCastInterruptible(unit)
-	local db = self:GetParent().db
-	
-	if not db then return end
-	
 	if unit == "vehicle" then unit = "player" end
 	if unit ~= "player" then
-		local color
 		if UnitCanAttack("player", unit) then
-			color = db['castbar'].interruptcolor
+			self:SetStatusBarColor(unpack(ElvUF.colors.castNoInterrupt))	
 		else
-			color = db['castbar'].color
-		end		
-		self:SetStatusBarColor(color.r, color.g, color.b)
+			self:SetStatusBarColor(unpack(ElvUF.colors.castColor))
+		end
 	end
 end
 
 function UF:PostCastNotInterruptible(unit)
-	local db = self:GetParent().db
-	
-	local color = db['castbar'].interruptcolor
-	self:SetStatusBarColor(color.r, color.g, color.b)
+	self:SetStatusBarColor(unpack(ElvUF.colors.castNoInterrupt))
 end
 
 function UF:UpdateHoly(event, unit, powerType)
@@ -677,7 +668,8 @@ function UF:UpdateHarmony()
 			end
 		else
 			self[i]:Point("LEFT", self[i-1], "RIGHT", SPACING , 0)
-		end		
+		end
+		self[i]:SetStatusBarColor(unpack(ElvUF.colors.harmony[i]))
 	end	
 end
 
@@ -1044,6 +1036,13 @@ function UF:UpdateAuraWatch(frame)
 	local buffs = {};
 	local auras = frame.AuraWatch;
 	local db = frame.db.buffIndicator;
+
+	if not db.enable then
+		auras:Hide()
+		return;
+	else
+		auras:Show()
+	end
 	
 	if not E.global['unitframe'].buffwatch[E.myclass] then E.global['unitframe'].buffwatch[E.myclass] = {} end
 
@@ -1055,6 +1054,25 @@ function UF:UpdateAuraWatch(frame)
 		for _, value in pairs(E.global['unitframe'].buffwatch[E.myclass]) do
 			tinsert(buffs, value);
 		end	
+	end
+	
+	--CLEAR CACHE
+	if auras.icons then
+		for spell in pairs(auras.icons) do
+			local matchFound = false;
+			for _, spell2 in pairs(buffs) do
+				if spell2["id"] then
+					if spell2["id"] == spell then
+						matchFound = true;
+					end
+				end
+			end
+			
+			if not matchFound then
+				auras.icons[spell]:Hide()
+				auras.icons[spell] = nil;
+			end
+		end
 	end
 	
 	for _, spell in pairs(buffs) do
@@ -1098,6 +1116,7 @@ function UF:UpdateAuraWatch(frame)
 						icon.icon:SetVertexColor(0.8, 0.8, 0.8);
 					end			
 				else
+					icon.icon:SetVertexColor(1, 1, 1)
 					icon.icon:SetTexCoord(.18, .82, .18, .82);
 					icon.icon:SetTexture(icon.image);
 				end
@@ -1143,7 +1162,7 @@ function UF:UpdateAuraWatch(frame)
 	if frame.AuraWatch.Update then
 		frame.AuraWatch.Update(frame)
 	end
-	
+		
 	buffs = nil;
 end
 

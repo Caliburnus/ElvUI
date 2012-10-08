@@ -412,6 +412,8 @@ G.unitframe.aurafilters['Whitelist'] = {
 	['spells'] = {
 		[SpellName(2825)] = Defaults(), -- Bloodlust
 		[SpellName(32182)] = Defaults(), -- Heroism	
+		[SpellName(80353)] = Defaults(), --Time Warp
+		[SpellName(90355)] = Defaults(), --Ancient Hysteria		
 	},
 }
 
@@ -670,7 +672,7 @@ G.unitframe.buffwatch = {
 	MONK = {
 		ClassBuff(119611, "TOPLEFT", {0.8, 0.4, 0.8}),	 --Renewing Mist
 		ClassBuff(116849, "TOPRIGHT", {0.2, 0.8, 0.2}),	 -- Life Cocoon
-		ClassBuff(124682, "BOTTOMLEFT", {0.4, 0.8, 0.2}), -- Enveloping Mist
+		ClassBuff(132120, "BOTTOMLEFT", {0.4, 0.8, 0.2}), -- Enveloping Mist
 		ClassBuff(124081, "BOTTOMRIGHT", {0.7, 0.4, 0}), -- Zen Sphere
 	},
 	ROGUE = {
@@ -733,8 +735,11 @@ G.unitframe.HastedChannelTicks = {
 
 --This should probably be the same as the whitelist filter + any personal class ones that may be important to watch
 G.unitframe.AuraBarColors = {
-	[SpellName(2825)] = {169/255, 98/255, 181/255},
-	[SpellName(32182)] = {169/255, 98/255, 181/255},
+	[SpellName(2825)] = {r = 250/255, g = 146/255, b = 27/255},	--Bloodlust
+	[SpellName(32182)] = {r = 250/255, g = 146/255, b = 27/255}, --Heroism
+	[SpellName(80353)] = {r = 250/255, g = 146/255, b = 27/255}, --Time Warp
+	[SpellName(90355)] = {r = 250/255, g = 146/255, b = 27/255}, --Ancient Hysteria
+	[SpellName(84963)] = {r = 250/255, g = 146/255, b = 27/255}, --Inquisition
 }
 
 G.unitframe.InvalidSpells = {

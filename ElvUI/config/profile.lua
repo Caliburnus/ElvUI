@@ -99,6 +99,7 @@ P["nameplate"] = {
 	["trackfilter"] = 'CCDebuffs',
 	['goodscale'] = 1,
 	['badscale'] = 1,
+	['bgMult'] = 0.15,
 	["goodcolor"] = {r = 75/255,  g = 175/255, b = 76/255},
 	["badcolor"] = {r = 0.78, g = 0.25, b = 0.25},
 	["goodtransitioncolor"] = {r = 218/255, g = 197/255, b = 92/255},
@@ -224,6 +225,9 @@ P['unitframe'] = {
 		['customhealthbackdrop'] = false,
 		['classbackdrop'] = false,
 
+		['castColor'] = P.general.bordercolor,
+		['castNoInterrupt'] = { r = 0.78, g = 0.25, b = 0.25 },
+
 		['health'] = P.general.bordercolor,
 		['health_backdrop'] = { r = .8,g = .01,b = .01 },
 		['tapped'] = { r = 0.55, g = 0.57, b = 0.61},
@@ -241,6 +245,33 @@ P['unitframe'] = {
 			['BAD'] = { r = 0.78, g = 0.25, b = 0.25 },
 			['NEUTRAL'] = { r = 218/255, g = 197/255, b = 92/255 },
 			['GOOD'] = { r = 75/255, g = 175/255, b = 76/255 },
+		},
+		['classResources'] = {
+			['DEATHKNIGHT'] = {
+				[1] = {r = 1, g = 0, b = 0},
+				[2] = {r = 0, g = .5, b = 0},
+				[3] = {r = 0, g = 1, b = 1},
+				[4] = {r = .9, g = .1, b = 1},
+			},
+			['PALADIN'] = {r = 228/255,g = 225/255,b = 16/255},
+			['MAGE'] = {r = 0, g = 157/255, b = 255/255},
+			['PRIEST'] = {r = 1, g = 1, b = 1},
+			['DRUID'] = {
+				[1] = {r = .30, g = .52, b = .90},
+				[2] = {r = .80, g = .82,  b = .60},
+			},
+			['MONK'] = {
+				[1] = {r = .57, g = .63, b = .35},
+				[2] = {r = .47, g = .63, b = .35},
+				[3] = {r = .37, g = .63, b = .35},
+				[4] = {r = .27, g = .63, b = .33},
+				[5] = {r = .17, g = .63, b = .33},
+			},
+			['WARLOCK'] = {
+				[1] = {r = 148/255, g = 130/255, b = 201/255},
+				[2] = {r = 148/255, g = 130/255, b = 201/255},
+				[3] = {r = 230/255, g = 95/255,  b = 95/255}
+			},
 		},
 	},
 
@@ -323,8 +354,6 @@ P['unitframe'] = {
 				['icon'] = true,
 				['latency'] = true,
 				['displayTarget'] = false,
-				['color'] = P.general.bordercolor,
-				['interruptcolor'] = { r = 0.78, g = 0.25, b = 0.25 },
 				['format'] = 'REMAINING',
 				["ticks"] = true,
 				['spark'] = true,
@@ -347,6 +376,13 @@ P['unitframe'] = {
 				['useFilter'] = '',
 				['friendlyAuraType'] = 'HELPFUL',
 				['enemyAuraType'] = 'HARMFUL'
+			},
+			['raidicon'] = {
+				['enable'] = true,
+				['size'] = 18,
+				['attachTo'] = 'TOP',
+				['xOffset'] = 0,
+				['yOffset'] = 10,
 			},
 		},
 		['target'] = {
@@ -419,8 +455,6 @@ P['unitframe'] = {
 				['width'] = 270,
 				['height'] = 18,
 				['icon'] = true,
-				['color'] = P.general.bordercolor,
-				['interruptcolor'] = { r = 0.78, g = 0.25, b = 0.25 },
 				['format'] = 'REMAINING',
 				['spark'] = true,
 			},
@@ -442,6 +476,13 @@ P['unitframe'] = {
 				['useFilter'] = '',
 				['friendlyAuraType'] = 'HELPFUL',
 				['enemyAuraType'] = 'HARMFUL'
+			},
+			['raidicon'] = {
+				['enable'] = true,
+				['size'] = 18,
+				['attachTo'] = 'TOP',
+				['xOffset'] = 0,
+				['yOffset'] = 10,
 			},
 		},
 		['targettarget'] = {
@@ -499,6 +540,13 @@ P['unitframe'] = {
 				['useFilter'] = '',
 				['xOffset'] = 0,
 				['yOffset'] = 0,
+			},
+			['raidicon'] = {
+				['enable'] = true,
+				['size'] = 18,
+				['attachTo'] = 'TOP',
+				['xOffset'] = 0,
+				['yOffset'] = 10,
 			},
 		},
 		['focus'] = {
@@ -564,8 +612,6 @@ P['unitframe'] = {
 				['width'] = 190,
 				['height'] = 18,
 				['icon'] = true,
-				['color'] = P.general.bordercolor,
-				['interruptcolor'] = { r = 0.78, g = 0.25, b = 0.25 },
 				['format'] = 'REMAINING',
 				['spark'] = true,
 			},
@@ -578,9 +624,17 @@ P['unitframe'] = {
 				['useWhitelist'] = {friendly = false, enemy = false},
 				['noDuration'] = {friendly = false, enemy = false},
 				['onlyDispellable'] = {friendly = false, enemy = false},
+				['noConsolidated'] = {friendly = true, enemy = true},
 				['useFilter'] = '',
 				['friendlyAuraType'] = 'HELPFUL',
 				['enemyAuraType'] = 'HARMFUL'
+			},
+			['raidicon'] = {
+				['enable'] = true,
+				['size'] = 18,
+				['attachTo'] = 'TOP',
+				['xOffset'] = 0,
+				['yOffset'] = 10,
 			},
 		},
 		['focustarget'] = {
@@ -638,6 +692,13 @@ P['unitframe'] = {
 				['useFilter'] = '',
 				['xOffset'] = 0,
 				['yOffset'] = 0,
+			},
+			['raidicon'] = {
+				['enable'] = true,
+				['size'] = 18,
+				['attachTo'] = 'TOP',
+				['xOffset'] = 0,
+				['yOffset'] = 10,
 			},
 		},
 		['pet'] = {
@@ -832,10 +893,15 @@ P['unitframe'] = {
 				['width'] = 215,
 				['height'] = 18,
 				['icon'] = true,
-				['color'] = P.general.bordercolor,
-				['interruptcolor'] = { r = 0.78, g = 0.25, b = 0.25 },
 				['format'] = 'REMAINING',
 				['spark'] = true,
+			},
+			['raidicon'] = {
+				['enable'] = true,
+				['size'] = 18,
+				['attachTo'] = 'TOP',
+				['xOffset'] = 0,
+				['yOffset'] = 10,
 			},
 		},
 		['arena'] = {
@@ -903,8 +969,6 @@ P['unitframe'] = {
 				['width'] = 240,
 				['height'] = 18,
 				['icon'] = true,
-				['color'] = P.general.bordercolor,
-				['interruptcolor'] = { r = 0.78, g = 0.25, b = 0.25 },
 				['format'] = 'REMAINING',
 				['spark'] = true,
 			},
@@ -1019,6 +1083,13 @@ P['unitframe'] = {
 				['xOffset'] = -1,
 				['yOffset'] = 0,
 			},
+			['raidicon'] = {
+				['enable'] = true,
+				['size'] = 18,
+				['attachTo'] = 'TOP',
+				['xOffset'] = 0,
+				['yOffset'] = 10,
+			},
 		},
 		['raid10'] = {
 			['enable'] = true,
@@ -1110,6 +1181,13 @@ P['unitframe'] = {
 			['raidRoleIcons'] = {
 				['enable'] = true,
 				['position'] = 'TOPLEFT',
+			},
+			['raidicon'] = {
+				['enable'] = true,
+				['size'] = 18,
+				['attachTo'] = 'TOP',
+				['xOffset'] = 0,
+				['yOffset'] = 10,
 			},
 		},
 		['raid25'] = {
@@ -1203,6 +1281,13 @@ P['unitframe'] = {
 				['enable'] = true,
 				['position'] = 'TOPLEFT',
 			},
+			['raidicon'] = {
+				['enable'] = true,
+				['size'] = 18,
+				['attachTo'] = 'TOP',
+				['xOffset'] = 0,
+				['yOffset'] = 10,
+			},
 		},
 		['raid40'] = {
 			['enable'] = true,
@@ -1295,6 +1380,13 @@ P['unitframe'] = {
 				['fontSize'] = 10,
 				['colorIcons'] = true,
 			},
+			['raidicon'] = {
+				['enable'] = true,
+				['size'] = 18,
+				['attachTo'] = 'TOP',
+				['xOffset'] = 0,
+				['yOffset'] = 10,
+			},
 		},
 		['tank'] = {
 			['enable'] = true,
@@ -1341,6 +1433,8 @@ P["actionbar"] = {
 	["minutescolor"] = { r = 1, g = 1, b = 1 },
 	["hourscolor"] = { r = 0.4, g = 1, b = 1 },
 	["dayscolor"] = { r = 0.4, g = 0.4, b = 1 },
+	['noRangeColor'] = { r = 0.8, g = 0.1, b = 0.1 },
+	['noPowerColor'] = { r = 0.5, g = 0.5, b = 1 },
 
 	['keyDown'] = true,
 	['movementModifier'] = 'SHIFT',

@@ -1009,6 +1009,34 @@ E.Options.args.unitframe = {
 								},									
 							},
 						},	
+						castBars = {
+							order = 9,
+							type = 'group',
+							guiInline = true,
+							name = L['Castbar'],
+							get = function(info)
+								local t = E.db.unitframe.colors[ info[#info] ]
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b)
+								E.db.general[ info[#info] ] = {}
+								local t = E.db.unitframe.colors[ info[#info] ]
+								t.r, t.g, t.b = r, g, b
+								UF:Update_AllFrames()
+							end,			
+							args = {
+								castColor = {
+									order = 1,
+									name = L['Interruptable'],
+									type = 'color',
+								},	
+								castNoInterrupt = {
+									order = 2,
+									name = L['Non-Interruptable'],
+									type = 'color',
+								},								
+							},
+						},
 						auraBars = {
 							order = 9,
 							type = 'group',
@@ -1755,36 +1783,6 @@ E.Options.args.unitframe.args.player = {
 					name = L['Latency'],
 					type = 'toggle',				
 				},
-				color = {
-					order = 10,
-					type = 'color',
-					name = L['Color'],
-					get = function(info)
-						local t = E.db.unitframe.units['player']['castbar'][ info[#info] ]
-						return t.r, t.g, t.b, t.a
-					end,
-					set = function(info, r, g, b)
-						E.db.general[ info[#info] ] = {}
-						local t = E.db.unitframe.units['player']['castbar'][ info[#info] ]
-						t.r, t.g, t.b = r, g, b
-						UF:CreateAndUpdateUF('player')
-					end,													
-				},
-				interruptcolor = {
-					order = 11,
-					type = 'color',
-					name = L['Interrupt Color'],
-					get = function(info)
-						local t = E.db.unitframe.units['player']['castbar'][ info[#info] ]
-						return t.r, t.g, t.b, t.a
-					end,
-					set = function(info, r, g, b)
-						E.db.general[ info[#info] ] = {}
-						local t = E.db.unitframe.units['player']['castbar'][ info[#info] ]
-						t.r, t.g, t.b = r, g, b
-						UF:CreateAndUpdateUF('player')
-					end,					
-				},
 				format = {
 					order = 12,
 					type = 'select',
@@ -1910,6 +1908,12 @@ E.Options.args.unitframe.args.player = {
 							name = L['Allow Dispellable Auras'],
 							desc = L['Allow Dispellable Auras'],
 						},
+						noConsolidated = {
+							order = 14,
+							type = 'toggle',
+							name = L["Block Raid Buffs"],
+							desc = L["Block Raid Buffs"],		
+						},						
 						useFilter = {
 							order = 15,
 							name = L['Additional Filter'],
@@ -1947,7 +1951,45 @@ E.Options.args.unitframe.args.player = {
 					},						
 				},
 			},
-		},			
+		},	
+		raidicon = {
+			order = 2000,
+			type = 'group',
+			name = L['Raid Icon'],
+			get = function(info) return E.db.unitframe.units['player']['raidicon'][ info[#info] ] end,
+			set = function(info, value) E.db.unitframe.units['player']['raidicon'][ info[#info] ] = value; UF:CreateAndUpdateUF('player') end,
+			args = {
+				enable = {
+					type = 'toggle',
+					order = 1,
+					name = L['Enable'],
+				},	
+				attachTo = {
+					type = 'select',
+					order = 2,
+					name = L['Position'],
+					values = positionValues,
+				},
+				size = {
+					type = 'range',
+					name = L['Size'],
+					order = 3,
+					min = 8, max = 60, step = 1,
+				},				
+				xOffset = {
+					order = 4,
+					type = 'range',
+					name = L['xOffset'],
+					min = -300, max = 300, step = 1,
+				},
+				yOffset = {
+					order = 5,
+					type = 'range',
+					name = L['yOffset'],
+					min = -300, max = 300, step = 1,
+				},			
+			},
+		},		
 	},
 }
 
@@ -2721,36 +2763,6 @@ E.Options.args.unitframe.args.target = {
 					name = L['Icon'],
 					type = 'toggle',
 				},			
-				color = {
-					order = 9,
-					type = 'color',
-					name = L['Color'],
-					get = function(info)
-						local t = E.db.unitframe.units['target']['castbar'][ info[#info] ]
-						return t.r, t.g, t.b, t.a
-					end,
-					set = function(info, r, g, b)
-						E.db.general[ info[#info] ] = {}
-						local t = E.db.unitframe.units['target']['castbar'][ info[#info] ]
-						t.r, t.g, t.b = r, g, b
-						UF:CreateAndUpdateUF('target')
-					end,													
-				},
-				interruptcolor = {
-					order = 10,
-					type = 'color',
-					name = L['Interrupt Color'],
-					get = function(info)
-						local t = E.db.unitframe.units['target']['castbar'][ info[#info] ]
-						return t.r, t.g, t.b, t.a
-					end,
-					set = function(info, r, g, b)
-						E.db.general[ info[#info] ] = {}
-						local t = E.db.unitframe.units['target']['castbar'][ info[#info] ]
-						t.r, t.g, t.b = r, g, b
-						UF:CreateAndUpdateUF('target')
-					end,					
-				},
 				format = {
 					order = 11,
 					type = 'select',
@@ -3018,7 +3030,45 @@ E.Options.args.unitframe.args.target = {
 					},						
 				},				
 			},
-		},			
+		},
+		raidicon = {
+			order = 2000,
+			type = 'group',
+			name = L['Raid Icon'],
+			get = function(info) return E.db.unitframe.units['target']['raidicon'][ info[#info] ] end,
+			set = function(info, value) E.db.unitframe.units['target']['raidicon'][ info[#info] ] = value; UF:CreateAndUpdateUF('target') end,
+			args = {
+				enable = {
+					type = 'toggle',
+					order = 1,
+					name = L['Enable'],
+				},	
+				attachTo = {
+					type = 'select',
+					order = 2,
+					name = L['Position'],
+					values = positionValues,
+				},
+				size = {
+					type = 'range',
+					name = L['Size'],
+					order = 3,
+					min = 8, max = 60, step = 1,
+				},				
+				xOffset = {
+					order = 4,
+					type = 'range',
+					name = L['xOffset'],
+					min = -300, max = 300, step = 1,
+				},
+				yOffset = {
+					order = 5,
+					type = 'range',
+					name = L['yOffset'],
+					min = -300, max = 300, step = 1,
+				},			
+			},
+		},		
 	},
 }
 
@@ -3670,6 +3720,44 @@ E.Options.args.unitframe.args.targettarget = {
 				},				
 			},
 		},	
+		raidicon = {
+			order = 2000,
+			type = 'group',
+			name = L['Raid Icon'],
+			get = function(info) return E.db.unitframe.units['targettarget']['raidicon'][ info[#info] ] end,
+			set = function(info, value) E.db.unitframe.units['targettarget']['raidicon'][ info[#info] ] = value; UF:CreateAndUpdateUF('targettarget') end,
+			args = {
+				enable = {
+					type = 'toggle',
+					order = 1,
+					name = L['Enable'],
+				},	
+				attachTo = {
+					type = 'select',
+					order = 2,
+					name = L['Position'],
+					values = positionValues,
+				},
+				size = {
+					type = 'range',
+					name = L['Size'],
+					order = 3,
+					min = 8, max = 60, step = 1,
+				},				
+				xOffset = {
+					order = 4,
+					type = 'range',
+					name = L['xOffset'],
+					min = -300, max = 300, step = 1,
+				},
+				yOffset = {
+					order = 5,
+					type = 'range',
+					name = L['yOffset'],
+					min = -300, max = 300, step = 1,
+				},			
+			},
+		},			
 	},
 }
 
@@ -4390,36 +4478,6 @@ E.Options.args.unitframe.args.focus = {
 					name = L['Icon'],
 					type = 'toggle',
 				},			
-				color = {
-					order = 9,
-					type = 'color',
-					name = L['Color'],
-					get = function(info)
-						local t = E.db.unitframe.units['focus']['castbar'][ info[#info] ]
-						return t.r, t.g, t.b, t.a
-					end,
-					set = function(info, r, g, b)
-						E.db.general[ info[#info] ] = {}
-						local t = E.db.unitframe.units['focus']['castbar'][ info[#info] ]
-						t.r, t.g, t.b = r, g, b
-						UF:CreateAndUpdateUF('focus')
-					end,													
-				},
-				interruptcolor = {
-					order = 10,
-					type = 'color',
-					name = L['Interrupt Color'],
-					get = function(info)
-						local t = E.db.unitframe.units['focus']['castbar'][ info[#info] ]
-						return t.r, t.g, t.b, t.a
-					end,
-					set = function(info, r, g, b)
-						E.db.general[ info[#info] ] = {}
-						local t = E.db.unitframe.units['focus']['castbar'][ info[#info] ]
-						t.r, t.g, t.b = r, g, b
-						UF:CreateAndUpdateUF('focus')
-					end,					
-				},
 				format = {
 					order = 11,
 					type = 'select',
@@ -4657,6 +4715,44 @@ E.Options.args.unitframe.args.focus = {
 						['HELPFUL'] = L['Buffs'],
 					},						
 				},				
+			},
+		},	
+		raidicon = {
+			order = 2000,
+			type = 'group',
+			name = L['Raid Icon'],
+			get = function(info) return E.db.unitframe.units['focus']['raidicon'][ info[#info] ] end,
+			set = function(info, value) E.db.unitframe.units['focus']['raidicon'][ info[#info] ] = value; UF:CreateAndUpdateUF('focus') end,
+			args = {
+				enable = {
+					type = 'toggle',
+					order = 1,
+					name = L['Enable'],
+				},	
+				attachTo = {
+					type = 'select',
+					order = 2,
+					name = L['Position'],
+					values = positionValues,
+				},
+				size = {
+					type = 'range',
+					name = L['Size'],
+					order = 3,
+					min = 8, max = 60, step = 1,
+				},				
+				xOffset = {
+					order = 4,
+					type = 'range',
+					name = L['xOffset'],
+					min = -300, max = 300, step = 1,
+				},
+				yOffset = {
+					order = 5,
+					type = 'range',
+					name = L['yOffset'],
+					min = -300, max = 300, step = 1,
+				},			
 			},
 		},			
 	},
@@ -5311,6 +5407,44 @@ E.Options.args.unitframe.args.focustarget = {
 				},				
 			},
 		},	
+		raidicon = {
+			order = 2000,
+			type = 'group',
+			name = L['Raid Icon'],
+			get = function(info) return E.db.unitframe.units['focustarget']['raidicon'][ info[#info] ] end,
+			set = function(info, value) E.db.unitframe.units['focustarget']['raidicon'][ info[#info] ] = value; UF:CreateAndUpdateUF('focustarget') end,
+			args = {
+				enable = {
+					type = 'toggle',
+					order = 1,
+					name = L['Enable'],
+				},	
+				attachTo = {
+					type = 'select',
+					order = 2,
+					name = L['Position'],
+					values = positionValues,
+				},
+				size = {
+					type = 'range',
+					name = L['Size'],
+					order = 3,
+					min = 8, max = 60, step = 1,
+				},				
+				xOffset = {
+					order = 4,
+					type = 'range',
+					name = L['xOffset'],
+					min = -300, max = 300, step = 1,
+				},
+				yOffset = {
+					order = 5,
+					type = 'range',
+					name = L['yOffset'],
+					min = -300, max = 300, step = 1,
+				},			
+			},
+		},			
 	},
 }
 
@@ -7000,36 +7134,6 @@ E.Options.args.unitframe.args.boss = {
 					name = L['Icon'],
 					type = 'toggle',
 				},
-				color = {
-					order = 7,
-					type = 'color',
-					name = L['Color'],
-					get = function(info)
-						local t = E.db.unitframe.units['boss']['castbar'][ info[#info] ]
-						return t.r, t.g, t.b, t.a
-					end,
-					set = function(info, r, g, b)
-						E.db.general[ info[#info] ] = {}
-						local t = E.db.unitframe.units['boss']['castbar'][ info[#info] ]
-						t.r, t.g, t.b = r, g, b
-						UF:CreateAndUpdateUFGroup('boss', MAX_BOSS_FRAMES)
-					end,													
-				},
-				interruptcolor = {
-					order = 8,
-					type = 'color',
-					name = L['Interrupt Color'],
-					get = function(info)
-						local t = E.db.unitframe.units['boss']['castbar'][ info[#info] ]
-						return t.r, t.g, t.b, t.a
-					end,
-					set = function(info, r, g, b)
-						E.db.general[ info[#info] ] = {}
-						local t = E.db.unitframe.units['boss']['castbar'][ info[#info] ]
-						t.r, t.g, t.b = r, g, b
-						UF:CreateAndUpdateUFGroup('boss', MAX_BOSS_FRAMES)
-					end,					
-				},
 				format = {
 					order = 9,
 					type = 'select',
@@ -7046,6 +7150,44 @@ E.Options.args.unitframe.args.boss = {
 					name = L['Spark'],
 					desc = L['Display a spark texture at the end of the castbar statusbar to help show the differance between castbar and backdrop.'],
 				},				
+			},
+		},	
+		raidicon = {
+			order = 2000,
+			type = 'group',
+			name = L['Raid Icon'],
+			get = function(info) return E.db.unitframe.units['boss']['raidicon'][ info[#info] ] end,
+			set = function(info, value) E.db.unitframe.units['boss']['raidicon'][ info[#info] ] = value; UF:CreateAndUpdateUFGroup('boss', MAX_BOSS_FRAMES) end,
+			args = {
+				enable = {
+					type = 'toggle',
+					order = 1,
+					name = L['Enable'],
+				},	
+				attachTo = {
+					type = 'select',
+					order = 2,
+					name = L['Position'],
+					values = positionValues,
+				},
+				size = {
+					type = 'range',
+					name = L['Size'],
+					order = 3,
+					min = 8, max = 60, step = 1,
+				},				
+				xOffset = {
+					order = 4,
+					type = 'range',
+					name = L['xOffset'],
+					min = -300, max = 300, step = 1,
+				},
+				yOffset = {
+					order = 5,
+					type = 'range',
+					name = L['yOffset'],
+					min = -300, max = 300, step = 1,
+				},			
 			},
 		},	
 	},
@@ -7753,36 +7895,6 @@ E.Options.args.unitframe.args.arena = {
 					name = L['Icon'],
 					type = 'toggle',
 				},
-				color = {
-					order = 7,
-					type = 'color',
-					name = L['Color'],
-					get = function(info)
-						local t = E.db.unitframe.units['arena']['castbar'][ info[#info] ]
-						return t.r, t.g, t.b, t.a
-					end,
-					set = function(info, r, g, b)
-						E.db.general[ info[#info] ] = {}
-						local t = E.db.unitframe.units['arena']['castbar'][ info[#info] ]
-						t.r, t.g, t.b = r, g, b
-						UF:CreateAndUpdateUFGroup('arena', 5)
-					end,													
-				},
-				interruptcolor = {
-					order = 8,
-					type = 'color',
-					name = L['Interrupt Color'],
-					get = function(info)
-						local t = E.db.unitframe.units['arena']['castbar'][ info[#info] ]
-						return t.r, t.g, t.b, t.a
-					end,
-					set = function(info, r, g, b)
-						E.db.general[ info[#info] ] = {}
-						local t = E.db.unitframe.units['arena']['castbar'][ info[#info] ]
-						t.r, t.g, t.b = r, g, b
-						UF:CreateAndUpdateUFGroup('arena', 5)
-					end,					
-				},
 				format = {
 					order = 9,
 					type = 'select',
@@ -7986,6 +8098,7 @@ E.Options.args.unitframe.args.party = {
 					values = {
 						['CLASS'] = CLASS,
 						['ROLE'] = L["MT, MA First"],
+						['NAME'] = NAME,
 						['GROUP'] = GROUP,
 					},
 				},
@@ -8580,7 +8693,45 @@ E.Options.args.unitframe.args.party = {
 					min = -500, max = 500, step = 1,	
 				},					
 			},
-		},		
+		},	
+		raidicon = {
+			order = 2000,
+			type = 'group',
+			name = L['Raid Icon'],
+			get = function(info) return E.db.unitframe.units['party']['raidicon'][ info[#info] ] end,
+			set = function(info, value) E.db.unitframe.units['party']['raidicon'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('party') end,
+			args = {
+				enable = {
+					type = 'toggle',
+					order = 1,
+					name = L['Enable'],
+				},	
+				attachTo = {
+					type = 'select',
+					order = 2,
+					name = L['Position'],
+					values = positionValues,
+				},
+				size = {
+					type = 'range',
+					name = L['Size'],
+					order = 3,
+					min = 8, max = 60, step = 1,
+				},				
+				xOffset = {
+					order = 4,
+					type = 'range',
+					name = L['xOffset'],
+					min = -300, max = 300, step = 1,
+				},
+				yOffset = {
+					order = 5,
+					type = 'range',
+					name = L['yOffset'],
+					min = -300, max = 300, step = 1,
+				},			
+			},
+		},			
 	},
 }
 
@@ -8719,6 +8870,7 @@ for i=10, 40, 15 do
 						values = {
 							['CLASS'] = CLASS,
 							['ROLE'] = L["MT, MA First"],
+							['NAME'] = NAME,
 							['GROUP'] = GROUP,
 						},
 					},		
@@ -9245,7 +9397,45 @@ for i=10, 40, 15 do
 						min = 7, max = 22, step = 1,
 					},				
 				},
-			},		
+			},
+			raidicon = {
+				order = 2000,
+				type = 'group',
+				name = L['Raid Icon'],
+				get = function(info) return E.db.unitframe.units['raid'..i]['raidicon'][ info[#info] ] end,
+				set = function(info, value) E.db.unitframe.units['raid'..i]['raidicon'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('raid'..i) end,
+				args = {
+					enable = {
+						type = 'toggle',
+						order = 1,
+						name = L['Enable'],
+					},	
+					position = {
+						type = 'select',
+						order = 2,
+						name = L['Position'],
+						values = positionValues,
+					},
+					size = {
+						type = 'range',
+						name = L['Size'],
+						order = 3,
+						min = 8, max = 30, step = 1,
+					},				
+					xOffset = {
+						order = 4,
+						type = 'range',
+						name = L['xOffset'],
+						min = -300, max = 300, step = 1,
+					},
+					yOffset = {
+						order = 5,
+						type = 'range',
+						name = L['yOffset'],
+						min = -300, max = 300, step = 1,
+					},			
+				},
+			},			
 		},
 	}
 end
@@ -9430,3 +9620,125 @@ E.Options.args.unitframe.args.assist = {
 		},			
 	},
 }
+
+
+--MORE COLORING STUFF YAY
+if P.unitframe.colors.classResources[E.myclass] then
+	E.Options.args.unitframe.args.general.args.allColorsGroup.args.classResourceGroup = {
+		order = -1,
+		type = 'group',
+		guiInline = true,
+		name = L['Class Resources'],
+		get = function(info)
+			local t = E.db.unitframe.colors.classResources[ info[#info] ]
+			return t.r, t.g, t.b, t.a
+		end,
+		set = function(info, r, g, b)
+			E.db.unitframe.colors.classResources[ info[#info] ] = {}
+			local t = E.db.unitframe.colors.classResources[ info[#info] ]
+			t.r, t.g, t.b = r, g, b
+			UF:Update_AllFrames()
+		end,
+		args = {}
+	}
+	
+	if E.myclass == 'PALADIN' then
+		E.Options.args.unitframe.args.general.args.allColorsGroup.args.classResourceGroup.args[E.myclass] = {
+			type = 'color',
+			name = L['Holy Power'],
+		}
+	elseif E.myclass == 'MAGE' then
+		E.Options.args.unitframe.args.general.args.allColorsGroup.args.classResourceGroup.args[E.myclass] = {
+			type = 'color',
+			name = L['Arcane Charges'],
+		}
+	elseif E.myclass == 'PRIEST' then
+		E.Options.args.unitframe.args.general.args.allColorsGroup.args.classResourceGroup.args[E.myclass] = {
+			type = 'color',
+			name = L['Shadow Orbs'],
+		}	
+	elseif E.myclass == 'MONK' then
+		for i = 1, 5 do
+			E.Options.args.unitframe.args.general.args.allColorsGroup.args.classResourceGroup.args['resource'..i] = {
+				type = 'color',
+				name = L['Harmony']..' #'..i,
+				get = function(info)
+					local t = E.db.unitframe.colors.classResources.MONK[i]
+					return t.r, t.g, t.b, t.a
+				end,
+				set = function(info, r, g, b)
+					E.db.unitframe.colors.classResources.MONK[i] = {}
+					local t = E.db.unitframe.colors.classResources.MONK[i]
+					t.r, t.g, t.b = r, g, b
+					UF:Update_AllFrames()
+				end,			
+			}
+		end
+	elseif E.myclass == 'WARLOCK' then
+		local names = {
+			[1] = L['Affliction'],
+			[2] = L['Demonology'],
+			[3] = L['Destruction']
+		}
+		for i = 1, 3 do
+			E.Options.args.unitframe.args.general.args.allColorsGroup.args.classResourceGroup.args['resource'..i] = {
+				type = 'color',
+				name = names[i],
+				get = function(info)
+					local t = E.db.unitframe.colors.classResources.WARLOCK[i]
+					return t.r, t.g, t.b, t.a
+				end,
+				set = function(info, r, g, b)
+					E.db.unitframe.colors.classResources.WARLOCK[i] = {}
+					local t = E.db.unitframe.colors.classResources.WARLOCK[i]
+					t.r, t.g, t.b = r, g, b
+					UF:Update_AllFrames()
+				end,			
+			}
+		end	
+	elseif E.myclass == 'DRUID' then
+		local names = {
+			[1] = L['Lunar'],
+			[2] = L['Solar'],
+		}
+		for i = 1, 2 do
+			E.Options.args.unitframe.args.general.args.allColorsGroup.args.classResourceGroup.args['resource'..i] = {
+				type = 'color',
+				name = names[i],
+				get = function(info)
+					local t = E.db.unitframe.colors.classResources.DRUID[i]
+					return t.r, t.g, t.b, t.a
+				end,
+				set = function(info, r, g, b)
+					E.db.unitframe.colors.classResources.DRUID[i] = {}
+					local t = E.db.unitframe.colors.classResources.DRUID[i]
+					t.r, t.g, t.b = r, g, b
+					UF:Update_AllFrames()
+				end,			
+			}
+		end		
+	elseif E.myclass == 'DEATHKNIGHT' then
+		local names = {
+			[1] = L['Blood'],
+			[2] = L['Unholy'],
+			[3] = L['Frost'],
+			[4] = L['Death'],
+		}
+		for i = 1, 4 do
+			E.Options.args.unitframe.args.general.args.allColorsGroup.args.classResourceGroup.args['resource'..i] = {
+				type = 'color',
+				name = names[i],
+				get = function(info)
+					local t = E.db.unitframe.colors.classResources.DEATHKNIGHT[i]
+					return t.r, t.g, t.b, t.a
+				end,
+				set = function(info, r, g, b)
+					E.db.unitframe.colors.classResources.DEATHKNIGHT[i] = {}
+					local t = E.db.unitframe.colors.classResources.DEATHKNIGHT[i]
+					t.r, t.g, t.b = r, g, b
+					UF:Update_AllFrames()
+				end,			
+			}
+		end		
+	end
+end

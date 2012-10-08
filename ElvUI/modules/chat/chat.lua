@@ -310,10 +310,18 @@ end
 
 function CH:OnEnter(frame)
 	_G[frame:GetName().."Text"]:Show()
+
+	if frame.conversationIcon then
+		frame.conversationIcon:Show()
+	end
 end
 
 function CH:OnLeave(frame)
 	_G[frame:GetName().."Text"]:Hide()
+
+	if frame.conversationIcon then
+		frame.conversationIcon:Hide()
+	end
 end
 
 local x = CreateFrame('Frame')
@@ -328,8 +336,16 @@ function CH:SetupChatTabs(frame, hook)
 
 	if not hook then
 		_G[frame:GetName().."Text"]:Show()
+
+		if frame.conversationIcon then
+			frame.conversationIcon:Show()
+		end
 	elseif GetMouseFocus() ~= frame then
 		_G[frame:GetName().."Text"]:Hide()
+
+		if frame.conversationIcon then
+			frame.conversationIcon:Hide()
+		end
 	end
 end
 
@@ -379,7 +395,6 @@ function CH:PositionChat(override)
 			end
 		end
 
-		if not chat.isInitialized then return end
 
 		if point == "BOTTOMRIGHT" and chat:IsShown() and not (id > NUM_CHAT_WINDOWS) and id == self.RightChatWindowID then
 			if id ~= 2 then
@@ -423,6 +438,7 @@ function CH:PositionChat(override)
 			if chat:IsMovable() then
 				chat:SetUserPlaced(true)
 			end
+
 			if E.db.chat.panelBackdrop == 'HIDEBOTH' or E.db.chat.panelBackdrop == 'RIGHT' then
 				CH:SetupChatTabs(tab, true)
 			else
@@ -569,8 +585,8 @@ function CH:AddMessage(text, ...)
 			text = '|cffB3B3B3['..timeStamp..'] |r'..text
 		end
 
-		text = text:gsub('|Hplayer:Elvz:', '|TInterface\\ChatFrame\\UI-ChatIcon-Blizz:12:20:0:0:32:16:4:28:0:16|t|Hplayer:Elvz:')
-		text = text:gsub('|Hplayer:Elvz%-', '|TInterface\\ChatFrame\\UI-ChatIcon-Blizz:12:20:0:0:32:16:4:28:0:16|t|Hplayer:Elvz%-')
+		text = text:gsub('|Hplayer:Elvz:', '|TInterface\\AddOns\\ElvUI\\media\\textures\\ElvUI_Chat_Logo:13:22|t|Hplayer:Elvz:')
+		text = text:gsub('|Hplayer:Elvz%-', '|TInterface\\AddOns\\ElvUI\\media\\textures\\ElvUI_Chat_Logo:13:22|t|Hplayer:Elvz%-')
 		CH.timeOverride = nil;
 	end
 
@@ -643,7 +659,9 @@ function CH:SetupChat(event, ...)
 		else
 			frame:SetShadowColor(0, 0, 0, 1)
 		end
+		frame:SetTimeVisible(100)
 		frame:SetShadowOffset((E.mult or 1), -(E.mult or 1))
+		frame:SetFading(self.db.fade)
 	end
 
 	if self.db.hyperlinkHover then
@@ -664,7 +682,7 @@ local sizes = {
 	":14:14",
 	":15:15",
 	":16:16",
-	":12:20",
+	":13:22",
 	":14",
 	":16",
 }
@@ -1115,7 +1133,11 @@ function CH:Initialize()
 
 		for _, size in pairs(sizes) do
 			if string.find(text, size) and not string.find(text, size.."]") then
-				self:SetText(string.gsub(text, size, ":12:12"))
+				if size == ':13:22' then
+					self:SetText(string.gsub(text, size, ":12:20"))
+				else
+					self:SetText(string.gsub(text, size, ":12:12"))
+				end
 			end
 		end
 	end)
