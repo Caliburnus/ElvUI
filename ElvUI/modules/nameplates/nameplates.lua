@@ -16,6 +16,7 @@ NP.Healers = {
 	[L['Restoration']] = true,
 	[L['Holy']] = true,
 	[L['Discipline']] = true,
+	[L['Mistweaver']] = true,
 }
 
 function NP:Initialize()
@@ -733,7 +734,9 @@ function NP:CheckArenaHealers()
 			if specID and specID > 0 then
 				local _, talentSpec = GetSpecializationInfoByID(specID);
 				local unitName = UnitName(unit)
-				self.BattleGroundHealers[unitName] = talentSpec
+				if unitName and self.Healers[talentSpec] then
+					self.BattleGroundHealers[unitName] = talentSpec
+				end
 			end	
 		end
 	end
