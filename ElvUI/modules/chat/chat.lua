@@ -400,11 +400,11 @@ function CH:PositionChat(override)
 			if id ~= 2 then
 				chat:ClearAllPoints()
 				chat:Point("BOTTOMLEFT", RightChatDataPanel, "TOPLEFT", 1, 3)
-				chat:SetSize(E.db.chat.panelWidth - 11, (E.db.chat.panelHeight - 60))
+				chat:SetSize(E.db.chat.panelWidth - 11, (E.db.chat.panelHeight - (E.PixelMode and 57 or 60)))
 			else
 				chat:ClearAllPoints()
 				chat:Point("BOTTOMLEFT", RightChatDataPanel, "TOPLEFT", 1, 3)
-				chat:Size(E.db.chat.panelWidth - 11, (E.db.chat.panelHeight - 60) - CombatLogQuickButtonFrame_Custom:GetHeight())
+				chat:Size(E.db.chat.panelWidth - 11, (E.db.chat.panelHeight - (E.PixelMode and 57 or 60)) - CombatLogQuickButtonFrame_Custom:GetHeight())
 			end
 
 
@@ -430,7 +430,7 @@ function CH:PositionChat(override)
 			if id ~= 2 and not (id > NUM_CHAT_WINDOWS) then
 				chat:ClearAllPoints()
 				chat:Point("BOTTOMLEFT", LeftChatToggleButton, "TOPLEFT", 1, 3)
-				chat:Size(E.db.chat.panelWidth - 11, (E.db.chat.panelHeight - 60))
+				chat:Size(E.db.chat.panelWidth - 11, (E.db.chat.panelHeight - (E.PixelMode and 57 or 60)))
 				FCF_SavePositionAndDimensions(chat)
 			end
 			chat:SetParent(LeftChatPanel)
@@ -585,8 +585,11 @@ function CH:AddMessage(text, ...)
 			text = '|cffB3B3B3['..timeStamp..'] |r'..text
 		end
 
-		text = text:gsub('|Hplayer:Elvz:', '|TInterface\\AddOns\\ElvUI\\media\\textures\\ElvUI_Chat_Logo:13:22|t|Hplayer:Elvz:')
-		text = text:gsub('|Hplayer:Elvz%-', '|TInterface\\AddOns\\ElvUI\\media\\textures\\ElvUI_Chat_Logo:13:22|t|Hplayer:Elvz%-')
+		if E.myrealm == "Kil'Jaeden" then
+			text = text:gsub('|Hplayer:Elvz:', '|TInterface\\AddOns\\ElvUI\\media\\textures\\ElvUI_Chat_Logo:13:22|t|Hplayer:Elvz:')
+		else
+			text = text:gsub("|Hplayer:Elvz%-Kil'Jaeden", "|TInterface\\AddOns\\ElvUI\\media\\textures\\ElvUI_Chat_Logo:13:22|t|Hplayer:Elvz%-Kil'Jaeden")
+		end
 		CH.timeOverride = nil;
 	end
 
