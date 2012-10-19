@@ -573,8 +573,8 @@ function B:ContructContainerFrame(name, isBank)
 		GameTooltip:ClearLines()
 		GameTooltip:AddDoubleLine(L['Hold Shift + Drag:'], L['Temporary Move'], 1, 1, 1)
 		GameTooltip:AddDoubleLine(L['Hold Control + Right Click:'], L['Reset Position'], 1, 1, 1)
-		
-		GameTooltip:Show()	
+
+		GameTooltip:Show()
 	end)
 	f:SetScript('OnLeave', function(self) GameTooltip:Hide() end)
 	f.isBank = isBank
@@ -600,6 +600,7 @@ function B:ContructContainerFrame(name, isBank)
 	f.ContainerHolder:Point('BOTTOMLEFT', f, 'TOPLEFT', 0, 1)
 	f.ContainerHolder:SetTemplate('Transparent')
 	f.ContainerHolder:Hide()
+	local buttonColor = E.PixelMode and {0.31, 0.31, 0.31} or E.media.bordercolor
 
 	if isBank then
 		f.purchaseBagButton = CreateFrame('Button', nil, f)
@@ -629,8 +630,7 @@ function B:ContructContainerFrame(name, isBank)
 		f.sortButton:Point('TOPRIGHT', f, 'TOP', 0, -4)
 		f.sortButton:Size(55, 10)
 		f.sortButton:SetTemplate('Default', true)
-		f.sortButton.backdropTexture:SetVertexColor(unpack(E.media.bordercolor))
-		f.sortButton.backdropTexture.SetVertexColor = E.noop
+		f.sortButton.backdropTexture:SetVertexColor(unpack(buttonColor))
 		f.sortButton.ttText = L['Sort Bags'];
 		f.sortButton:SetScript("OnEnter", self.Tooltip_Show)
 		f.sortButton:SetScript("OnLeave", self.Tooltip_Hide)
@@ -641,8 +641,7 @@ function B:ContructContainerFrame(name, isBank)
 		f.stackButton:Point('LEFT', f.sortButton, 'RIGHT', 3, 0)
 		f.stackButton:Size(55, 10)
 		f.stackButton:SetTemplate('Default', true)
-		f.stackButton.backdropTexture:SetVertexColor(unpack(E.media.bordercolor))
-		f.stackButton.backdropTexture.SetVertexColor = E.noop
+		f.stackButton.backdropTexture:SetVertexColor(unpack(buttonColor))
 		f.stackButton.ttText = L['Stack Items']
 		f.stackButton:SetScript("OnEnter", self.Tooltip_Show)
 		f.stackButton:SetScript("OnLeave", self.Tooltip_Hide)
@@ -653,8 +652,7 @@ function B:ContructContainerFrame(name, isBank)
 		f.transferButton:Point('LEFT', f.stackButton, 'RIGHT', 3, 0)
 		f.transferButton:Size(55, 10)
 		f.transferButton:SetTemplate('Default', true)
-		f.transferButton.backdropTexture:SetVertexColor(unpack(E.media.bordercolor))
-		f.transferButton.backdropTexture.SetVertexColor = E.noop
+		f.transferButton.backdropTexture:SetVertexColor(unpack(buttonColor))
 		f.transferButton.ttText = L['Stack Bags to Bank'];
 		f.transferButton:SetScript("OnEnter", self.Tooltip_Show)
 		f.transferButton:SetScript("OnLeave", self.Tooltip_Hide)
@@ -665,8 +663,7 @@ function B:ContructContainerFrame(name, isBank)
 		f.bagsButton:Point('RIGHT', f.sortButton, 'LEFT', -3, 0)
 		f.bagsButton:Size(55, 10)
 		f.bagsButton:SetTemplate('Default', true)
-		f.bagsButton.backdropTexture:SetVertexColor(unpack(E.media.bordercolor))
-		f.bagsButton.backdropTexture.SetVertexColor = E.noop
+		f.bagsButton.backdropTexture:SetVertexColor(unpack(buttonColor))
 		f.bagsButton.ttText = L['Toggle Bags'];
 		f.bagsButton:SetScript("OnEnter", self.Tooltip_Show)
 		f.bagsButton:SetScript("OnLeave", self.Tooltip_Hide)
@@ -734,7 +731,7 @@ function B:ContructContainerFrame(name, isBank)
 		f.sortButton:Point('TOP', f, 'TOP', 0, -4)
 		f.sortButton:Size(55, 10)
 		f.sortButton:SetTemplate('Default', true)
-		f.sortButton.backdropTexture:SetVertexColor(unpack(E.media.bordercolor))
+		f.sortButton.backdropTexture:SetVertexColor(unpack(buttonColor))
 		f.sortButton.backdropTexture.SetVertexColor = E.noop
 		f.sortButton.ttText = L['Sort Bags'];
 		f.sortButton:SetScript("OnEnter", self.Tooltip_Show)
@@ -746,7 +743,7 @@ function B:ContructContainerFrame(name, isBank)
 		f.stackButton:Point('LEFT', f.sortButton, 'RIGHT', 3, 0)
 		f.stackButton:Size(55, 10)
 		f.stackButton:SetTemplate('Default', true)
-		f.stackButton.backdropTexture:SetVertexColor(unpack(E.media.bordercolor))
+		f.stackButton.backdropTexture:SetVertexColor(unpack(buttonColor))
 		f.stackButton.backdropTexture.SetVertexColor = E.noop
 		f.stackButton.ttText = L['Stack Items']
 		f.stackButton:SetScript("OnEnter", self.Tooltip_Show)
@@ -758,7 +755,7 @@ function B:ContructContainerFrame(name, isBank)
 		f.vendorButton:Point('RIGHT', f.sortButton, 'LEFT', -3, 0)
 		f.vendorButton:Size(55, 10)
 		f.vendorButton:SetTemplate('Default', true)
-		f.vendorButton.backdropTexture:SetVertexColor(unpack(E.media.bordercolor))
+		f.vendorButton.backdropTexture:SetVertexColor(unpack(buttonColor))
 		f.vendorButton.backdropTexture.SetVertexColor = E.noop
 		f.vendorButton.ttText = L['Vendor Grays']
 		f.vendorButton.ttText2 = L['Hold Shift:']
@@ -772,7 +769,7 @@ function B:ContructContainerFrame(name, isBank)
 		f.bagsButton:Point('RIGHT', f.vendorButton, 'LEFT', -3, 0)
 		f.bagsButton:Size(55, 10)
 		f.bagsButton:SetTemplate('Default', true)
-		f.bagsButton.backdropTexture:SetVertexColor(unpack(E.media.bordercolor))
+		f.bagsButton.backdropTexture:SetVertexColor(unpack(buttonColor))
 		f.bagsButton.backdropTexture.SetVertexColor = E.noop
 		f.bagsButton.ttText = L['Toggle Bags']
 		f.bagsButton:SetScript("OnEnter", self.Tooltip_Show)
@@ -784,7 +781,7 @@ function B:ContructContainerFrame(name, isBank)
 		f.transferButton:Point('LEFT', f.stackButton, 'RIGHT', 3, 0)
 		f.transferButton:Size(55, 10)
 		f.transferButton:SetTemplate('Default', true)
-		f.transferButton.backdropTexture:SetVertexColor(unpack(E.media.bordercolor))
+		f.transferButton.backdropTexture:SetVertexColor(unpack(buttonColor))
 		f.transferButton.backdropTexture.SetVertexColor = E.noop
 		f.transferButton.ttText = L['Stack Bags to Bank'];
 		f.transferButton:SetScript("OnEnter", self.Tooltip_Show)
@@ -869,7 +866,7 @@ function B:CloseBags()
 	if self.BankFrame then
 		self.BankFrame:Hide();
 	end
-	
+
 	E:GetModule('Tooltip'):GameTooltip_SetDefaultAnchor(GameTooltip)
 end
 

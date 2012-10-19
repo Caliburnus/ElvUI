@@ -1,19 +1,11 @@
--- English localization file for enUS and enGB.
 local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
-local L
-if UnitName('player') ~= 'Elvz' then
-	L = AceLocale:NewLocale("ElvUI", "enUS", true, true);
-else
-	L = AceLocale:NewLocale("ElvUI", "enUS", true);
-end
-
+local L = AceLocale:NewLocale("ElvUI", "itIT");
 if not L then return; end
 
 --TEMP
 L["A taint has occured that is preventing you from using your talents/glyphs, this can happen if you've inspected someone. Unfortionatly theres nothing we can do to fix it, please reload your ui and try again."] = true;
 
 --ActionBars
-L['Alpha'] = true;
 L[" |cff00ff00bound to |r"] = true;
 L["Action Paging"] = true;
 L["ActionBars"] = true;
@@ -77,7 +69,6 @@ L["Pet Bar"] = true;
 L['Remove Bar %d Action Page'] = true;
 L["Restore Bar"] = true;
 L["Restore the actionbars default settings"] = true;
-L["Saved Instance(s)"] = "Saved Instance(s)"
 L["Seconds"] = true;
 L["Set the font size of the action buttons."] = true;
 L["Stance Bar"] = true;
@@ -254,8 +245,6 @@ Example: Interface\AddOns\ElvUI\media\textures\copy
 Or for most users it would be easier to simply put a tga file into your WoW folder, then type the name of the file here.]=] ] = true;
 
 --Config / Install
-L["You have changed the pixel perfect option. You will have to complete the installation process to remove any graphical bugs."] = true;
-L['Pixel Perfect'] = true;
 L["Auras Set"] = true;
 L["Auras System"] = true;
 L["Caster DPS"] = true;
@@ -414,10 +403,6 @@ L["No locals to dump"] = true;
 L['|cFFE30000Lua error recieved. You can view the error message when you exit combat.'] = true;
 
 --General
-L['Top Panel'] = true;
-L['Display a panel across the top of the screen. This is for cosmetic only.'] = true;
-L['Bottom Panel'] = true;
-L['Display a panel across the bottom of the screen. This is for cosmetic only.'] = true;
 L["Accept Invites"] = true;
 L['Adjust the position of the threat bar to either the left or right datatext panels.'] = true;
 L['Adjust the size of the minimap.'] = true;
@@ -506,7 +491,6 @@ L["Your items have been repaired using guild bank funds for: "] = true;
 L["Your version of ElvUI is out of date. You can download the latest version from http://www.tukui.org"] = true; --core\core.lua
 
 --NamePlates
-L['Mistweaver'] = true;
 L["Add Name"] = true;
 L["All"] = true;
 L["Auras"] = true;
@@ -633,10 +617,6 @@ L["You have changed your UIScale, however you still have the AutoScale option en
 L["You must purchase a bank slot first!"] = true;
 
 --Tooltip
-L['Spell/Item IDs'] = true;
-L['Display the spell or item ID when mousing over a spell or item tooltip.'] = true;
-L['Item Count'] = true;
-L['Display how many of a certain item you have in your possession.'] = true;
 L['Always Hide'] = true;
 L["Anchor Mode"] = true;
 L["Anchor"] = true;
@@ -680,7 +660,6 @@ L['You can toggle the microbar by using your middle mouse button on the minimap 
 L['You can use the /resetui command to reset all of your movers. You can also use the command to reset a specific mover, /resetui <mover name>.\nExample: /resetui Player Frame'] = true;
 
 --UnitFrames
-L['Raid Icon'] = true;
 L["%s frame(s) has a conflicting anchor point, please change either the buff or debuff anchor point so they are not attached to each other. Forcing the debuffs to be attached to the main unitframe until fixed."] = true;
 L['2D'] = true;
 L['3D'] = true;
@@ -796,6 +775,7 @@ L["Health By Value"] = true;
 L["Health Text"] = true;
 L["Health"] = true;
 L["Height"] = true;
+L['Hold shift + right click to blacklist this aura.'] = true;
 L['Holy Power'] = true;
 L["Horizontal"] = true; --Also used in bags module
 L["How far away the portrait is from the camera."] = true;
