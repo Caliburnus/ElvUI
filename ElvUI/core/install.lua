@@ -491,6 +491,14 @@ function E:SetupLayout(layout, noDataReset)
 	else
 		if not noDataReset then
 			E:ResetMovers('')
+			if E.private.general.pixelPerfect then
+				if not E.db.movers then E.db.movers = {}; end
+				E.db.movers["ElvUF_PetMover"] = "BOTTOMElvUIParentBOTTOM0104"
+				E.db.movers["AurasMover"] = "TOPRIGHTElvUIParentTOPRIGHT-221-5"
+				E.db.movers["ElvUF_TargetTargetMover"] = "BOTTOMElvUIParentBOTTOM064"
+				E.db.movers["ElvUF_PlayerMover"] = "BOTTOMElvUIParentBOTTOM-27865"
+				E.db.movers["ElvUF_TargetMover"] = "BOTTOMElvUIParentBOTTOM27864"		
+			end			
 		end
 	end
 

@@ -243,7 +243,7 @@ end
 
 function E:UpdateBorderColors()
 	for frame, _ in pairs(self["frames"]) do
-		if frame then
+		if frame and not frame.ignoreUpdates then
 			if frame.template == 'Default' or frame.template == 'Transparent' or frame.template == nil then
 				frame:SetBackdropBorderColor(unpack(self['media'].bordercolor))
 			end
@@ -477,6 +477,7 @@ function E:UpdateAll(ignoreInstall)
 	self.global = self.data.global;
 
 	self:SetMoversPositions()
+	self:UpdateMedia()
 
 	local UF = self:GetModule('UnitFrames')
 	UF.db = self.db.unitframe
@@ -536,7 +537,6 @@ function E:UpdateAll(ignoreInstall)
 
 	self:GetModule('Minimap'):UpdateSettings()
 
-	self:UpdateMedia()
 	self:UpdateBorderColors()
 	self:UpdateBackdropColors()
 	self:UpdateFrameTemplates()
