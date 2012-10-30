@@ -241,6 +241,7 @@ function M:Initialize()
 	Minimap:SetQuestBlobRingAlpha(0)
 	Minimap:SetArchBlobRingAlpha(0)
 	Minimap:CreateBackdrop('Default')
+	Minimap:SetFrameLevel(Minimap:GetFrameLevel() + 2)
 	Minimap:HookScript('OnEnter', function(self)
 		if E.db.general.minimap.locationText ~= 'MOUSEOVER' or not E.private.general.minimap.enable then return; end
 		self.location:Show()
@@ -299,6 +300,10 @@ function M:Initialize()
 	GuildInstanceDifficulty:ClearAllPoints()
 	GuildInstanceDifficulty:SetParent(Minimap)
 	GuildInstanceDifficulty:Point("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
+
+	MiniMapChallengeMode:ClearAllPoints()
+	MiniMapChallengeMode:SetParent(Minimap)
+	MiniMapChallengeMode:Point("TOPLEFT", Minimap, "TOPLEFT", 8, -8)
 
 	if TimeManagerClockButton then
 		TimeManagerClockButton:Kill()
