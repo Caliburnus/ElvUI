@@ -45,7 +45,7 @@ function AddOn:OnInitialize()
 	
 	self.db = table.copy(self.DF.profile, true);
 	self.global = table.copy(self.DF.global, true);
-	
+	local dbProfileKey
 	if ElvData then
 		if ElvData.global then
 			self:CopyTable(self.global, ElvData.global)
@@ -57,22 +57,54 @@ function AddOn:OnInitialize()
 		end
 		
 		if profileKey and ElvData.profiles and ElvData.profiles[profileKey] then
+			dbProfileKey = profileKey
 			self:CopyTable(self.db, ElvData.profiles[profileKey])
 		end
 	end
-	
-	
+
 	self.private = table.copy(self.privateVars.profile, true);
 	if ElvPrivateData then
 		local profileKey
 		if ElvPrivateData.profileKeys then
 			profileKey = ElvPrivateData.profileKeys[self.myname..' - '..self.myrealm]
 		end
-		
-		if profileKey and ElvPrivateData.profiles and ElvPrivateData.profiles[profileKey] then
+				
+		if profileKey and ElvPrivateData.profiles and ElvPrivateData.profiles[profileKey] then		
 			self:CopyTable(self.private, ElvPrivateData.profiles[profileKey])
 		end
 	end	
+	
+	if self.db.install_complete then
+		self.private.install_complete = self.db.install_complete;
+		self.db.install_complete = nil;
+	end
+	
+	if self.db.theme then
+		if ElvData.profileKeys and dbProfileKey then
+			for name, key in pairs(ElvData.profileKeys) do
+				if key == dbProfileKey then
+					if ElvPrivateData.profiles and ElvPrivateData.profiles[name] then
+						ElvPrivateData.profiles[name].theme = self.db.theme
+					end
+				end
+			end
+		end
+		self.private.theme = self.db.theme
+		self.db.theme = nil;
+	end	
+	
+	
+	if self.private.theme == 'pixelPerfect' then
+		self.private.general.pixelPerfect = true;
+	elseif self.private.install_complete and (self.private.theme ~= 'pixelPerfect' and self.private.theme ~= nil) then
+		self.private.general.pixelPerfect = false;
+	end
+	
+	if self.private.install_complete and not self.global.newThemePrompt and not self.private.general.pixelPerfect then 
+		self.__showMessage = true;
+	elseif not self.private.theme and not self.private.install_complete then
+		self.__setupTheme = true;
+	end		
 	
 	if self.private.general.pixelPerfect then
 		self.Border = 1;
@@ -86,7 +118,7 @@ function AddOn:OnInitialize()
 	
 	self:RegisterEvent('PLAYER_REGEN_DISABLED')
 	self:RegisterEvent('PLAYER_LOGIN', 'Initialize')
-	self:Contruct_StaticPopups()
+	self:Contruct_StaticPopups()	
 	self:InitializeInitialModules()
 end
 

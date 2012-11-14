@@ -416,7 +416,7 @@ function UF:PostCastStart(unit, name, rank, castid)
 		if UnitCanAttack("player", unit) then
 			self:SetStatusBarColor(unpack(ElvUF.colors.castNoInterrupt))
 		else
-			if E.db.theme == 'class' then
+			if E.private.theme == 'class' then
 				local color = RAID_CLASS_COLORS[E.myclass]
 				self:SetStatusBarColor(color.r, color.g, color.b)
 			else
@@ -424,7 +424,7 @@ function UF:PostCastStart(unit, name, rank, castid)
 			end					
 		end
 	else
-		if E.db.theme == 'class' then
+		if E.private.theme == 'class' then
 			local color = RAID_CLASS_COLORS[E.myclass]
 			self:SetStatusBarColor(color.r, color.g, color.b)
 		else
@@ -508,6 +508,11 @@ function UF:PostCastNotInterruptible(unit)
 	self:SetStatusBarColor(unpack(ElvUF.colors.castNoInterrupt))
 end
 
+function UF:VengeanceUpdate(event, value)
+	local frame = self:GetParent();
+	UF:UpdatePlayerFrameAnchors(frame, (frame.ClassBar and frame.ClassBar:IsShown()))
+end
+
 function UF:UpdateHoly(event, unit, powerType)
 	if(self.unit ~= unit or (powerType and powerType ~= 'HOLY_POWER')) then return end
 	local db = self.db
@@ -567,7 +572,8 @@ function UF:UpdateHoly(event, unit, powerType)
 			self.HolyPower[i]:Show()
 			self.HolyPower[i].backdrop:SetAlpha(1)
 		end		
-	end	
+	end
+
 end	
 
 function UF:UpdateShadowOrbs(event, unit, powerType)

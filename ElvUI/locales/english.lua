@@ -5,7 +5,7 @@ local L = AceLocale:NewLocale("ElvUI", "enUS", true, true);
 if not L then return; end
 
 --TEMP
-L["A taint has occured that is preventing you from using your talents/glyphs, this can happen if you've inspected someone. Unfortionatly theres nothing we can do to fix it, please reload your ui and try again."] = true;
+L["A taint has occured that is preventing you from using your talents/glyphs, this can happen if you've inspected someone. Unfortunately theres nothing we can do to fix it, please reload your ui and try again."] = true;
 
 --ActionBars
 L[" |cff00ff00bound to |r"] = true;
@@ -254,6 +254,8 @@ Example: Interface\AddOns\ElvUI\media\textures\copy
 Or for most users it would be easier to simply put a tga file into your WoW folder, then type the name of the file here.]=] ] = true;
 
 --Config / Install
+L['A new theme called Pixel Perfect has been added for ElvUI! This theme will increase overall performance and provides a cleaner appearance to all of ElvUI. Unfortunately to apply this theme it will require some settings getting reset. Would you like to try the Pixel Perfect theme?'] = true;
+L['Dark'] = true;
 L["Auras Set"] = true;
 L["Auras System"] = true;
 L["Caster DPS"] = true;
@@ -686,6 +688,9 @@ L['You can toggle the microbar by using your middle mouse button on the minimap 
 L['You can use the /resetui command to reset all of your movers. You can also use the command to reset a specific mover, /resetui <mover name>.\nExample: /resetui Player Frame'] = true;
 
 --UnitFrames
+L['Vengeance'] = true;
+L['By Type'] = true;
+L['Color aurabar debuffs by type.'] = true;
 L["%s frame(s) has a conflicting anchor point, please change either the buff or debuff anchor point so they are not attached to each other. Forcing the debuffs to be attached to the main unitframe until fixed."] = true;
 L['2D'] = true;
 L['3D'] = true;

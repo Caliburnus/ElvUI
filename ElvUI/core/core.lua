@@ -28,7 +28,7 @@ E.FrameLocks = {}
 E.CreditsList = {};
 E.Spacing = 1;
 E.Border = 2;
-E.PixelMode = tr;
+E.PixelMode = false;
 
 E.InversePoints = {
 	TOP = 'BOTTOM',
@@ -125,7 +125,7 @@ end
 
 --Basically check if another class border is being used on a class that doesn't match. And then return true if a match is found.
 local function CheckClassColor(r, g, b)
-	if E.db.theme ~= 'class' then return end
+	if E.private.theme ~= 'class' then return end
 	local matchFound = false;
 	for class, _ in pairs(RAID_CLASS_COLORS) do
 		if class ~= E.myclass then
@@ -172,6 +172,8 @@ function E:UpdateMedia()
 		E.db['general'].bordercolor.r = RAID_CLASS_COLORS[E.myclass].r
 		E.db['general'].bordercolor.g = RAID_CLASS_COLORS[E.myclass].g
 		E.db['general'].bordercolor.b = RAID_CLASS_COLORS[E.myclass].b
+	elseif E.PixelMode then
+		border = {r = 0, g = 0, b = 0}
 	end
 	self["media"].bordercolor = {border.r, border.g, border.b}
 
@@ -485,6 +487,9 @@ function E:UpdateAll(ignoreInstall)
 	self.db = self.data.profile;
 	self.global = self.data.global;
 
+	self.db.theme = nil;
+	self.db.install_complete = nil;
+
 	self:SetMoversPositions()
 	self:UpdateMedia()
 
@@ -538,7 +543,7 @@ function E:UpdateAll(ignoreInstall)
 
 	E:GetModule('Auras'):UpdateAllHeaders()
 
-	if self.db.install_complete == nil or (self.db.install_complete and type(self.db.install_complete) == 'boolean') or (self.db.install_complete and type(tonumber(self.db.install_complete)) == 'number' and tonumber(self.db.install_complete) <= 3.83) then
+	if self.private.install_complete == nil or (self.private.install_complete and type(self.private.install_complete) == 'boolean') or (self.private.install_complete and type(tonumber(self.private.install_complete)) == 'number' and tonumber(self.private.install_complete) <= 3.83) then
 		if not ignoreInstall then
 			self:Install()
 		end
@@ -774,6 +779,23 @@ function E:DBConversions()
 			end
 		end
 	end
+
+	if self.db.install_complete then
+		self.private.install_complete = self.db.install_complete;
+		self.db.install_complete = nil;
+	end
+
+	if self.db.theme then
+		self.private.theme = self.db.theme;
+		self.db.theme = nil;
+	end
+
+
+	if self.private.theme == 'pixelPerfect' then
+		self.private.general.pixelPerfect = true;
+	elseif self.private.install_complete and (self.private.theme ~= 'pixelPerfect' and self.private.theme ~= nil) then
+		self.private.general.pixelPerfect = false;
+	end
 end
 
 function E:Initialize()
@@ -803,9 +825,9 @@ function E:Initialize()
 
 	self.initialized = true
 
-	if self.db.install_complete == nil then
+	if self.private.install_complete == nil then
 		self:Install()
-	elseif (self.db.install_complete and type(self.db.install_complete) == 'boolean') or (self.db.install_complete and type(tonumber(self.db.install_complete)) == 'number' and tonumber(self.db.install_complete) <= 4.22) then
+	elseif (self.private.install_complete and type(self.private.install_complete) == 'boolean') or (self.private.install_complete and type(tonumber(self.private.install_complete)) == 'number' and tonumber(self.private.install_complete) <= 4.22) then
 		self:Install()
 		ElvUIInstallFrame.SetPage(7)
 		self:StaticPopup_Show('CONFIGAURA_SET')
@@ -846,5 +868,16 @@ function E:Initialize()
 
 	if self.db.general.loginmessage then
 		print(select(2, E:GetModule('Chat'):FindURL(nil, format(L['LOGIN_MSG'], self["media"].hexvaluecolor, self["media"].hexvaluecolor, self.version)))..'.')
+	end
+
+
+	if self.__showMessage then
+		if self.private.general.pixelPerfect then
+			self.global.newThemePrompt = true;
+		else
+			self:StaticPopup_Show('NEW_THEME');
+		end
+	elseif self.__setupTheme then
+		self:SetupTheme('pixelPerfect', nil, true);
 	end
 end

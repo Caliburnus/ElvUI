@@ -7,6 +7,7 @@ local function LoadSkin()
 	GuildBankFrame:SetTemplate("Transparent")
 	GuildBankEmblemFrame:StripTextures(true)
 	GuildBankMoneyFrameBackground:Kill()
+	S:HandleScrollBar(GuildBankPopupScrollFrameScrollBar)
 	
 	--Close button doesn't have a fucking name, extreme hackage
 	for i=1, GuildBankFrame:GetNumChildren() do
@@ -66,6 +67,33 @@ local function LoadSkin()
 	for i=1, 4 do
 		S:HandleTab(_G["GuildBankFrameTab"..i])
 	end
+	
+	hooksecurefunc('GuildBankFrame_Update', function()
+		if GuildBankFrame.mode ~= "bank" then return; end
+		local tab = GetCurrentGuildBankTab();
+		local button, index, column, itemLink, itemRarity, r, g, b;
+		for i=1, MAX_GUILDBANK_SLOTS_PER_TAB do
+			index = mod(i, NUM_SLOTS_PER_GUILDBANK_GROUP);
+			if ( index == 0 ) then
+				index = NUM_SLOTS_PER_GUILDBANK_GROUP;
+			end
+			column = ceil((i-0.5)/NUM_SLOTS_PER_GUILDBANK_GROUP);
+			button = _G["GuildBankColumn"..column.."Button"..index];
+
+			itemLink  = GetGuildBankItemLink(tab, i);
+			if itemLink then
+				itemRarity = select(3, GetItemInfo(itemLink))
+				if itemRarity > 1 then
+					r, g, b = GetItemQualityColor(itemRarity)
+				else
+					r, g, b = unpack(E.media.bordercolor)
+				end
+			else
+				r, g, b = unpack(E.media.bordercolor)
+			end
+			button:SetBackdropBorderColor(r, g, b)
+		end		
+	end)
 	
 	--Popup
 	GuildBankPopupFrame:StripTextures()

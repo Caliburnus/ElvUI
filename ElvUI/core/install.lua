@@ -168,11 +168,11 @@ function E:GetColor(r, b, g, a)
 	return { r = r, b = b, g = g, a = a }
 end
 
-function E:SetupTheme(theme, noDisplayMsg)
+function E:SetupTheme(theme, noDisplayMsg, noPopup)
 	local classColor = RAID_CLASS_COLORS[E.myclass]
-	E.db.theme = theme
+	E.private.theme = theme
 
-	if (not E.PixelMode and theme == 'pixelPerfect') or (E.PixelMode and theme ~= 'pixelPerfect') then
+	if not noPopup and ((not E.PixelMode and theme == 'pixelPerfect') or (E.PixelMode and theme ~= 'pixelPerfect')) then
 		E:StaticPopup_Show('PIXELPERFECT_CHANGED')
 	end
 
@@ -192,8 +192,9 @@ function E:SetupTheme(theme, noDisplayMsg)
 
 	--Set colors
 	if theme == 'pixelPerfect' then
+		E.global.newThemePrompt = true;
 		E.private.general.pixelPerfect = true;
-		E.db.general.bordercolor = E:GetColor(0, 0, 0)
+		--E.db.general.bordercolor = E:GetColor(.1, .1, .1)
 		E.db.general.backdropcolor = E:GetColor(.1, .1, .1)
 		E.db.general.backdropfadecolor = E:GetColor(.06, .06, .06, .8)
 
@@ -237,7 +238,7 @@ function E:SetupTheme(theme, noDisplayMsg)
 		E.db.bags.bankSize = 34;
 		E.private.auras.size = 30;
 
-		if not noDisplayMsg then
+		if not noDisplayMsg or noPopup then
 			if not E.db.movers then E.db.movers = {}; end
 			E.db.movers["ElvUF_PetMover"] = "BOTTOMElvUIParentBOTTOM0104"
 			E.db.movers["AurasMover"] = "TOPRIGHTElvUIParentTOPRIGHT-221-5"
@@ -289,7 +290,7 @@ function E:SetupTheme(theme, noDisplayMsg)
 	if InstallStatus then
 		InstallStatus:SetStatusBarColor(unpack(E['media'].rgbvaluecolor))
 
-		if InstallStepComplete and not noDisplayMsg then
+		if InstallStepComplete and not noDisplayMsg and not noPopup then
 			InstallStepComplete.message = L["Theme Set"]
 			InstallStepComplete:Show()
 		end
@@ -387,8 +388,8 @@ function E:SetupResolution(noDataReset)
 		E.db.lowresolutionset = nil;
 	end
 
-	if not noDataReset and E.db.theme then
-		E:SetupTheme(E.db.theme, true)
+	if not noDataReset and E.private.theme then
+		E:SetupTheme(E.private.theme, true)
 	end
 
 	E:UpdateAll(true)
@@ -497,8 +498,8 @@ function E:SetupLayout(layout, noDataReset)
 				E.db.movers["AurasMover"] = "TOPRIGHTElvUIParentTOPRIGHT-221-5"
 				E.db.movers["ElvUF_TargetTargetMover"] = "BOTTOMElvUIParentBOTTOM064"
 				E.db.movers["ElvUF_PlayerMover"] = "BOTTOMElvUIParentBOTTOM-27865"
-				E.db.movers["ElvUF_TargetMover"] = "BOTTOMElvUIParentBOTTOM27864"		
-			end			
+				E.db.movers["ElvUF_TargetMover"] = "BOTTOMElvUIParentBOTTOM27864"
+			end
 		end
 	end
 
@@ -555,8 +556,8 @@ function E:SetupLayout(layout, noDataReset)
 
 	E.db.layoutSet = layout
 
-	if not noDataReset and E.db.theme then
-		E:SetupTheme(E.db.theme, true)
+	if not noDataReset and E.private.theme then
+		E:SetupTheme(E.private.theme, true)
 	end
 
 	E:UpdateAll(true)
@@ -610,7 +611,7 @@ local function SetupAuras(style)
 end
 
 local function InstallComplete()
-	E.db.install_complete = E.version
+	E.private.install_complete = E.version
 
 	if GetCVarBool("Sound_EnableMusic") then
 		StopMusic()
@@ -696,13 +697,13 @@ local function SetPage(PageNum)
 		InstallOption1Button:SetText(L["Classic"])
 		InstallOption2Button:Show()
 		InstallOption2Button:SetScript('OnClick', function() E:SetupTheme('default') end)
-		InstallOption2Button:SetText(DEFAULT)
+		InstallOption2Button:SetText(L['Dark'])
 		InstallOption3Button:Show()
 		InstallOption3Button:SetScript('OnClick', function() E:SetupTheme('class') end)
 		InstallOption3Button:SetText(CLASS)
 		InstallOption4Button:Show()
 		InstallOption4Button:SetScript('OnClick', function() E:SetupTheme('pixelPerfect') end)
-		InstallOption4Button:SetText(L['Pixel Perfect']..' (Beta)')
+		InstallOption4Button:SetText(L['Pixel Perfect'])
 	elseif PageNum == 5 then
 		f.SubTitle:SetText(L["Resolution"])
 		f.Desc1:SetText(format(L["Your current resolution is %s, this is considered a %s resolution."], E.resolution, E.lowversion == true and L["low"] or L["high"]))
