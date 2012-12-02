@@ -495,19 +495,6 @@ function UF:Construct_NameText(frame)
 	return name
 end
 
-function UF:Construct_VengeanceBar(frame)
-	local bar = CreateFrame('StatusBar', nil, frame);
-	bar:CreateBackdrop('Default');
-	UF['statusbars'][bar] = true;
-	bar:SetStatusBarTexture(E['media'].blankTex);
-	bar:GetStatusBarTexture():SetHorizTile(false);
-	bar:SetStatusBarColor(0.8, 0.0, 0.0);
-	bar:SetOrientation('VERTICAL');
-	bar.PostUpdate = UF.VengeanceUpdate
-	
-	return bar
-end
-
 function UF:Construct_Combobar(frame)
 	local CPoints = CreateFrame("Frame", nil, frame)
 	CPoints:CreateBackdrop('Default')
@@ -607,7 +594,7 @@ end
 
 function UF:Construct_RaidIcon(frame)
 	local tex = (frame.RaisedElementParent or frame):CreateTexture(nil, "OVERLAY")
-	tex:SetTexture("Interface\\AddOns\\ElvUI\\media\\textures\\raidicons.blp") 
+	tex:SetTexture([[Interface\TargetingFrame\UI-RaidTargetingIcons]]) 
 	tex:Size(18)
 	tex:Point("CENTER", frame.Health, "TOP", 0, 2)
 	tex.SetTexture = E.noop

@@ -8,14 +8,14 @@ local good, maybe, filter, login = {}, {}, {}, false
 
 local TIMESTAMP_FORMAT
 local DEFAULT_STRINGS = {
-	BATTLEGROUND = L['BG'],
 	GUILD = L['G'],
 	PARTY = L['P'],
 	RAID = L['R'],
 	OFFICER = L['O'],
-	BATTLEGROUND_LEADER = L['BGL'],
 	PARTY_LEADER = L['PL'],
 	RAID_LEADER = L['RL'],
+	INSTANCE_CHAT = L['I'],
+	INSTANCE_CHAT_LEADER = L['IL'],
 }
 
 local hyperlinkTypes = {
@@ -165,6 +165,8 @@ function CH:StyleChat(frame)
 
 	if frame.styled then return end
 
+	frame:SetFrameLevel(4)
+
 	local id = frame:GetID()
 
 	local tab = _G[name..'Tab']
@@ -247,7 +249,7 @@ function CH:StyleChat(frame)
 		end
 	end)
 
-	for i, text in pairs(ElvCharacterData.ChatEditHistory) do
+	for i, text in pairs(ElvCharacterDB.ChatEditHistory) do
 		editbox:AddHistoryLine(text)
 	end
 
@@ -444,7 +446,7 @@ function CH:PositionChat(override)
 			FCF_SavePositionAndDimensions(chat)
 
 			tab:SetParent(RightChatPanel)
-			chat:SetParent(tab)
+			chat:SetParent(RightChatPanel)
 
 			if chat:IsMovable() then
 				chat:SetUserPlaced(true)
@@ -455,8 +457,8 @@ function CH:PositionChat(override)
 				CH:SetupChatTabs(tab, false)
 			end
 		elseif not isDocked and chat:IsShown() then
-			tab:SetParent(E.UIParent)
-			chat:SetParent(E.UIParent)
+			tab:SetParent(UIParent)
+			chat:SetParent(UIParent)
 
 			CH:SetupChatTabs(tab, true)
 		else
@@ -472,7 +474,11 @@ function CH:PositionChat(override)
 				FCF_SavePositionAndDimensions(chat)
 			end
 			chat:SetParent(LeftChatPanel)
-			tab:SetParent(GeneralDockManager)
+			if i > 2 then
+				tab:SetParent(GeneralDockManagerScrollFrameChild)
+			else
+				tab:SetParent(GeneralDockManager)
+			end
 			if chat:IsMovable() then
 				chat:SetUserPlaced(true)
 			end
@@ -958,15 +964,15 @@ function CH:ChatEdit_AddHistory(editBox, line)
 	if line:find("/rl") then return; end
 
 	if ( strlen(line) > 0 ) then
-		for i, text in pairs(ElvCharacterData.ChatEditHistory) do
+		for i, text in pairs(ElvCharacterDB.ChatEditHistory) do
 			if text == line then
 				return
 			end
 		end
 
-		table.insert(ElvCharacterData.ChatEditHistory, #ElvCharacterData.ChatEditHistory + 1, line)
-		if #ElvCharacterData.ChatEditHistory > 5 then
-			table.remove(ElvCharacterData.ChatEditHistory, 1)
+		table.insert(ElvCharacterDB.ChatEditHistory, #ElvCharacterDB.ChatEditHistory + 1, line)
+		if #ElvCharacterDB.ChatEditHistory > 5 then
+			table.remove(ElvCharacterDB.ChatEditHistory, 1)
 		end
 	end
 end
@@ -1008,7 +1014,7 @@ end
 
 function CH:DisplayChatHistory()
 	local temp, data = {}
-	for id, _ in pairs(ElvCharacterData.ChatHistory) do
+	for id, _ in pairs(ElvCharacterDB.ChatHistory) do
 		table.insert(temp, tonumber(id))
 	end
 
@@ -1017,7 +1023,7 @@ function CH:DisplayChatHistory()
 	end)
 
 	for i = 1, #temp do
-		data = ElvCharacterData.ChatHistory[tostring(temp[i])]
+		data = ElvCharacterDB.ChatHistory[tostring(temp[i])]
 
 		if type(data) == "table" then
 			CH.timeOverride = temp[i]
@@ -1048,10 +1054,10 @@ function CH:SaveChatHistory(event, ...)
 	if #temp > 0 then
 	  temp[20] = event
 	  local timeForMessage = GetTimeForSavedMessage()
-	  ElvCharacterData.ChatHistory[timeForMessage] = temp
+	  ElvCharacterDB.ChatHistory[timeForMessage] = temp
 
 		local c, k = 0
-		for id, data in pairs(ElvCharacterData.ChatHistory) do
+		for id, data in pairs(ElvCharacterDB.ChatHistory) do
 			c = c + 1
 			if (not k) or k > id then
 				k = id
@@ -1059,7 +1065,7 @@ function CH:SaveChatHistory(event, ...)
 		end
 
 		if c > 128 then
-			ElvCharacterData.ChatHistory[k] = nil
+			ElvCharacterDB.ChatHistory[k] = nil
 		end
 	end
 end
@@ -1073,12 +1079,12 @@ function CH:Initialize()
 		ChatFrame_SystemEventHandler(DEFAULT_CHAT_FRAME, "GUILD_MOTD", msg)
 		return
 	end
-	if not ElvCharacterData.ChatEditHistory then
-		ElvCharacterData.ChatEditHistory = {};
+	if not ElvCharacterDB.ChatEditHistory then
+		ElvCharacterDB.ChatEditHistory = {};
 	end
 
-	if not ElvCharacterData.ChatHistory or not self.db.chatHistory then
-		ElvCharacterData.ChatHistory = {};
+	if not ElvCharacterDB.ChatHistory or not self.db.chatHistory then
+		ElvCharacterDB.ChatHistory = {};
 	end
 
 	self:UpdateChatKeywords()
@@ -1140,6 +1146,15 @@ function CH:Initialize()
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER_INFORM", CH.FindURL)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_INLINE_TOAST_BROADCAST", CH.FindURL)
 
+
+	GeneralDockManagerOverflowButton:ClearAllPoints()
+	GeneralDockManagerOverflowButton:Point('BOTTOMRIGHT', LeftChatTab, 'BOTTOMRIGHT', -2, 2)
+	GeneralDockManagerOverflowButtonList:SetTemplate('Transparent')
+	hooksecurefunc(GeneralDockManagerScrollFrame, 'SetPoint', function(self, point, anchor, attachTo, x, y)
+		if anchor == GeneralDockManagerOverflowButton and x == 0 and y == 0 then
+			self:SetPoint(point, anchor, attachTo, -2, -6)
+		end
+	end)
 
 	if self.db.chatHistory then
 		self.SoundPlayed = true;
@@ -1212,6 +1227,9 @@ function CH:Initialize()
 	InterfaceOptionsSocialPanelTimestampsButton:SetScale(0.000001)
 	InterfaceOptionsSocialPanelTimestamps:SetAlpha(0)
 	InterfaceOptionsSocialPanelTimestamps:SetScale(0.000001)
+
+	CombatLogQuickButtonFrame_CustomAdditionalFilterButton:Size(20, 22)
+	CombatLogQuickButtonFrame_CustomAdditionalFilterButton:Point("TOPRIGHT", CombatLogQuickButtonFrame_Custom, "TOPRIGHT", 0, -1)
 end
 
 E:RegisterModule(CH:GetName())
