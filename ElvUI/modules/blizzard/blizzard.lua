@@ -17,6 +17,8 @@ function B:Initialize()
 	WorldStateAlwaysUpFrame:SetPoint("TOP", E.UIParent, "TOP", 0, -50)
 	self:PositionAltPowerBar()
 
+	E:CreateMover(LossOfControlFrame, 'LossControlMover', 'Loss Control Icon')
+
 	CreateFrame("Frame"):SetScript("OnUpdate", function(self, elapsed)
 		if LFRBrowseFrame.timeToClear then
 			LFRBrowseFrame.timeToClear = nil

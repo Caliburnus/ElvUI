@@ -111,7 +111,7 @@ function AB:PositionAndSizeBar(barName)
 		button:ClearAllPoints();
 		button:Size(size)
 		button:SetAttribute("showgrid", 1);
-		ActionButton_ShowGrid(button);
+		--ActionButton_ShowGrid(button);
 
 		if self.db[barName].mouseover == true then
 			bar:SetAlpha(0);
@@ -182,13 +182,19 @@ function AB:PositionAndSizeBar(barName)
 		self:StyleButton(button);
 	end
 	
-	if self.db[barName].enabled then		
+	if self.db[barName].enabled or not bar.initialized then		
 		if not self.db[barName].mouseover then
 			bar:SetAlpha(self.db[barName].alpha);
 		end
 		bar:Show()
 		RegisterStateDriver(bar, "visibility", self.db[barName].visibility); -- this is ghetto
 		RegisterStateDriver(bar, "page", self:GetPage(barName, self['barDefaults'][barName].page, self['barDefaults'][barName].conditions));
+		
+		if not bar.initialized then
+			bar.initialized = true;
+			AB:PositionAndSizeBar(barName)
+			return
+		end
 	else
 		bar:Hide()
 		UnregisterStateDriver(bar, "visibility");
