@@ -578,7 +578,7 @@ function TT:GameTooltipStatusBar_OnValueChanged(tt, value)
 	end
 
 	if tt.text then
-		if unit then
+		if unit and self.db.health then
 			min, max = UnitHealth(unit), UnitHealthMax(unit)
 			tt.text:Show()
 			local hp = E:ShortValue(min).." / "..E:ShortValue(max)
@@ -696,11 +696,21 @@ end
 
 function TT:Initialize()
 	self.db = E.db["tooltip"]
+
+	BNToastFrame:Point('TOPRIGHT', MMHolder, 'BOTTOMRIGHT', 0, -10);
+	E:CreateMover(BNToastFrame, 'BNETMover', L['BNet Frame'])
+	hooksecurefunc(BNToastFrame, "SetPoint", function(self, point, anchor, anchorPoint, xOffset, yOffset)
+		if anchor ~= BNETMover then
+			BNToastFrame:ClearAllPoints()
+			BNToastFrame:Point('TOPLEFT', BNETMover, 'TOPLEFT');
+		end
+	end)
+
 	if E.private["tooltip"].enable ~= true then return end
 	E.Tooltip = TT
 
 	GameTooltipStatusBar:ClearAllPoints()
-	GameTooltipStatusBar:Height(5)
+	GameTooltipStatusBar:Height(self.db.healthHeight)
 	GameTooltipStatusBar:Point("TOPLEFT", GameTooltipStatusBar:GetParent(), "BOTTOMLEFT", 2, -5)
 	GameTooltipStatusBar:Point("TOPRIGHT", GameTooltipStatusBar:GetParent(), "BOTTOMRIGHT", -2, -5)
 	GameTooltipStatusBar:SetStatusBarTexture(E["media"].normTex)
@@ -715,7 +725,7 @@ function TT:Initialize()
 	GameTooltipAnchor:Point('BOTTOMRIGHT', RightChatToggleButton, 'BOTTOMRIGHT')
 	GameTooltipAnchor:Size(130, 20)
 	GameTooltipAnchor:SetFrameLevel(GameTooltipAnchor:GetFrameLevel() + 50)
-	E:CreateMover(GameTooltipAnchor, 'TooltipMover', 'Tooltip')
+	E:CreateMover(GameTooltipAnchor, 'TooltipMover', L['Tooltip'])
 
 	self:SecureHook('GameTooltip_SetDefaultAnchor')
 	self:SecureHook('GameTooltip_ShowCompareItem')
@@ -778,17 +788,12 @@ function TT:Initialize()
 				break
 			end
 		end
-		
+
 		if not isFound then
 			self:AddLine(displayString)
 			self:Show()
 		end
 	end)
-
-	BNToastFrame:Point('TOPRIGHT', MMHolder, 'BOTTOMRIGHT', 0, -10);
-	E:CreateMover(BNToastFrame, 'BNETMover', 'BNet Frame')
-	BNToastFrame.SetPoint = E.noop
-	BNToastFrame.ClearAllPoints = E.noop
 end
 
 E:RegisterModule(TT:GetName())

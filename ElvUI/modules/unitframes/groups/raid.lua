@@ -114,7 +114,7 @@ for i=10, 40, 15 do
 		header:SetAttribute("maxColumns", db.maxColumns)
 		header:SetAttribute("unitsPerColumn", db.unitsPerColumn)
 		
-		header:SetAttribute('columnSpacing', db.columnSpacing)
+		header:SetAttribute('columnSpacing', db.yOffset)
 		header:SetAttribute("xOffset", db.xOffset)	
 		header:SetAttribute("yOffset", db.yOffset)
 
@@ -128,7 +128,7 @@ for i=10, 40, 15 do
 		if not header.positioned then
 			header:ClearAllPoints()
 			header:Point("BOTTOMLEFT", E.UIParent, "BOTTOMLEFT", 4, 195)	
-			E:CreateMover(header, header:GetName()..'Mover', 'Raid 1-'..i..' Frames', nil, nil, nil, 'ALL,RAID'..i)
+			E:CreateMover(header, header:GetName()..'Mover', L['Raid 1-']..i..L[' Frames'], nil, nil, nil, 'ALL,RAID'..i)
 			
 			header:SetAttribute('minHeight', header.dirtyHeight)
 			header:SetAttribute('minWidth', header.dirtyWidth)
@@ -392,7 +392,7 @@ for i=10, 40, 15 do
 				frame:EnableElement('RaidDebuffs')				
 
 				rdebuffs:Size(db.rdebuffs.size)
-				
+				rdebuffs:Point('BOTTOM', frame, 'BOTTOM', db.rdebuffs.xOffset, db.rdebuffs.yOffset)
 				rdebuffs.count:FontTemplate(nil, db.rdebuffs.fontSize, 'OUTLINE')
 				rdebuffs.time:FontTemplate(nil, db.rdebuffs.fontSize, 'OUTLINE')
 			else

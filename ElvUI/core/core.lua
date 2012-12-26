@@ -14,7 +14,6 @@ E.resolution = GetCVar("gxResolution")
 E.screenheight = tonumber(string.match(E.resolution, "%d+x(%d+)"))
 E.screenwidth = tonumber(string.match(E.resolution, "(%d+)x+%d"))
 
-
 --Tables
 E["media"] = {};
 E["frames"] = {};
@@ -409,10 +408,11 @@ function E:CopyTable(currentTable, defaultTable)
 end
 
 function E:SendMessage()
+	local _, instanceType = IsInInstance()
 	if IsInRaid() then
-		SendAddonMessage("ElvUIVC", E.version, IsPartyLFG() and "INSTANCE_CHAT" or "RAID")
+		SendAddonMessage("ElvUIVC", E.version, (not IsInRaid(LE_PARTY_CATEGORY_HOME) and IsInRaid(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "RAID")
 	elseif IsInGroup() then
-		SendAddonMessage("ElvUIVC", E.version, IsPartyLFG() and "INSTANCE_CHAT" or "PARTY")
+		SendAddonMessage("ElvUIVC", E.version, (not IsInGroup(LE_PARTY_CATEGORY_HOME) and IsInGroup(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "PARTY")
 	end
 
 	if E.SendMSGTimer then

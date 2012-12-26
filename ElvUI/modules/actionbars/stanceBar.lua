@@ -226,6 +226,14 @@ function AB:AdjustMaxStanceButtons(event)
 	end
 end
 
+function AB:UpdateStanceBindings()
+	for i = 1, NUM_STANCE_SLOTS do
+		local key = GetBindingKey("CLICK ElvUI_StanceBarButton"..i..":LeftButton")
+		_G["ElvUI_StanceBarButton"..i.."HotKey"]:SetText(key)	
+		self:FixKeybindText(_G["ElvUI_StanceBarButton"..i])
+	end
+end
+
 function AB:CreateBarShapeShift()
 	bar:CreateBackdrop('Default');
 	bar.backdrop:SetAllPoints();
@@ -245,8 +253,9 @@ function AB:CreateBarShapeShift()
 	self:RegisterEvent('UPDATE_SHAPESHIFT_FORM', 'StyleShapeShift');
 	self:RegisterEvent('ACTIONBAR_PAGE_CHANGED', 'StyleShapeShift');
 	
-	E:CreateMover(bar, 'ShiftAB', 'Stance Bar', nil, -3, nil, 'ALL,ACTIONBARS');
+	E:CreateMover(bar, 'ShiftAB', L['Stance Bar'], nil, -3, nil, 'ALL,ACTIONBARS');
 	self:AdjustMaxStanceButtons();
 	self:PositionAndSizeBarShapeShift();
 	self:StyleShapeShift();
+	self:UpdateStanceBindings()
 end

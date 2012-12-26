@@ -521,7 +521,36 @@ L["Your items have been repaired for: "] = true;
 L["Your items have been repaired using guild bank funds for: "] = true;
 L["Your version of ElvUI is out of date. You can download the latest version from http://www.tukui.org"] = true; --core\core.lua
 
+--Movers
+L[' Frames'] = true;
+L["Left Chat"] = true;
+L["Right Chat"] = true;
+L["Bar "] = true;
+L["Boss Button"] = true;
+L["Micro Bar"] = true;
+L["Pet Bar"] = true;
+L["Stance Bar"] = true;
+L["Auras Frame"] = true;
+L["Weapons"] = true;
+L["Loot / Alert Frames"] = true;
+L["Alternative Power"] = true;
+L["Loss Control Icon"] = true;
+L["GM Ticket Frame"] = true;
+L["Vehicle Seat Frame"] = true;
+L["Watch Frame"] = true;
+L["Loot Frame"] = true;
+L["Totems"] = true;
+L["BNet Frame"] = true;
+L["MA Frames"] = true;
+L["MT Frames"] = true;
+L["Raid 1-"] = true;
+L["Player Castbar"] = true;
+L["Target Castbar"] = true;
+L["Focus Castbar"] = true;
+
 --NamePlates
+L["Class Icons"] = true;
+L["Display a class icon on nameplates."] = true;
 L["Add Name"] = true;
 L["All"] = true;
 L['Aura'] = true;
@@ -656,6 +685,9 @@ L["You have changed your UIScale, however you still have the AutoScale option en
 L["You must purchase a bank slot first!"] = true;
 
 --Tooltip
+L['Display the health text on the tooltip.'] = true;
+L['Health Height'] = true;
+L['Set the height of the tooltip healthbar.'] = true;
 L['Always Hide'] = true;
 L["Anchor Mode"] = true;
 L["Anchor"] = true;
@@ -713,7 +745,7 @@ L["Additional Filter"] = true;
 L["Affliction"] = true;
 L["An X offset (in pixels) to be used when anchoring new frames."] = true;
 L["An Y offset (in pixels) to be used when anchoring new frames."] = true;
-L["Any Unit"] = true;
+L["Show Aura From Other Players"] = true;
 L['Arcane Charges'] = true;
 L["Arena Frames"] = true;
 L["Assist Frames"] = true;
@@ -754,7 +786,6 @@ L["Color the unit healthbar if there is a debuff that can be dispelled by you."]
 L["Color"] = true;
 L['Colored Icon'] = true;
 L["Column Point"] = true;
-L["Column Spacing"] = true;
 L["Combat Fade"] = true;
 L["Combobar"] = true;
 L["Copy From"] = true;
@@ -895,7 +926,7 @@ L["Sets the font instance's horizontal text alignment style."] = true;
 L['Shadow Orbs'] = true;
 L["Show a incomming heal prediction bar on the unitframe. Also display a slightly different colored bar for incoming overheals."] = true;
 L['Show Auras'] = true;
-L["Show Missing"] = true;
+L["Show When Not Active"] = true;
 L["Show Party"] = true;
 L["Show Raid"] = true;
 L["Show Solo"] = true;
@@ -923,7 +954,6 @@ L["Text Toggle On NPC"] = true;
 L['Text'] = true;
 L['Textured Icon'] = true;
 L["The alpha to set units that are out of range to."] = true;
-L["The amount of space (in pixels) between the columns."] = true;
 L["The anchor point for each new column. A value of LEFT will cause the columns to grow to the right."] = true;
 L["The following macro must be true in order for the group to be shown, in addition to any filter that may already be set."] = true;
 L["The font that the unitframes will use."] = true;
