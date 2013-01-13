@@ -2,53 +2,9 @@ local E, L, V, P, G, _ = unpack(select(2, ...)); --Inport: Engine, Locales, Priv
 local A = E:NewModule('Auras', 'AceHook-3.0', 'AceEvent-3.0');
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local DAY, HOUR, MINUTE = 86400, 3600, 60 --used for calculating aura time text
-local DAYISH, HOURISH, MINUTEISH = 3600 * 23.5, 60 * 59.5, 59.5 --used for caclculating aura time at transition points
-local HALFDAYISH, HALFHOURISH, HALFMINUTEISH = DAY/2 + 0.5, HOUR/2 + 0.5, MINUTE/2 + 0.5 --used for calculating next update times
-
-local ceil = math.ceil
-local max = math.max
 local find = string.find
 local format = string.format
 local join = string.join
-
--- aura time colors for days, hours, minutes, seconds, fadetimer
-A.TimeColors = {
-	[0] = '|cfffefefe',
-	[1] = '|cfffefefe',
-	[2] = '|cfffefefe',
-	[3] = '|cfffefefe',
-	[4] = '|cfffe0000',
-}
-
--- short and long aura time formats
-A.TimeFormats = {
-	[0] = { '%dd', '%dd' },
-	[1] = { '%dh', '%dh' },
-	[2] = { '%dm', '%dm' },
-	[3] = { '%ds', '%d' },
-	[4] = { '%.1fs', '%.1f' },
-}
-
--- will return the the value to display, the formatter id to use and calculates the next update for the Aura
-function A:AuraTimeGetInfo(s, threshhold)
-	if s < MINUTE then
-		if s >= threshhold then
-			return floor(s), 3, 0.51
-		else
-			return s, 4, 0.051
-		end
-	elseif s < HOUR then
-		local minutes = tonumber(E:Round(s/MINUTE))
-		return ceil(s / MINUTE), 2, minutes > 1 and (s - (minutes*MINUTE - HALFMINUTEISH)) or (s - MINUTEISH)
-	elseif s < DAY then
-		local hours = tonumber(E:Round(s/HOUR))
-		return ceil(s / HOUR), 1, hours > 1 and (s - (hours*HOUR - HALFHOURISH)) or (s - HOURISH)
-	else
-		local days = tonumber(E:Round(s/DAY))
-		return ceil(s / DAY), 0,  days > 1 and (s - (days*DAY - HALFDAYISH)) or (s - DAYISH)
-	end
-end
 
 function A:UpdateTime(elapsed)
 	self.expiration = self.expiration - elapsed
@@ -65,8 +21,8 @@ function A:UpdateTime(elapsed)
 	end
 
 	local timervalue, formatid
-	timervalue, formatid, self.nextupdate = A:AuraTimeGetInfo(self.expiration, E.db.auras.fadeThreshold)
-	self.time:SetFormattedText(("%s%s|r"):format(A.TimeColors[formatid], A.TimeFormats[formatid][1]), timervalue)	
+	timervalue, formatid, self.nextupdate = E:GetTimeInfo(self.expiration, 4)
+	self.time:SetFormattedText(("%s%s|r"):format(E.TimeColors[formatid], E.TimeFormats[formatid][1]), timervalue)	
 	if self.expiration > E.db.auras.fadeThreshold then
 		E:StopFlash(self)
 	else
@@ -274,8 +230,8 @@ function A:UpdateWeaponText(auraButton, timeLeft)
 			duration:SetText("")
 			E:StopFlash(auraButton)
 		else
-			local timervalue, formatid = A:AuraTimeGetInfo(timeLeft, E.db.auras.fadeThreshold)
-			duration:SetFormattedText(("%s%s|r"):format(A.TimeColors[formatid], A.TimeFormats[formatid][2]), timervalue)	
+			local timervalue, formatid = E:GetTimeInfo(timeLeft, E.db.auras.fadeThreshold)
+			duration:SetFormattedText(("%s%s|r"):format(E.TimeColors[formatid], E.TimeFormats[formatid][2]), timervalue)	
 			if timeLeft <= E.db.auras.fadeThreshold then
 				E:Flash(auraButton, 1)
 			else
@@ -288,21 +244,6 @@ end
 function A:Initialize()
 	if self.db then return; end --IDK WHY BUT THIS IS GETTING CALLED TWICE FROM SOMEWHERE...
 	
-	local color = E.db.actionbar.expiringcolor
-	A.TimeColors[4] = E:RGBToHex(color.r, color.g, color.b) -- color for timers that are soon to expire
-	
-	color = E.db.actionbar.secondscolor
-	A.TimeColors[3] = E:RGBToHex(color.r, color.g, color.b) -- color for timers that have seconds remaining
-	
-	color = E.db.actionbar.minutescolor
-	A.TimeColors[2] = E:RGBToHex(color.r, color.g, color.b) -- color for timers that have minutes remaining
-	
-	color = E.db.actionbar.hourscolor
-	A.TimeColors[1] = E:RGBToHex(color.r, color.g, color.b) -- color for timers that have hours remaining
-	
-	color = E.db.actionbar.dayscolor
-	A.TimeColors[0] = E:RGBToHex(color.r, color.g, color.b) -- color for timers that have days remaining	
-
 	self.db = E.db.auras
 	
 	BuffFrame:Kill()

@@ -1,6 +1,5 @@
 local E, L, V, P, G, _ = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
 local UF = E:GetModule('UnitFrames');
-local A = E:GetModule('Auras')
 local LSM = LibStub("LibSharedMedia-3.0");
 
 local sub = string.sub
@@ -166,8 +165,8 @@ function UF:UpdateAuraTimer(elapsed)
 	end
 
 	local timervalue, formatid
-	timervalue, formatid, self.nextupdate = A:AuraTimeGetInfo(self.expiration, E.db.auras.fadeThreshold)
-	self.text:SetFormattedText(("%s%s|r"):format(A.TimeColors[formatid], A.TimeFormats[formatid][2]), timervalue)
+	timervalue, formatid, self.nextupdate = E:GetTimeInfo(self.expiration, 4)
+	self.text:SetFormattedText(("%s%s|r"):format(E.TimeColors[formatid], E.TimeFormats[formatid][2]), timervalue)
 end
 
 function UF:PostUpdateAura(unit, button, index, offset, filter, isDebuff, duration, timeLeft)
@@ -231,7 +230,9 @@ function UF:PostUpdateAura(unit, button, index, offset, filter, isDebuff, durati
 	end	
 	if duration == 0 or expiration == 0 then
 		button:SetScript('OnUpdate', nil)
-		button.text:SetText('')
+		if button.text:GetFont() then
+			button.text:SetText('')
+		end
 	end
 end
 
@@ -651,7 +652,7 @@ function UF:UpdateShardBar(spec)
 		self:Point("CENTER", frame.Health.backdrop, "TOP", -12, -2)
 	end
 	
-	local SPACING = db.classbar.fill == 'spaced' and 1 or 11
+	local SPACING = db.classbar.fill == 'spaced' and 11 or 1
 	for i = 1, maxBars do
 		self[i]:SetHeight(self:GetHeight())	
 		self[i]:SetWidth((self:GetWidth() - (maxBars - 1)) / maxBars)
@@ -1125,7 +1126,7 @@ function UF:UpdateRoleIcon()
 	local lfdrole = self.LFDRole
 	local db = self.db.roleIcon;
 	
-	if not (db or db.enable) then 
+	if (not db) or (db and not db.enable) then 
 		lfdrole:Hide()
 		return
 	end
