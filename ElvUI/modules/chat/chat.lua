@@ -104,7 +104,7 @@ local smileyKeys = {
 };
 
 local specialChatIcons = {
-	["Kil'jaeden"] = {
+	["Spirestone"] = {
 		["Elvz"] = "|TInterface\\AddOns\\ElvUI\\media\\textures\\ElvUI_Chat_Logo:13:22|t"
 	},
 	["Illidan"] = {
@@ -1128,7 +1128,7 @@ function CH:SetupChat(event, ...)
 
 		if id > NUM_CHAT_WINDOWS then
 			frame:SetScript("OnEvent", CH.FloatingChatFrame_OnEvent)
-		else
+		elseif id ~= 2 then
 			frame:SetScript("OnEvent", CH.ChatFrame_OnEvent)
 		end
 

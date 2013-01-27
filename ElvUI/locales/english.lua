@@ -549,6 +549,8 @@ L["Target Castbar"] = true;
 L["Focus Castbar"] = true;
 
 --NamePlates
+L["Combo Points"] = true;
+L["Display combo points on nameplates."] = true;
 L["Small Plates"] = true;
 L["Adjust nameplate size on smaller mobs to scale down. This will only adjust the health bar width not the actual nameplate hitbox you click on."] = true;
 L["Class Icons"] = true;
@@ -573,7 +575,7 @@ L["Custom Color"] = true;
 L["Custom Scale"] = true;
 L["Disable threat coloring for this plate and use the custom color."] = true;
 L["Discipline"] = true;
-L["Display a healer icon over known healers inside battlegrounds."] = true;
+L["Display a healer icon over known healers inside battlegrounds or arenas."] = true;
 L["Display level text on nameplate for nameplates that belong to units that aren't your level."] = true;
 L["Display your personal debuffs over the nameplate."] = true;
 L["Enemy"] = true; --Also used in UnitFrames
