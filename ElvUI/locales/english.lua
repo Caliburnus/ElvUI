@@ -7,6 +7,25 @@ if not L then return; end
 --TEMP
 L["A taint has occured that is preventing you from using your talents/glyphs. Please reload your user interface and try again."] = true;
 
+--Distributor
+L["This feature will allow you to transfer, settings to other characters."] = true;
+L["Share Current Profile"] = true;
+L["Sends your current profile to your target."] = true;
+L["You must be targeting a player."] = true;
+L["Must be in group with the player if he isn't on the same server as you."] = true;
+L["Share Filters"] = true;
+L["Sends your filter settings to your target."] = true;
+L['%s is attempting to share the profile %s with you. Would you like to accept the request?'] = true;
+L['Profile download complete from %s, but the profile %s already exists. Change the name or else it will overwrite the existing profile.'] = true;
+L['%s is attempting to share his filters with you. Would you like to accept the request?'] = true;
+L["Data From: %s"] = true;
+L['Profile download complete from %s, would you like to load the profile %s now?'] = true;
+L['Filter download complete from %s, would you like to apply changes now?'] = true;
+L['Your profile was successfully recieved by the player.'] = true;
+L['Profile request sent. Waiting for response from player.'] = true;
+L['Request was denied by user.'] = true;
+L["Lord! It's a miracle! The download up and vanished like a fart in the wind! Try Again!"] = true;
+
 --ActionBars
 L[" |cff00ff00bound to |r"] = true;
 L["Action Paging"] = true;
@@ -87,6 +106,8 @@ L[ [=[This works like a macro, you can run different situations to get the actio
  Example: '[combat] show;hide']=] ] = true;
 
 --Bags
+L['Ignore Items'] = true;
+L['List of items to ignore when sorting. If you wish to add multiple items you must seperate the word with a comma.'] = true;
 L['Adjust the width of the bag frame.'] = true;
 L['Adjust the width of the bank frame.'] = true;
 L['Align the width of the bag frame to fit inside the chat box.'] = true;
@@ -174,6 +195,7 @@ L['Wrap After'] = true;
 L['Your Auras First'] = true;
 
 --Chat
+L['Tab Panel Transparency'] = true;
 L['Above Chat'] = true;
 L["AFK"] = true; --Also used in datatexts and tooltip
 L["Attempt to create URL links inside the chat."] = true;
@@ -332,6 +354,10 @@ L["ELVUI_CREDITS"] = "I would like to give out a special shout out to the follow
 L["Testing:"] = true;
 
 --DataTexts
+L['Oondasta'] = true;
+L['Nalak'] = true;
+L["Combat Time"] = true;
+L['Panel Transparency'] = true;
 L["(Hold Shift) Memory Usage"] = true;
 L["24-Hour Time"] = true;
 L['Always Display'] = true;
@@ -543,6 +569,7 @@ L["Watch Frame"] = true;
 L["Weapons"] = true;
 
 --NamePlates
+L['Configure Selected Filter'] = true;
 L["Tagged Color"] = true;
 L["Color of a nameplate that is tagged by another person."] = true;
 L["Tanked/Loose Color"] = true;
@@ -717,8 +744,8 @@ L["Targeted By:"] = true;
 L["Tooltip"] = true;
 L["TOOLTIP_DESC"] = "Setup options for the Tooltip."
 L["UF Hide"] = true;
-L["When in a raid group display if anyone in your raid is targetting the current tooltip unit."] = true;
-L["Who's targetting who?"] = true;
+L["When in a raid group display if anyone in your raid is targeting the current tooltip unit."] = true;
+L["Who's targeting who?"] = true;
 
 --Tutorials
 L['A raid marker feature is available by pressing Escape -> Keybinds scroll to the bottom under ElvUI and setting a keybind for the raid marker.'] = true;
@@ -727,7 +754,7 @@ L['For technical support visit us at http://www.tukui.org.'] = true;
 L['If you accidently remove a chat frame you can always go the in-game configuration menu, press install, go to the chat portion and reset them.'] = true
 L['If you are experiencing issues with ElvUI try disabling all your addons except ElvUI, remember ElvUI is a full UI replacement addon, you cannot run two addons that do the same thing.'] = true;
 L['The buff panel to the right of minimap is a list of your consolidated buffs. You can disable it in Buffs and Debuffs options of ElvUI.'] = true;
-L['The focus unit can be set by typing /focus when you are targetting the unit you want to focus. It is recommended you make a macro to do this.'] = true;
+L['The focus unit can be set by typing /focus when you are targeting the unit you want to focus. It is recommended you make a macro to do this.'] = true;
 L['To move abilities on the actionbars by default hold shift + drag. You can change the modifier key from the actionbar options menu.'] = true;
 L['To setup which channels appear in which chat frame, right click the chat tab and go to settings.'] = true;
 L['Using the /farmmode <size> command will spawn a larger minimap on your screen that can be moved around, very useful when farming.'] = true;
@@ -741,6 +768,63 @@ L['You can use the /resetui command to reset all of your movers. You can also us
 L['ABOVE_THREAT_FORMAT'] = '%s: %.0f%% [%.0f%% above |cff%02x%02x%02x%s|r]'
 
 --UnitFrames
+L['Start from Center'] = true;
+L['The initial group will start near the center and grow out. Corrosponding groups will behave normally.'] = true;
+L['Display Target'] = true;
+L['Display the target of your current cast. Useful for mouseover casts.'] = true;
+L['Up'] = true;
+L['Down'] = true;
+L['Growth direction from the first unitframe.'] = true;
+L['%s and then %s'] = true;
+L['Horizontal Spacing'] = true;
+L['Vertical Spacing'] = true;
+L['Group Size'] = true;
+L['Number of units in a group.'] = true;
+L['Number of Groups'] = true;
+L['Coloring (Specific)'] = true;
+L['Coloring'] = true;
+L['Configure Auras'] = true;
+L['Text xOffset'] = true
+L['Text yOffset'] = true
+L['Text Position'] = true
+L['Offset position for text.'] = true;
+L['Inset'] = true;
+L["Target On Mouse-Down"] = true;
+L["Target units on mouse down rather than mouse up. \n\n|cffFF0000Warning: If you are using the addon 'Clique' you may have to adjust your clique settings when changing this."] = true;
+L['Turtle Color'] = true;
+L['Color Turtle Buffs'] = true;
+L["Color all buffs that reduce the unit's incoming damage."] = true;
+L['Class Castbars'] = true;
+L['Color castbars by the class or reaction type of the unit.'] = true;
+L['Middle Click - Set Focus'] = true;
+L['Middle clicking the unit frame will cause your focus to match the unit.'] = true;
+L["Count Font Size"] = true;
+L['Time Remaining'] = true;
+L['Time Remaining Reverse'] = true;
+L['Duration'] = true;
+L['Duration Reverse'] = true;
+L['Glow'] = true;
+L['Borders'] = true;
+L['Health Border'] = true;
+L['Icon: TOPLEFT'] = true;
+L['Icon: TOPRIGHT'] = true;
+L['Icon: BOTTOMLEFT'] = true;
+L['Icon: BOTTOMRIGHT'] = true;
+L['Icon: LEFT'] = true;
+L['Icon: RIGHT'] = true;
+L['Icon: TOP'] = true;
+L['Icon: BOTTOM'] = true;
+L["Range Check"] = true
+L["Check if you are in range to cast spells on this specific unit."] = true;
+L['Transparent'] = true;
+L['Make textures transparent.'] = true;
+L['Stagger Bar'] = true;
+L['Text Color'] = true;
+L['Only show when the unit is not in range.'] = true;
+L['Mouseover'] = true;
+L['Only show when you are mousing over a frame.'] = true;
+L['Ascending'] = true;
+L['Descending'] = true;
 L["Don't display auras that are not yours."] = true;
 L["Don't display any auras found on the 'Blacklist' filter."] = true;
 L["If no other filter options are being used then it will block anything not on the 'Whitelist' filter, otherwise it will simply add auras on the whitelist in addition to any other filter settings."] = true;
@@ -748,8 +832,9 @@ L["Don't display auras that have no duration."] = true;
 L["Don't display auras that cannot be purged or dispelled by your class."] = true;
 L["Don't display raid buffs such as Blessing of Kings or Mark of the Wild."] = true;
 L['Select an additional filter to use. If the selected filter is a whitelist and no other filters are being used (with the exception of Block Non-Personal Auras) then it will block anything not on the whitelist, otherwise it will simply add auras on the whitelist in addition to any other filter settings.'] = true;
-
-
+L['Display Text'] = true;
+L['Text Threshold'] = true;
+L['At what point should the text be displayed. Set to -1 to disable.'] = true;
 L["If the unit is friendly to you."] = true;
 L["If the unit is an enemy to you."] = true;
 
@@ -762,8 +847,6 @@ L["Add Spell"] = true;
 L["Add SpellID"] = true;
 L["Additional Filter"] = true;
 L["Affliction"] = true;
-L["An X offset (in pixels) to be used when anchoring new frames."] = true;
-L["An Y offset (in pixels) to be used when anchoring new frames."] = true;
 L['Arcane Charges'] = true;
 L["Arena Frames"] = true;
 L["Assist Frames"] = true;
@@ -803,7 +886,6 @@ L["Color the health backdrop by class or reaction."] = true;
 L["Color the unit healthbar if there is a debuff that can be dispelled by you."] = true;
 L["Color"] = true;
 L['Colored Icon'] = true;
-L["Column Point"] = true;
 L["Combat Fade"] = true;
 L["Combobar"] = true;
 L["Copy From"] = true;
@@ -834,9 +916,7 @@ L["Display a spark texture at the end of the castbar statusbar to help show the 
 L['Display Frames'] = true;
 L['Display icon on arena frame indicating the units talent specialization or the units faction if inside a battleground.'] = true;
 L["Display Player"] = true;
-L["Display Target"] = true;
 L["Display the rested icon on the unitframe."] = true;
-L["Display the target of the cast on the castbar."] = true;
 L["Display tick marks on the castbar for channelled spells. This will adjust automatically for spells like Drain Soul and add additional ticks based on haste."] = true;
 L["Down"] = true;
 L['Enemy Aura Type'] = true;
@@ -858,7 +938,6 @@ L['Frost'] = true;
 L["Ghost"] = true;
 L["Good"] = true;
 L["Group By"] = true;
-L["Group Point"] = true;
 L['Growth Direction'] = true;
 L['Harmony'] = true;
 L["Heal Prediction"] = true;
@@ -880,8 +959,6 @@ L["Low Mana Threshold"] = true;
 L['Lunar'] = true;
 L["Main statusbar texture."] = true;
 L["Match Frame Width"] = true;
-L["Max Columns"] = true;
-L["MT, MA First"] = true;
 L["Name"] = true; --Also used in Buffs and Debuffs
 L["Neutral"] = true;
 L['Non-Interruptable'] = true;
@@ -943,9 +1020,6 @@ L['Shadow Orbs'] = true;
 L["Show a incomming heal prediction bar on the unitframe. Also display a slightly different colored bar for incoming overheals."] = true;
 L["Show Aura From Other Players"] = true;
 L['Show Auras'] = true;
-L["Show Party"] = true;
-L["Show Raid"] = true;
-L["Show Solo"] = true;
 L["Show When Not Active"] = true;
 L["Size of the indicator icon."] = true;
 L['Size Override'] = true;
@@ -971,11 +1045,8 @@ L["Text Toggle On NPC"] = true;
 L['Text'] = true;
 L['Textured Icon'] = true;
 L["The alpha to set units that are out of range to."] = true;
-L["The anchor point for each new column. A value of LEFT will cause the columns to grow to the right."] = true;
 L["The following macro must be true in order for the group to be shown, in addition to any filter that may already be set."] = true;
 L["The font that the unitframes will use."] = true;
-L["The maximum number of columns that the header will create."] = true;
-L["The maximum number of units that will be displayed in a single column."] = true;
 L['The name you have selected is already in use by another element.'] = true;
 L['The object you want to attach to.'] = true;
 L['The point of which you are anchoring to in relation to the attach to object.'] = true;
@@ -985,21 +1056,16 @@ L["Ticks"] = true;
 L["Toggles health text display"] = true;
 L['Unholy'] = true;
 L["UnitFrames"] = true;
-L["Units Per Column"] = true;
 L["Up"] = true;
 L["Use the custom health backdrop color instead of a multiple of the main health color."] = true;
 L["Value must be a number"] = true;
 L["Vertical"] = true; --Also used in bags section
 L["Visibility"] = true;
-L["What each frame should attach itself to, example setting it to TOP every unit will attach its top to the last point bottom."] = true;
 L["What point to anchor to the frame you set to attach to."] = true;
 L["What to attach the buff anchor frame to."] = true;
 L["What to attach the debuff anchor frame to."] = true;
 L['When set the Buffs and Debuffs will toggle being displayed depending on if the unit is friendly or an enemy. This will not effect the aurabars module.'] = true;
-L["When true, the group header is shown when the player is in a party."] = true;
-L["When true, the group header is shown when the player is in a raid."] = true;
 L["When true, the header includes the player when not in a raid."] = true;
-L["When true, the header is shown when the player is not in any group."] = true;
 L["When you mana falls below this point, text will flash on the player frame."] = true;
 L["Whitelist"] = true;
 L["Width"] = true; --Also used in NamePlates module
@@ -1007,7 +1073,6 @@ L["xOffset"] = true;
 L["yOffset"] = true;
 L["You can't remove a pre-existing filter."] = true;
 L["You cannot copy settings from the same unit."] = true;
-L["You cannot set the Group Point and Column Point so they are opposite of each other."] = true;
 L["You may not remove a spell from a default filter that is not customly added. Setting spell to false instead."] = true;
 L['TEXT_FORMAT_DESC'] = [=[Provide a string to change the text format.
 

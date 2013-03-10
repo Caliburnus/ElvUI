@@ -3,12 +3,17 @@ local Sticky = LibStub("LibSimpleSticky-1.0")
 
 local format = string.format
 local split = string.split
-
+local min = math.min
 E.CreatedMovers = {}
 
 local function SizeChanged(frame)
 	if InCombatLockdown() then return; end
-	frame.mover:Size(frame:GetSize())
+
+	if frame.dirtyWidth and frame.dirtyHeight then
+		frame.mover:Size(frame.dirtyWidth, frame.dirtyHeight)
+	else
+		frame.mover:Size(frame:GetSize())
+	end
 end
 
 local function GetPoint(obj)
@@ -168,11 +173,21 @@ local function CreateMover(parent, name, text, overlay, snapOffset, postdrag)
 		else
 			x = x - screenCenter
 		end
-
+		
+		if self.positionOverride then
+			self.parent:ClearAllPoints()
+			self.parent:Point(self.positionOverride, self, self.positionOverride)
+		end
+		
 		self:ClearAllPoints()
 		self:Point(point, E.UIParent, point, x, y)
+		
 		E:SaveMoverPosition(name)
-		E:UpdateNudgeFrame(self)
+
+		if ElvUIMoverNudgeWindow then
+			E:UpdateNudgeFrame(self)
+		end
+		
 		coordFrame.child = nil
 		coordFrame:Hide()		
 			
@@ -206,6 +221,18 @@ local function CreateMover(parent, name, text, overlay, snapOffset, postdrag)
 		coordFrame.child = self
 		coordFrame:GetScript('OnUpdate')(coordFrame)
 	end)
+	
+	f:SetScript("OnMouseDown", function(self, button)
+		if button == "RightButton" then
+			isDragging = false;
+			if E.db['general'].stickyFrames then
+				Sticky:StopMoving(self)
+			else
+				self:StopMovingOrSizing()
+			end
+		end
+	end)
+	
 	f:SetScript("OnLeave", function(self)
 		if isDragging then return end
 		self.text:SetTextColor(unpack(E["media"].rgbvaluecolor))
@@ -226,6 +253,12 @@ local function CreateMover(parent, name, text, overlay, snapOffset, postdrag)
 	end	
 	
 	E.CreatedMovers[name].Created = true;
+end
+
+function E:UpdatePositionOverride(name)
+	if _G[name] and _G[name]:GetScript("OnDragStop") then
+		_G[name]:GetScript("OnDragStop")(_G[name])
+	end
 end
 
 function E:HasMoverBeenMoved(name)

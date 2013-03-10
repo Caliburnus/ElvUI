@@ -6,7 +6,6 @@ local ElvUF = ns.oUF
 assert(ElvUF, "ElvUI was unable to locate oUF.")
 local tinsert = table.insert
 function UF:Construct_TankFrames(unitGroup)
-	self:RegisterForClicks("AnyUp")
 	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)	
 	
@@ -14,13 +13,9 @@ function UF:Construct_TankFrames(unitGroup)
 
 	self.Health = UF:Construct_HealthBar(self, true)
 	self.Name = UF:Construct_NameText(self)
-
-	tinsert(self.__elements, UF.UpdateThreat)
-	self:RegisterEvent('PLAYER_TARGET_CHANGED', UF.UpdateThreat)
-	self:RegisterEvent('UNIT_THREAT_LIST_UPDATE', UF.UpdateThreat)
-	self:RegisterEvent('UNIT_THREAT_SITUATION_UPDATE', UF.UpdateThreat)		
-	
+	self.Threat = UF:Construct_Threat(self)
 	self.RaidIcon = UF:Construct_RaidIcon(self)
+	self.Range = UF:Construct_Range(self)
 	
 	UF:Update_TankFrames(self, E.db['unitframe']['units']['tank'])
 	UF:Update_StatusBars()
@@ -33,38 +28,30 @@ end
 
 function UF:Update_TankHeader(header, db)
 	header:Hide()
-	header:SetAttribute('oUF-initialConfigFunction', ([[self:SetWidth(%d); self:SetHeight(%d); self:SetFrameLevel(5)]]):format(db.width, db.height))
 	header.db = db
 	
 	UF:ClearChildPoints(header:GetChildren())
 	
-	if not header.mover then
-		self:ChangeVisibility(header, 'custom show') --fucking retarded bug fix
-	end
+	header:SetAttribute("startingIndex", -1)
+	RegisterAttributeDriver(header, 'state-visibility', 'show')	
+	header.dirtyWidth, header.dirtyHeight = header:GetSize()	
+	RegisterAttributeDriver(header, 'state-visibility', '[@raid1,exists] show;hide')
+	header:SetAttribute("startingIndex", 1)
 	
-	self:ChangeVisibility(header, 'raid')
-
-	header:SetAttribute("showRaid", true)
-	header:SetAttribute('groupFilter', 'MAINTANK')
 	header:SetAttribute('point', 'BOTTOM')
+	header:SetAttribute('columnAnchorPoint', 'LEFT')
 	
-	header:SetAttribute('columnAnchorPoint', 'TOP')
-
 	UF:ClearChildPoints(header:GetChildren())
 	header:SetAttribute("yOffset", 7)
 
-	header:SetAttribute('columnAnchorPoint', 'TOP')
-	header:SetAttribute('point', 'BOTTOM')
-
 	if not header.positioned then
 		header:ClearAllPoints()
-		header:Point("LEFT", E.UIParent, "LEFT", 6, 250)
-		
-		E:CreateMover(header, header:GetName()..'Mover', L['MT Frames'], nil, nil, nil, 'ALL,RAID10,RAID25,RAID40')
+		header:Point("TOPLEFT", E.UIParent, "TOPLEFT", 4, -240)
 
+		E:CreateMover(header, header:GetName()..'Mover', L['MT Frames'], nil, nil, nil, 'ALL,RAID10,RAID25,RAID40')
+		header.mover.positionOverride = "TOPLEFT"
 		header:SetAttribute('minHeight', header.dirtyHeight)
 		header:SetAttribute('minWidth', header.dirtyWidth)
-
 		header.positioned = true;
 	end
 end
@@ -72,10 +59,10 @@ end
 function UF:Update_TankFrames(frame, db)
 	local BORDER = E.Border;
 	local SPACING = E.Spacing;
-	
+	local SHADOW_SPACING = E.PixelMode and 3 or 4
 	frame.colors = ElvUF.colors
-	frame.Range = {insideAlpha = 1, outsideAlpha = E.db.unitframe.OORAlpha}
-
+	frame.Range.outsideAlpha = E.db.unitframe.OORAlpha
+	frame:RegisterForClicks(self.db.targetOnMouseDown and 'AnyDown' or 'AnyUp')
 	if frame.isChild and frame.originalParent then
 		local childDB = db.targetsGroup
 		frame.db = db.targetsGroup
@@ -137,6 +124,54 @@ function UF:Update_TankFrames(frame, db)
 		end
 	end	
 	
+	--Threat
+	do
+		local threat = frame.Threat
+
+		if db.threatStyle ~= 'NONE' and db.threatStyle ~= nil then
+			if not frame:IsElementEnabled('Threat') then
+				frame:EnableElement('Threat')
+			end
+
+			if db.threatStyle == "GLOW" then
+				threat:SetFrameStrata('BACKGROUND')
+				threat.glow:ClearAllPoints()
+				threat.glow:SetBackdropBorderColor(0, 0, 0, 0)
+				threat.glow:Point("TOPLEFT", frame.Health.backdrop, "TOPLEFT", -SHADOW_SPACING, SHADOW_SPACING)
+				threat.glow:Point("TOPRIGHT", frame.Health.backdrop, "TOPRIGHT", SHADOW_SPACING, SHADOW_SPACING)
+				threat.glow:Point("BOTTOMLEFT", frame.Health.backdrop, "BOTTOMLEFT", -SHADOW_SPACING, -SHADOW_SPACING)
+				threat.glow:Point("BOTTOMRIGHT", frame.Health.backdrop, "BOTTOMRIGHT", SHADOW_SPACING, -SHADOW_SPACING)	
+			elseif db.threatStyle == "ICONTOPLEFT" or db.threatStyle == "ICONTOPRIGHT" or db.threatStyle == "ICONBOTTOMLEFT" or db.threatStyle == "ICONBOTTOMRIGHT" or db.threatStyle == "ICONTOP" or db.threatStyle == "ICONBOTTOM" or db.threatStyle == "ICONLEFT" or db.threatStyle == "ICONRIGHT" then
+				threat:SetFrameStrata('HIGH')
+				local point = db.threatStyle
+				point = point:gsub("ICON", "")
+				
+				threat.texIcon:ClearAllPoints()
+				threat.texIcon:SetPoint(point, frame.Health, point)
+			end
+		elseif frame:IsElementEnabled('Threat') then
+			frame:DisableElement('Threat')
+		end
+	end	
+	
+	--Range
+	do
+		local range = frame.Range
+		if db.rangeCheck then
+			if not frame:IsElementEnabled('Range') then
+				frame:EnableElement('Range')
+			end
+
+			range.outsideAlpha = E.db.unitframe.OORAlpha
+		else
+			if frame:IsElementEnabled('Range') then
+				frame:DisableElement('Range')
+			end				
+		end
+	end	
+	
+	UF:ToggleTransparentStatusBar(UF.db.colors.transparentHealth, frame.Health, frame.Health.bg)
+
 	frame:UpdateAllElements()
 end
 
