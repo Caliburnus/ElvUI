@@ -1,4 +1,4 @@
-local E, L, V, P, G, _ = unpack(ElvUI); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
+local E, L, V, P, G = unpack(ElvUI); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local UF = E:GetModule('UnitFrames');
 local _, ns = ...
 local ElvUF = ns.oUF
@@ -1036,18 +1036,24 @@ local function GetOptionsTable_Portrait(updateFunc, groupName, numUnits)
 				desc = L['Overlay the healthbar'],
 				order = 3,
 			},
+			rotation = {
+				type = 'range',
+				name = L['Model Rotation'],
+				order = 4,
+				min = 0, max = 360, step = 1,
+			},
 			camDistanceScale = {
 				type = 'range',
 				name = L['Camera Distance Scale'],
 				desc = L['How far away the portrait is from the camera.'],
-				order = 4,
+				order = 5,
 				min = 0.01, max = 4, step = 0.01,
 			},
 			style = {
 				type = 'select',
 				name = L['Style'],
 				desc = L['Select the display method of the portrait.'],
-				order = 5,
+				order = 6,
 				values = {
 					['2D'] = L['2D'],
 					['3D'] = L['3D'],
@@ -1749,7 +1755,40 @@ E.Options.args.unitframe = {
 									end,	
 								},								
 							},
-						},							
+						},
+						healPrediction = {
+							order = 10,
+							name = L['Heal Prediction'],
+							type = 'group',
+							get = function(info)
+								local t = E.db.unitframe.colors.healPrediction[ info[#info] ]
+								return t.r, t.g, t.b, t.a
+							end,
+							set = function(info, r, g, b, a)
+								local t = E.db.unitframe.colors.healPrediction[ info[#info] ]
+								t.r, t.g, t.b, t.a = r, g, b, a
+								UF:Update_AllFrames()
+							end,	
+							args = {
+								personal = {
+									order = 1,
+									name = L["Personal"],
+									type = 'color',
+									hasAlpha = true,
+								},
+								others = {
+									order = 2,
+									name = L["Others"],
+									type = 'color',
+									hasAlpha = true,								},
+								absorbs = {
+									order = 2,
+									name = L["Absorbs"],
+									type = 'color',
+									hasAlpha = true,	
+								}
+							},
+						},
 					},
 				},
 			},

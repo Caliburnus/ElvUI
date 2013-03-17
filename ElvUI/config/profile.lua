@@ -1,4 +1,4 @@
-﻿local E, L, V, P, G, _ = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
+﻿local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 
 P.gridSize = 64
 P.farmSize = 340
@@ -277,6 +277,11 @@ P['unitframe'] = {
 			['NEUTRAL'] = { r = 218/255, g = 197/255, b = 92/255 },
 			['GOOD'] = { r = 75/255, g = 175/255, b = 76/255 },
 		},
+		['healPrediction'] = {
+			['personal'] = {r = 0, g = 1, b = 0.5, a = 0.25},
+			['others'] = {r = 0, g = 1, b = 0, a = 0.25},
+			['absorbs'] = {r = 1, g = 1, b = 0, a = 0.25}
+		},
 		['classResources'] = {
 			['DEATHKNIGHT'] = {
 				[1] = {r = 1, g = 0, b = 0},
@@ -350,6 +355,7 @@ P['unitframe'] = {
 				['width'] = 45,
 				['overlay'] = false,
 				['camDistanceScale'] = 1,
+				['rotation'] = 0,
 				['style'] = '3D'
 			},
 			['buffs'] = {
@@ -467,6 +473,7 @@ P['unitframe'] = {
 				['enable'] = false,
 				['width'] = 45,
 				['overlay'] = false,
+				['rotation'] = 0,
 				['camDistanceScale'] = 1,
 				['style'] = '3D'
 			},
@@ -945,6 +952,7 @@ P['unitframe'] = {
 				['enable'] = false,
 				['width'] = 35,
 				['overlay'] = false,
+				['rotation'] = 0,
 				['camDistanceScale'] = 1,
 				['style'] = '3D'
 			},
