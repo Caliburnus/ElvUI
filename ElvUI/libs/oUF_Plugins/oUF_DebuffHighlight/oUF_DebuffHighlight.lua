@@ -10,7 +10,7 @@ local CanDispel = {
 	SHAMAN = { Magic = false, Curse = true },
 	PALADIN = { Magic = false, Poison = true, Disease = true },
 	MAGE = { Curse = true },
-	DRUID = { Magic = false, Curse = true, Poison = true },
+	DRUID = { Magic = false, Curse = true, Poison = true, Disease = false },
 	MONK = { Magic = false, Poison = true, Disease = true }
 }
 
@@ -22,6 +22,8 @@ local blackList = {
 	[GetSpellInfo(136180)] = true, --Keen Eyesight
 }
 
+local SymbiosisName = GetSpellInfo(110309)
+local CleanseName = GetSpellInfo(4987)
 local dispellist = CanDispel[playerClass] or {}
 local origColors = {}
 local origBorderColors = {}
@@ -78,9 +80,18 @@ local function CheckSpec(self, event, levels)
 		end		
 	end
 end
+
+local function CheckSymbiosis()
+	if GetSpellInfo(SymbiosisName) == CleanseName then
+		dispellist.Disease = true
+	else
+		dispellist.Disease = false
+	end
+end
  
 local function Update(object, event, unit)
 	if unit ~= object.unit then return; end
+
 	local debuffType, texture  = GetDebuffType(unit, object.DebuffHighlightFilter)
 	if debuffType then
 		local color = DebuffTypeColor[debuffType]
@@ -121,6 +132,10 @@ local function Enable(object)
 	object:RegisterEvent("PLAYER_TALENT_UPDATE", CheckSpec)
 	object:RegisterEvent("CHARACTER_POINTS_CHANGED", CheckSpec)
 	object:RegisterUnitEvent("UNIT_AURA", object.unit)
+	if playerClass == "DRUID" then
+		object:RegisterEvent("SPELLS_CHANGED", CheckSymbiosis)
+	end
+
 	if object.DebuffHighlightBackdrop then
 		local r, g, b, a = object:GetBackdropColor()
 		origColors[object] = { r = r, g = g, b = b, a = a}
@@ -138,7 +153,10 @@ local function Disable(object)
 	object:UnregisterEvent("UNIT_AURA", Update)
 	object:UnregisterEvent("PLAYER_TALENT_UPDATE", CheckSpec)
 	object:UnregisterEvent("CHARACTER_POINTS_CHANGED", CheckSpec)
-	
+	if playerClass == "DRUID" then
+		object:UnregisterEvent("SPELLS_CHANGED", CheckSymbiosis)
+	end
+
 	if object.DebuffHighlightBackdrop then
 		local color = origColors[object]
 		if color then

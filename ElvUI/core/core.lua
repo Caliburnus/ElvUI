@@ -67,7 +67,8 @@ E.DispelClasses = {
 	['DRUID'] = {
 		['Magic'] = false,
 		['Curse'] = true,
-		['Poison'] = true
+		['Poison'] = true,
+		['Disease'] = false,
 	},
 	['MONK'] = {
 		['Magic'] = false,
@@ -321,6 +322,16 @@ function E:IsDispellableByMe(debuffType)
 
 	if self.DispelClasses[self.myclass][debuffType] then
 		return true;
+	end
+end
+
+local SymbiosisName = GetSpellInfo(110309)
+local CleanseName = GetSpellInfo(4987)
+function E:SPELLS_CHANGED()
+	if GetSpellInfo(SymbiosisName) == CleanseName then
+		self.DispelClasses["DRUID"].Disease = true
+	else
+		self.DispelClasses["DRUID"].Disease = false
 	end
 end
 
@@ -777,6 +788,10 @@ function E:Initialize()
 	self:RegisterEvent('PLAYER_ENTERING_WORLD')
 	self:RegisterEvent("PET_BATTLE_CLOSE", 'AddNonPetBattleFrames')
 	self:RegisterEvent('PET_BATTLE_OPENING_START', "RemoveNonPetBattleFrames")
+
+	if self.myclass == "DRUID" then
+		self:RegisterEvent("SPELLS_CHANGED")
+	end
 
 	self:Tutorials()
 	self:GetModule('Minimap'):UpdateSettings()
