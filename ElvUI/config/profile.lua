@@ -569,6 +569,8 @@ P['unitframe'] = {
 				['offset'] = 0,
 				['position'] = 'LEFT',
 				['hideonnpc'] = false,
+				['xOffset'] = 0,
+				['yOffset'] = 0,
 			},
 			['name'] = {
 				['position'] = 'CENTER',
