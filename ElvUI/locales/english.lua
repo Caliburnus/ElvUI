@@ -201,7 +201,6 @@ L["AFK"] = true; --Also used in datatexts and tooltip
 L["Attempt to create URL links inside the chat."] = true;
 L['Attempt to lock the left and right chat frame positions. Disabling this option will allow you to move the main chat frame anywhere you wish.'] = true;
 L['Below Chat'] = true;
-L["BN:"] = true;
 L['Chat EditBox Position'] = true;
 L['Chat History'] = true;
 L["Chat"] = true;
@@ -452,6 +451,8 @@ L["No locals to dump"] = true;
 L['|cFFE30000Lua error recieved. You can view the error message when you exit combat.'] = true;
 
 --General
+L["Hide Error Text"] = true;
+L["Hides the red error text at the top of the screen while in combat."] = true;
 L['Skin Backdrop'] = true;
 L['Remove Backdrop'] = true;
 
@@ -706,6 +707,7 @@ L['Void Storage'] = true;
 L["World Map"] = true;
 
 --Static Popups
+L["Are you sure you want to reset all the settings on this profile?"] = true;
 L['Oh lord, you have got ElvUI and Tukui both enabled at the same time. Select an addon to disable.'] = true;
 L["A setting you have changed will change an option for this character only. This setting that you have changed will be uneffected by changing user profiles. Changing this setting requires that you reload your User Interface."] = true;
 L["Are you sure you want to delete all your gray items?"] = true;
@@ -776,11 +778,15 @@ L['You can use the /resetui command to reset all of your movers. You can also us
 L['ABOVE_THREAT_FORMAT'] = '%s: %.0f%% [%.0f%% above |cff%02x%02x%02x%s|r]'
 
 --UnitFrames
+L['Main Tanks / Main Assist'] = true;
+L['Name (Entire Group)'] = true;
+L['Invert Grouping Order'] = true;
+L['Reverses the grouping order. For example if your group is to grow right than up by default the first group is always at the bottom. With this option set then the first group will start at the bottom but as the number of groups grow it will always be near the top.'] = true;
 L["Personal"] = true;
 L["Others"] = true;
 L["Absorbs"] = true;
 L['Model Rotation'] = true;
-L['Start from Center'] = true;
+L['Start near Center'] = true;
 L['The initial group will start near the center and grow out. Corrosponding groups will behave normally.'] = true;
 L['Display Target'] = true;
 L['Display the target of your current cast. Useful for mouseover casts.'] = true;

@@ -14,9 +14,17 @@ local function createConfigEnv()
 	if( configEnv ) then return end
 	configEnv = setmetatable({
 		UnitPower = function (unit, displayType)
-			return random(1, UnitPowerMax(unit, displayType))
+			if unit:find('target') or unit:find('focus') then
+				return UnitPower(unit, displayType)
+			end
+
+			return random(1, UnitPowerMax(unit, displayType) or 1)
 		end,
 		UnitHealth = function(unit)
+			if unit:find('target') or unit:find('focus') then
+				return UnitHealth(unit)
+			end
+
 			return random(1, UnitHealthMax(unit))
 		end,
 		UnitName = function(unit)
@@ -50,6 +58,7 @@ local function createConfigEnv()
 	})
 	
 	overrideFuncs['namecolor'] = ElvUF.Tags.Methods['namecolor']
+	overrideFuncs['name:veryshort'] = ElvUF.Tags.Methods['name:veryshort']
 	overrideFuncs['name:short'] = ElvUF.Tags.Methods['name:short']
 	overrideFuncs['name:medium'] = ElvUF.Tags.Methods['name:medium']
 	overrideFuncs['name:long'] = ElvUF.Tags.Methods['name:long']
@@ -79,7 +88,10 @@ function UF:ForceShow(frame)
 		frame.oldUnit = frame.unit
 		frame.unit = 'player'
 		frame.isForced = true;
+		frame.oldOnUpdate = frame:GetScript("OnUpdate")
 	end
+
+	frame:SetScript("OnUpdate", nil)
 	frame.forceShowAuras = true
 	UnregisterUnitWatch(frame)
 	RegisterUnitWatch(frame, true)	
@@ -101,6 +113,11 @@ function UF:UnforceShow(frame)
 	-- Ask the SecureStateDriver to show/hide the frame for us
 	UnregisterUnitWatch(frame)
 	RegisterUnitWatch(frame)
+
+	if frame.oldOnUpdate then
+		frame:SetScript("OnUpdate", frame.oldOnUpdate)
+		frame.oldOnUpdate = nil
+	end
 	
 	frame.unit = frame.oldUnit or frame.unit
 	-- If we're visible force an update so everything is properly in a

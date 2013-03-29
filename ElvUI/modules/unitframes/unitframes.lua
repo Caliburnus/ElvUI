@@ -54,18 +54,32 @@ UF['headerGroupBy'] = {
 	['CLASS'] = function(header)
 		header:SetAttribute("groupingOrder", "DEATHKNIGHT,DRUID,HUNTER,MAGE,PALADIN,PRIEST,SHAMAN,WARLOCK,WARRIOR")
 		header:SetAttribute('sortMethod', 'NAME')
+		header:SetAttribute("groupBy", 'CLASS')
+	end,
+	['MTMA'] = function(header)
+		header:SetAttribute("groupingOrder", "MAINTANK,MAINASSIST,NONE")
+		header:SetAttribute('sortMethod', 'NAME')
+		header:SetAttribute("groupBy", 'ROLE')
 	end,
 	['ROLE'] = function(header)
 		header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
-		header:SetAttribute('sortMethod', 'NAME')	
+		header:SetAttribute('sortMethod', 'NAME')
+		header:SetAttribute("groupBy", 'ASSIGNEDROLE')
 	end,
 	['NAME'] = function(header)
 		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
-		header:SetAttribute('sortMethod', 'NAME')	
+		header:SetAttribute('sortMethod', 'NAME')
+		header:SetAttribute("groupBy", 'GROUP')
 	end,
+	['NAME_ENTIRE_GROUP'] = function(header)
+		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
+		header:SetAttribute('sortMethod', 'NAME')
+		header:SetAttribute("groupBy", nil)
+	end, 
 	['GROUP'] = function(header)
 		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
 		header:SetAttribute('sortMethod', 'INDEX')
+		header:SetAttribute("groupBy", 'GROUP')
 	end,
 }
 
@@ -95,6 +109,7 @@ local DIRECTION_TO_POINT = {
 	LEFT_UP = "RIGHT"
 }
 
+
 local DIRECTION_TO_GROUP_ANCHOR_POINT = {
 	OUT_RIGHT_UP = "BOTTOM",
 	OUT_LEFT_UP = "BOTTOM",
@@ -123,6 +138,17 @@ local DIRECTION_TO_COLUMN_ANCHOR_POINT = {
 	RIGHT_UP = "BOTTOM",
 	LEFT_DOWN = "TOP",
 	LEFT_UP = "BOTTOM"
+}
+
+local INVERTED_DIRECTION_TO_COLUMN_ANCHOR_POINT = {
+	DOWN_RIGHT = "RIGHT",
+	DOWN_LEFT = "LEFT",
+	UP_RIGHT = "RIGHT",
+	UP_LEFT = "LEFT",
+	RIGHT_DOWN = "BOTTOM",
+	RIGHT_UP = "TOP",
+	LEFT_DOWN = "BOTTOM",
+	LEFT_UP = "TOP"	
 }
 
 local DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER = {
@@ -208,7 +234,7 @@ function UF:SetupGroupAnchorPoints(group)
 		group:SetAttribute("columnSpacing", db.horizontalSpacing)
 	end
 	
-	group:SetAttribute("columnAnchorPoint", DIRECTION_TO_COLUMN_ANCHOR_POINT[direction])
+	group:SetAttribute("columnAnchorPoint", db.invertGroupingOrder and INVERTED_DIRECTION_TO_COLUMN_ANCHOR_POINT[direction] or DIRECTION_TO_COLUMN_ANCHOR_POINT[direction])
 	UF:ClearChildPoints(group:GetChildren())
 	group:SetAttribute("point", point)	
 	group:SetAttribute("maxColumns", db.numGroups)
@@ -751,7 +777,6 @@ end
 
 function UF:PLAYER_ENTERING_WORLD(event)
 	self:Update_AllFrames()
-	self:UpdatePrep(event)
 end
 
 function UF:UnitFrameThreatIndicator_Initialize(_, unitFrame)
@@ -799,8 +824,6 @@ function UF:Initialize()
 	
 	self:LoadUnits()
 	self:RegisterEvent('PLAYER_ENTERING_WORLD')
-	self:RegisterEvent('ARENA_PREP_OPPONENT_SPECIALIZATIONS', 'UpdatePrep')
-	self:RegisterEvent('ARENA_OPPONENT_UPDATE', 'UpdatePrep')
 
 	if E.private["unitframe"].disableBlizzard then
 		self:DisableBlizzard()	

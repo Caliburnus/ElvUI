@@ -167,6 +167,7 @@ function CH:InsertEmotions(msg)
 end
 
 function CH:GetSmileyReplacementText(msg)
+	if not msg then return end
 	if not self.db.emotionIcons or msg:find('/run') or msg:find('/dump') or msg:find('/script') then return msg end
 	local outstr = "";
 	local origlen = len(msg);
@@ -341,15 +342,16 @@ function CH:StyleChat(frame)
 end
 
 function CH:GetLines(...)
-	local ct = 1
+	local index = 1
 	for i = select("#", ...), 1, -1 do
 		local region = select(i, ...)
 		if region:GetObjectType() == "FontString" then
-			lines[ct] = tostring(region:GetText())
-			ct = ct + 1
+			local line = tostring(region:GetText())
+			lines[index] = gsub(line, "(|TInterface(.*)|t)", "")
+			index = index + 1
 		end
 	end
-	return ct - 1
+	return index - 1
 end
 
 function CH:CopyChat(frame)
@@ -682,6 +684,20 @@ function CH:ConcatenateTimeStamp(msg)
 	return msg
 end
 
+
+
+local function GetBNFriendColor(name, id)
+	local _, _, game, _, _, _, _, class = BNGetToonInfo(id)
+	if game ~= BNET_CLIENT_WOW or not class then
+		return name
+	else
+		for k,v in pairs(LOCALIZED_CLASS_NAMES_MALE) do if class == v then class = k end end
+		for k,v in pairs(LOCALIZED_CLASS_NAMES_FEMALE) do if class == v then class = k end end
+
+		return "|c"..RAID_CLASS_COLORS[class].colorStr..name.."|r"
+	end
+end
+
 function CH:ChatFrame_MessageEventHandler(event, ...)
 	if ( strsub(event, 1, 8) == "CHAT_MSG" ) then
 		local arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14 = ...;
@@ -1000,6 +1016,7 @@ function CH:ChatFrame_MessageEventHandler(event, ...)
 			if ( type ~= "BN_WHISPER" and type ~= "BN_WHISPER_INFORM" and type ~= "BN_CONVERSATION" ) then
 				playerLink = "|Hplayer:"..arg2..":"..arg11..":"..chatGroup..(chatTarget and ":"..chatTarget or "").."|h";
 			else
+				coloredName = GetBNFriendColor(arg2, arg13)
 				playerLink = "|HBNplayer:"..arg2..":"..arg13..":"..arg11..":"..chatGroup..(chatTarget and ":"..chatTarget or "").."|h";
 			end
 
@@ -1036,7 +1053,7 @@ function CH:ChatFrame_MessageEventHandler(event, ...)
 			-- Add Channel
 			arg4 = gsub(arg4, "%s%-%s.*", "");
 			if( chatGroup  == "BN_CONVERSATION" ) then
-				body = format(CHAT_BN_CONVERSATION_GET_LINK, arg8, MAX_WOW_CHAT_CHANNELS + arg8)..body;
+				body = format(CHAT_BN_CONVERSATION_GET_LINK, MAX_WOW_CHAT_CHANNELS + arg8, MAX_WOW_CHAT_CHANNELS + arg8)..body;
 			elseif(channelLength > 0) then
 				body = "|Hchannel:channel:"..arg8.."|h["..arg4.."]|h "..body;
 			end
@@ -1051,7 +1068,7 @@ function CH:ChatFrame_MessageEventHandler(event, ...)
 				body = body:gsub("^(.-|h) "..L['yells'], "%1")
 				body = body:gsub("<"..AFK..">", "[|cffFF0000"..L['AFK'].."|r] ")
 				body = body:gsub("<"..DND..">", "[|cffE7E716"..L['DND'].."|r] ")
-				body = body:gsub("%[BN_CONVERSATION:", '%['..L["BN:"])
+				body = body:gsub("%[BN_CONVERSATION:", '%['.."")
 				body = body:gsub("^%["..RAID_WARNING.."%]", '['..L['RW']..']')
 			end
 			self:AddMessage(CH:ConcatenateTimeStamp(body), info.r, info.g, info.b, info.id, false, accessID, typeID);
@@ -1162,15 +1179,6 @@ function CH:SetupChat(event, ...)
 	end
 end
 
-local sizes = {
-	":14:14",
-	":15:15",
-	":16:16",
-	":13:22",
-	":14",
-	":16",
-}
-
 local function PrepareMessage(author, message)
 	return author:upper() .. message
 end
@@ -1276,35 +1284,32 @@ function CH:ThrottleSound()
 end
 
 function CH:CheckKeyword(message)
-	local replaceWords = {};
-
-	for i=1, #{string.split(' ', message)} do
-		local word = select(i, string.split(' ', message));
-		if not word:find('|') then
-			for keyword, _ in pairs(CH.Keywords) do
-				if word:lower() == keyword:lower() then
-					replaceWords[word] = E.media.hexvaluecolor..word..'|r'
-					if self.db.keywordSound ~= 'None' and not self.SoundPlayed  then
-						PlaySoundFile(LSM:Fetch("sound", self.db.keywordSound), "Master")
-						self.SoundPlayed = true
-						self.SoundTimer = CH:ScheduleTimer('ThrottleSound', 1)
-					end
+	local rebuiltString, lowerCaseWord
+	local isFirstWord = true
+	for word in message:gmatch("[^%s]+") do
+		lowerCaseWord = word:lower()
+		lowerCaseWord = lowerCaseWord:gsub("%p", "")
+		for keyword, _ in pairs(CH.Keywords) do
+			if lowerCaseWord == keyword:lower() then
+				local tempWord = word:gsub("%p", "")
+				word = word:gsub(tempWord, E.media.hexvaluecolor..tempWord..'|r')
+				if self.db.keywordSound ~= 'None' and not self.SoundPlayed  then
+					PlaySoundFile(LSM:Fetch("sound", self.db.keywordSound), "Master")
+					self.SoundPlayed = true
+					self.SoundTimer = CH:ScheduleTimer('ThrottleSound', 1)
 				end
 			end
 		end
-	end
 
-	for word, replaceWord in pairs(replaceWords) do
-		if message == word then
-			message = message:gsub(word, replaceWord)
-		elseif message:find(' '..word) then
-			message = message:gsub(' '..word, ' '..replaceWord)
-		elseif message:find(word..' ') then
-			message = message:gsub(word..' ', replaceWord..' ')
+		if isFirstWord then
+			rebuiltString = word
+			isFirstWord = false
+		else
+			rebuiltString = format("%s %s", rebuiltString, word)
 		end
 	end
 
-	return message
+	return rebuiltString
 end
 
 function CH:AddLines(lines, ...)
@@ -1492,19 +1497,48 @@ function CH:FCF_SetWindowAlpha(frame, alpha, doNotSave)
 	frame.oldAlpha = alpha or 1;
 end
 
-DEFAULT_CHAT_FRAME:UnregisterEvent("GUILD_MOTD")
+local stopScript = false
+hooksecurefunc(DEFAULT_CHAT_FRAME, "RegisterEvent", function(self, event)
+	if event == "GUILD_MOTD" and not stopScript then
+		self:UnregisterEvent("GUILD_MOTD")
+	end
+end)
+
+local cachedMsg = GetGuildRosterMOTD()
+if cachedMsg == "" then cachedMsg = nil end
+function CH:DelayGMOTD()
+	stopScript = true
+	DEFAULT_CHAT_FRAME:RegisterEvent("GUILD_MOTD")
+	local msg = cachedMsg or GetGuildRosterMOTD()
+	if msg == "" then msg = nil end
+
+	if msg then
+		ChatFrame_SystemEventHandler(DEFAULT_CHAT_FRAME, "GUILD_MOTD", msg)
+	end
+	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+end
+
 function CH:Initialize()
 	if ElvCharacterDB.ChatHistory then
 		ElvCharacterDB.ChatHistory = nil --Depreciated
 	end
 
 	self.db = E.db.chat
-	local msg = GetGuildRosterMOTD() or ""
+
 	if E.private.chat.enable ~= true then
+		stopScript = true
 		DEFAULT_CHAT_FRAME:RegisterEvent("GUILD_MOTD")
-		ChatFrame_SystemEventHandler(DEFAULT_CHAT_FRAME, "GUILD_MOTD", msg)
+
+		local msg = GetGuildRosterMOTD()
+		if msg == "" then msg = nil end
+		if msg then
+			ChatFrame_SystemEventHandler(DEFAULT_CHAT_FRAME, "GUILD_MOTD", msg)
+		end
+
 		return
 	end
+
+
 	if not ElvCharacterDB.ChatEditHistory then
 		ElvCharacterDB.ChatEditHistory = {};
 	end
@@ -1527,9 +1561,11 @@ function CH:Initialize()
     end
 
 	self:SecureHook('FCF_SetChatWindowFontSize', 'SetChatFont')
+	self:RegisterEvent('PLAYER_ENTERING_WORLD', 'DelayGMOTD')
 	self:RegisterEvent('UPDATE_CHAT_WINDOWS', 'SetupChat')
 	self:RegisterEvent('UPDATE_FLOATING_CHAT_WINDOWS', 'SetupChat')
 	self:RegisterEvent('PET_BATTLE_CLOSE')
+
 	self:SetupChat()
 	self:UpdateAnchors()
 
@@ -1615,22 +1651,13 @@ function CH:Initialize()
 		self.SoundPlayed = true;
 		self:DisplayChatHistory()
 		self.SoundPlayed = nil;
-		local f = CreateFrame('Frame')
-		local OnUpdate = function(self)
-			local msg = GetGuildRosterMOTD()
-			if (msg and msg:len() > 0) then
-				ChatFrame_SystemEventHandler(DEFAULT_CHAT_FRAME, "GUILD_MOTD", msg)
-				DEFAULT_CHAT_FRAME:RegisterEvent("GUILD_MOTD")
-				self:SetScript('OnUpdate', nil)
-			end
-		end
-		f:SetScript('OnUpdate', OnUpdate)
 	end
 
 
 	local S = E:GetModule('Skins')
 	S:HandleNextPrevButton(CombatLogQuickButtonFrame_CustomAdditionalFilterButton, true)
 	local frame = CreateFrame("Frame", "CopyChatFrame", E.UIParent)
+	tinsert(UISpecialFrames, "CopyChatFrame")
 	frame:SetTemplate('Transparent')
 	frame:Size(700, 200)
 	frame:Point('BOTTOM', E.UIParent, 'BOTTOM', 0, 3)
@@ -1652,23 +1679,7 @@ function CH:Initialize()
 	editBox:SetFontObject(ChatFontNormal)
 	editBox:Width(scrollArea:GetWidth())
 	editBox:Height(200)
-	editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
 	scrollArea:SetScrollChild(editBox)
-
-	--EXTREME HACK..
-	editBox:SetScript("OnTextSet", function(self)
-		local text = self:GetText()
-
-		for _, size in pairs(sizes) do
-			if find(text, size) and not find(text, size.."]") then
-				if size == ':13:22' then
-					self:SetText(gsub(text, size, ":12:20"))
-				else
-					self:SetText(gsub(text, size, ":12:12"))
-				end
-			end
-		end
-	end)
 
 	local close = CreateFrame("Button", "CopyChatFrameCloseButton", frame, "UIPanelCloseButton")
 	close:SetPoint("TOPRIGHT")

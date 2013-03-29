@@ -729,7 +729,8 @@ local function GetOptionsTable_Castbar(hasTicks, updateFunc, groupName, numUnits
 							else
 								castbar.Hide = castbar.oldHide
 								castbar.oldHide = nil
-								castbar:Hide()						
+								castbar:Hide()			
+								castbar.lastUpdate = 0				
 							end						
 						end
 					else
@@ -741,7 +742,8 @@ local function GetOptionsTable_Castbar(hasTicks, updateFunc, groupName, numUnits
 						else
 							castbar.Hide = castbar.oldHide
 							castbar.oldHide = nil
-							castbar:Hide()						
+							castbar:Hide()
+							castbar.lastUpdate = 0			
 						end
 					end
 				end,
@@ -1718,9 +1720,16 @@ E.Options.args.unitframe = {
 										return t.r, t.g, t.b, t.a
 									end,
 									set = function(info, r, g, b)
-										E.db.general[ info[#info] ] = {}
-										local t = E.db.unitframe.colors.auraBarBuff
+										if E:CheckClassColor(r, g, b) then
+											local classColor = E.myclass == 'PRIEST' and E.PriestColors or RAID_CLASS_COLORS[E.myclass]
+											r = classColor.r
+											g = classColor.g
+											b = classColor.b			
+										end			
+										
+										local t = E.db.unitframe.colors.auraBarBuff										
 										t.r, t.g, t.b = r, g, b
+
 										UF:Update_AllFrames()
 									end,										
 								},	
@@ -2776,36 +2785,36 @@ E.Options.args.unitframe.args.arena = {
 			name = L["Range Check"],
 			desc = L["Check if you are in range to cast spells on this specific unit."],
 			type = "toggle",
-		},				
+		},	
+		healPrediction = {
+			order = 7,
+			name = L['Heal Prediction'],
+			desc = L['Show a incomming heal prediction bar on the unitframe. Also display a slightly different colored bar for incoming overheals.'],
+			type = 'toggle',
+		},					
 		hideonnpc = {
 			type = 'toggle',
-			order = 7,
+			order = 8,
 			name = L['Text Toggle On NPC'],
 			desc = L['Power text will be hidden on NPC targets, in addition the name text will be repositioned to the power texts anchor point.'],
 			get = function(info) return E.db.unitframe.units['arena']['power'].hideonnpc end,
 			set = function(info, value) E.db.unitframe.units['arena']['power'].hideonnpc = value; UF:CreateAndUpdateUFGroup('arena', 5) end,
 		},
 		pvpSpecIcon = {
-			order = 8,
+			order = 9,
 			name = L['Spec Icon'],
 			desc = L['Display icon on arena frame indicating the units talent specialization or the units faction if inside a battleground.'],
 			type = 'toggle',
 		},
 		growthDirection = {
-			order = 9,
+			order = 10,
 			name = L['Growth Direction'],
 			type = 'select',
 			values = {
 				['UP'] = L['Up'],
 				['DOWN'] = L['Down'],
 			},
-		},
-		threatStyle = {
-			type = 'select',
-			order = 13,
-			name = L['Threat Display Mode'],
-			values = threatValues,
-		},			
+		},	
 		pvpTrinket = {
 			order = 14,
 			type = 'group',
@@ -2981,19 +2990,25 @@ E.Options.args.unitframe.args.party = {
 						},
 						startOutFromCenter = {
 							order = 5,
-							name = L['Start from Center'],
+							name = L['Start near Center'],
 							desc = L['The initial group will start near the center and grow out. Corrosponding groups will behave normally.'],
 							type = 'toggle',
 						},
-						numGroups = {
+						invertGroupingOrder = {
 							order = 6,
+							name = L['Invert Grouping Order'],
+							desc = L['Reverses the grouping order. For example if your group is to grow right than up by default the first group is always at the bottom. With this option set then the first group will start at the bottom but as the number of groups grow it will always be near the top.'],
+							type = 'toggle',
+						},
+						numGroups = {
+							order = 7,
 							type = 'range',
 							name = L['Number of Groups'],
 							min = 1, max = 8, step = 1,
 							set = function(info, value) E.db.unitframe.units['party'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('party') end,
 						},
 						unitsPerGroup = {
-							order = 6,
+							order = 8,
 							type = 'range',
 							name = L['Group Size'],
 							desc = L['Number of units in a group.'],
@@ -3001,13 +3016,13 @@ E.Options.args.unitframe.args.party = {
 							set = function(info, value) E.db.unitframe.units['party'][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('party') end,
 						},
 						horizontalSpacing = {
-							order = 7,
+							order = 9,
 							type = 'range',
 							name = L['Horizontal Spacing'],
 							min = 0, max = 50, step = 1,		
 						},
 						verticalSpacing = {
-							order = 8,
+							order = 10,
 							type = 'range',
 							name = L['Vertical Spacing'],
 							min = 0, max = 50, step = 1,		
@@ -3053,6 +3068,8 @@ E.Options.args.unitframe.args.party = {
 								['CLASS'] = CLASS,
 								['ROLE'] = ROLE,
 								['NAME'] = NAME,
+								['NAME_ENTIRE_GROUP'] = L['Name (Entire Group)'],
+								['MTMA'] = L['Main Tanks / Main Assist'],
 								['GROUP'] = GROUP,
 							},
 						},
@@ -3369,19 +3386,25 @@ for i=10, 40, 15 do
 							},
 							startOutFromCenter = {
 								order = 5,
-								name = L['Start from Center'],
+								name = L['Start near Center'],
 								desc = L['The initial group will start near the center and grow out. Corrosponding groups will behave normally.'],
 								type = 'toggle',
-							},							
-							numGroups = {
+							},	
+							invertGroupingOrder = {
 								order = 6,
+								name = L['Invert Grouping Order'],
+								desc = L['Reverses the grouping order. For example if your group is to grow right than up by default the first group is always at the bottom. With this option set then the first group will start at the bottom but as the number of groups grow it will always be near the top.'],
+								type = 'toggle',
+							},										
+							numGroups = {
+								order = 7,
 								type = 'range',
 								name = L['Number of Groups'],
 								min = 1, max = 8, step = 1,
 								set = function(info, value) E.db.unitframe.units['raid'..i][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('raid'..i) end,
 							},
 							unitsPerGroup = {
-								order = 6,
+								order = 8,
 								type = 'range',
 								name = L['Group Size'],
 								desc = L['Number of units in a group.'],
@@ -3389,13 +3412,13 @@ for i=10, 40, 15 do
 								set = function(info, value) E.db.unitframe.units['raid'..i][ info[#info] ] = value; UF:CreateAndUpdateHeaderGroup('raid'..i) end,
 							},
 							horizontalSpacing = {
-								order = 7,
+								order = 9,
 								type = 'range',
 								name = L['Horizontal Spacing'],
 								min = 0, max = 50, step = 1,		
 							},
 							verticalSpacing = {
-								order = 8,
+								order = 10,
 								type = 'range',
 								name = L['Vertical Spacing'],
 								min = 0, max = 50, step = 1,		
@@ -3441,6 +3464,8 @@ for i=10, 40, 15 do
 									['CLASS'] = CLASS,
 									['ROLE'] = ROLE,
 									['NAME'] = NAME,
+									['NAME_ENTIRE_GROUP'] = L['Name (Entire Group)'],
+									['MTMA'] = L['Main Tanks / Main Assist'],
 									['GROUP'] = GROUP,
 								},
 							},

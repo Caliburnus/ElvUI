@@ -146,15 +146,21 @@ function E:GetFormattedText(style, min, max)
 			return format(useStyle, E:ShortValue(deficit))
 		end
 	elseif style == 'PERCENT' then
-		return format(useStyle, format("%.1f", min / max * 100))
+		local s = format(useStyle, format("%.1f", min / max * 100))
+		s = s:gsub(".0%%", "%%")
+		return s
 	elseif style == 'CURRENT' or ((style == 'CURRENT_MAX' or style == 'CURRENT_MAX_PERCENT' or style == 'CURRENT_PERCENT') and min == max) then
 		return format(styles['CURRENT'],  E:ShortValue(min))
 	elseif style == 'CURRENT_MAX' then
 		return format(useStyle,  E:ShortValue(min), E:ShortValue(max))
 	elseif style == 'CURRENT_PERCENT' then
-		return format(useStyle, E:ShortValue(min), format("%.1f", min / max * 100))
+		local s = format(useStyle, E:ShortValue(min), format("%.1f", min / max * 100))
+		s = s:gsub(".0%%", "%%")
+		return s
 	elseif style == 'CURRENT_MAX_PERCENT' then
-		return format(useStyle, E:ShortValue(min), E:ShortValue(max), format("%.1f", min / max * 100))
+		local s = format(useStyle, E:ShortValue(min), E:ShortValue(max), format("%.1f", min / max * 100))
+		s = s:gsub(".0%%", "%%")
+		return s
 	end
 end
 
@@ -269,12 +275,12 @@ function E:GetTimeInfo(s, threshhold)
 end
 
 local ninetyDegreeAngleInRadians = (3.141592653589793 / 2) 
-local function GetPosition(unit)
+local function GetPosition(unit, mapScan)
 	local m, f, x, y
 	if unit == "player" or UnitIsUnit("player", unit) then
 		m, f, x, y = Astrolabe:GetCurrentPlayerPosition()
 	else
-		m, f, x, y = Astrolabe:GetUnitPosition(unit, true)
+		m, f, x, y = Astrolabe:GetUnitPosition(unit, mapScan or WorldMapFrame:IsVisible())
 	end
 
 	if not (m and y) then
@@ -284,12 +290,12 @@ local function GetPosition(unit)
 	end
 end
 
-function E:GetDistance(unit1, unit2)
-	local canCalculate, m1, f1, x1, y1 = GetPosition(unit1)
+function E:GetDistance(unit1, unit2, mapScan)
+	local canCalculate, m1, f1, x1, y1 = GetPosition(unit1, mapScan)
 
 	if not canCalculate then return end
 
-	local canCalculate, m2, f2, x2, y2 = GetPosition(unit2)
+	local canCalculate, m2, f2, x2, y2 = GetPosition(unit2, mapScan)
 
 	if not canCalculate then return end
 
