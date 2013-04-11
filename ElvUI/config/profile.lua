@@ -40,6 +40,7 @@ P['general'] = {
 		['textFormat'] = 'NONE',
 		['textSize'] = 11,
 		['mouseover'] = false,
+		['orientation'] = 'HORIZONTAL',
 	},
 	['reputation'] = {
 		['enable'] = true,
@@ -48,6 +49,7 @@ P['general'] = {
 		['textFormat'] = 'NONE',
 		['textSize'] = 11,
 		['mouseover'] = false,
+		['orientation'] = 'HORIZONTAL',
 	},
 	['threat'] = {
 		['enable'] = true,
@@ -412,6 +414,8 @@ P['unitframe'] = {
 				['enable'] = true,
 				['fill'] = 'fill',
 				['height'] = 10,
+				['DetachFromFrame'] = false,
+				['DetachedWidth'] = 250,
 			},
 			['aurabar'] = {
 				['enable'] = true,
@@ -528,6 +532,9 @@ P['unitframe'] = {
 				['enable'] = true,
 				['fill'] = 'fill',
 				['height'] = 10,
+				['DetachFromFrame'] = false,
+				['DetachedWidth'] = 250,
+				['autoHide'] = true,
 			},
 			['aurabar'] = {
 				['enable'] = true,
