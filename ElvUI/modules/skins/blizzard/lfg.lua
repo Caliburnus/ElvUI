@@ -32,13 +32,46 @@ local function LoadSkin()
 	LFGDungeonReadyDialog:SetTemplate("Transparent")
 	LFGDungeonReadyStatus:StripTextures()
 	LFGDungeonReadyStatus:SetTemplate("Transparent")
+	LFGDungeonReadyDialogRoleIconTexture:SetTexture("Interface\\LFGFrame\\UI-LFG-ICONS-ROLEBACKGROUNDS")
+	LFGDungeonReadyDialogRoleIconTexture:SetAlpha(0.5)
+	hooksecurefunc("LFGDungeonReadyPopup_Update", function()
+		local proposalExists, id, typeID, subtypeID, name, texture, role, hasResponded, totalEncounters, completedEncounters, numMembers, isLeader = GetLFGProposal();
+		if LFGDungeonReadyDialogRoleIcon:IsShown() then
+			if role == "DAMAGER" then
+				LFGDungeonReadyDialogRoleIconTexture:SetTexCoord(LFDQueueFrameRoleButtonDPS.background:GetTexCoord())
+			elseif role == "TANK" then
+				LFGDungeonReadyDialogRoleIconTexture:SetTexCoord(LFDQueueFrameRoleButtonTank.background:GetTexCoord())
+			elseif role == "HEALER" then
+				LFGDungeonReadyDialogRoleIconTexture:SetTexCoord(LFDQueueFrameRoleButtonHealer.background:GetTexCoord())
+			end
+		end
+	end)
 
 	hooksecurefunc(LFGDungeonReadyDialog, "SetBackdrop", function(self, backdrop)
 		if backdrop.bgFile ~= E["media"].blankTex then
 			self:SetTemplate("Transparent")
 		end
 	end)
-	
+
+	LFDQueueFrameRoleButtonTankIncentiveIcon:SetAlpha(0)
+	LFDQueueFrameRoleButtonHealerIncentiveIcon:SetAlpha(0)
+	LFDQueueFrameRoleButtonDPSIncentiveIcon:SetAlpha(0)
+
+	local function OnShow(self)
+		ActionButton_ShowOverlayGlow(self:GetParent().checkButton)
+	end
+	local function OnHide(self)
+		ActionButton_HideOverlayGlow(self:GetParent().checkButton)
+	end	
+	LFDQueueFrameRoleButtonTankIncentiveIcon:HookScript("OnShow", OnShow)
+	LFDQueueFrameRoleButtonHealerIncentiveIcon:HookScript("OnShow", OnShow)
+	LFDQueueFrameRoleButtonDPSIncentiveIcon:HookScript("OnShow", OnShow)
+	LFDQueueFrameRoleButtonTankIncentiveIcon:HookScript("OnHide", OnHide)
+	LFDQueueFrameRoleButtonHealerIncentiveIcon:HookScript("OnHide", OnHide)
+	LFDQueueFrameRoleButtonDPSIncentiveIcon:HookScript("OnHide", OnHide)	
+	LFDQueueFrameRoleButtonTank.shortageBorder:Kill()
+	LFDQueueFrameRoleButtonDPS.shortageBorder:Kill()
+	LFDQueueFrameRoleButtonHealer.shortageBorder:Kill()
 	LFGDungeonReadyDialog.filigree:SetAlpha(0)
 	LFGDungeonReadyDialog.bottomArt:SetAlpha(0)	
 	S:HandleCloseButton(LFGDungeonReadyStatusCloseButton)
@@ -56,24 +89,50 @@ local function LoadSkin()
 		LFGInvitePopupRoleButtonHealer,
 		LFGInvitePopupRoleButtonDPS		
 	}
+
+
 	
 	for _, roleButton in pairs(roleButtons) do
-		S:HandleCheckBox(roleButton.checkButton)
-		roleButton:GetChildren():SetFrameLevel(roleButton:GetChildren():GetFrameLevel() + 1)
+		S:HandleCheckBox(roleButton.checkButton, true)
+		roleButton:DisableDrawLayer("ARTWORK")
+		roleButton:DisableDrawLayer("OVERLAY")
 	end
-	
+
+	LFDQueueFrameRoleButtonLeader.leadIcon = LFDQueueFrameRoleButtonLeader:CreateTexture(nil, 'BACKGROUND')
+	LFDQueueFrameRoleButtonLeader.leadIcon:SetTexture([[Interface\GroupFrame\UI-Group-LeaderIcon]])
+	LFDQueueFrameRoleButtonLeader.leadIcon:SetPoint(LFDQueueFrameRoleButtonLeader:GetNormalTexture():GetPoint())
+	LFDQueueFrameRoleButtonLeader.leadIcon:Size(50)
+	LFDQueueFrameRoleButtonLeader.leadIcon:SetAlpha(0.4)		
+
+	RaidFinderQueueFrameRoleButtonLeader.leadIcon = RaidFinderQueueFrameRoleButtonLeader:CreateTexture(nil, 'BACKGROUND')
+	RaidFinderQueueFrameRoleButtonLeader.leadIcon:SetTexture([[Interface\GroupFrame\UI-Group-LeaderIcon]])
+	RaidFinderQueueFrameRoleButtonLeader.leadIcon:SetPoint(RaidFinderQueueFrameRoleButtonLeader:GetNormalTexture():GetPoint())
+	RaidFinderQueueFrameRoleButtonLeader.leadIcon:Size(50)
+	RaidFinderQueueFrameRoleButtonLeader.leadIcon:SetAlpha(0.4)	
+
 	hooksecurefunc('LFG_DisableRoleButton', function(button)
 		if button.checkButton:GetChecked() then
 			button.checkButton:SetAlpha(1)
 		else
 			button.checkButton:SetAlpha(0)
 		end
+
+		if button.background then
+			button.background:Show()
+		end
 	end)
-	
+
 	hooksecurefunc('LFG_EnableRoleButton', function(button)
 		button.checkButton:SetAlpha(1)
 	end)
 		
+
+	hooksecurefunc("LFG_PermanentlyDisableRoleButton", function(self)
+		if self.background then
+			self.background:Show()
+			self.background:SetDesaturated(true)
+		end
+	end)
 	
 	for i = 1, 3 do
 		local bu = GroupFinderFrame["groupButton"..i]
@@ -340,7 +399,12 @@ local function LoadSkin()
 	S:HandleButton(_G[ScenarioQueueFrame.PartyBackfill:GetName().."BackfillButton"])
 	S:HandleButton(_G[ScenarioQueueFrame.PartyBackfill:GetName().."NoBackfillButton"])
 	LFDQueueFrameRandomScrollFrameScrollBar:StripTextures()
+	ScenarioQueueFrameSpecificScrollFrame:StripTextures()
 	S:HandleScrollBar(LFDQueueFrameRandomScrollFrameScrollBar)
+	S:HandleScrollBar(ScenarioQueueFrameSpecificScrollFrameScrollBar)
+
+
+
 end
 
 S:RegisterSkin("ElvUI", LoadSkin)

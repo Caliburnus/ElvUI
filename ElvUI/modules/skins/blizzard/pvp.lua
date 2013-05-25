@@ -58,12 +58,48 @@ local function LoadSkin()
 	HonorFrame.BonusFrame.CallToArmsButton:StyleButton(nil, true)
 	HonorFrame.BonusFrame.CallToArmsButton.SelectedTexture:SetInside()
 	HonorFrame.BonusFrame.CallToArmsButton.SelectedTexture:SetTexture(1, 1, 0, 0.1)
-	HonorFrame.BonusFrame.CallToArmsButton:ClearAllPoints()
-	HonorFrame.BonusFrame.CallToArmsButton:SetPoint("TOP", HonorFrame.BonusFrame.RandomBGButton, "BOTTOM", 0, -E.Border)
 
 	HonorFrame.BonusFrame.DiceButton:DisableDrawLayer("ARTWORK")
 	HonorFrame.BonusFrame.DiceButton:SetHighlightTexture("")
 
+	HonorFrame.RoleInset:StripTextures()
+	S:HandleCheckBox(HonorFrame.RoleInset.DPSIcon.checkButton, true)
+	S:HandleCheckBox(HonorFrame.RoleInset.TankIcon.checkButton, true)
+	S:HandleCheckBox(HonorFrame.RoleInset.HealerIcon.checkButton, true)
+	
+	HonorFrame.RoleInset.TankIcon:DisableDrawLayer("ARTWORK")
+	HonorFrame.RoleInset.TankIcon:DisableDrawLayer("OVERLAY")
+	HonorFrame.RoleInset.TankIcon.bg = HonorFrame.RoleInset.TankIcon:CreateTexture(nil, 'BACKGROUND')
+	HonorFrame.RoleInset.TankIcon.bg:SetTexture("Interface\\LFGFrame\\UI-LFG-ICONS-ROLEBACKGROUNDS")
+	HonorFrame.RoleInset.TankIcon.bg:SetTexCoord(LFDQueueFrameRoleButtonTank.background:GetTexCoord())
+	HonorFrame.RoleInset.TankIcon.bg:SetPoint('CENTER')
+	HonorFrame.RoleInset.TankIcon.bg:Size(80)
+	HonorFrame.RoleInset.TankIcon.bg:SetAlpha(0.5)
+
+	HonorFrame.RoleInset.HealerIcon:DisableDrawLayer("ARTWORK")
+	HonorFrame.RoleInset.HealerIcon:DisableDrawLayer("OVERLAY")
+	HonorFrame.RoleInset.HealerIcon.bg = HonorFrame.RoleInset.HealerIcon:CreateTexture(nil, 'BACKGROUND')
+	HonorFrame.RoleInset.HealerIcon.bg:SetTexture("Interface\\LFGFrame\\UI-LFG-ICONS-ROLEBACKGROUNDS")
+	HonorFrame.RoleInset.HealerIcon.bg:SetTexCoord(LFDQueueFrameRoleButtonHealer.background:GetTexCoord())
+	HonorFrame.RoleInset.HealerIcon.bg:SetPoint('CENTER')
+	HonorFrame.RoleInset.HealerIcon.bg:Size(80)
+	HonorFrame.RoleInset.HealerIcon.bg:SetAlpha(0.5)
+
+
+	HonorFrame.RoleInset.DPSIcon:DisableDrawLayer("ARTWORK")
+	HonorFrame.RoleInset.DPSIcon:DisableDrawLayer("OVERLAY")
+	HonorFrame.RoleInset.DPSIcon.bg = HonorFrame.RoleInset.DPSIcon:CreateTexture(nil, 'BACKGROUND')
+	HonorFrame.RoleInset.DPSIcon.bg:SetTexture("Interface\\LFGFrame\\UI-LFG-ICONS-ROLEBACKGROUNDS")
+	HonorFrame.RoleInset.DPSIcon.bg:SetTexCoord(LFDQueueFrameRoleButtonDPS.background:GetTexCoord())
+	HonorFrame.RoleInset.DPSIcon.bg:SetPoint('CENTER')
+	HonorFrame.RoleInset.DPSIcon.bg:Size(80)
+	HonorFrame.RoleInset.DPSIcon.bg:SetAlpha(0.5)
+
+	hooksecurefunc("LFG_PermanentlyDisableRoleButton", function(self)
+		if self.bg then
+			self.bg:SetDesaturated(true)
+		end
+	end)
 	for i = 1, 2 do
 		local b = HonorFrame.BonusFrame["WorldPVP"..i.."Button"]
 		b:StripTextures()
@@ -71,17 +107,11 @@ local function LoadSkin()
 		b:StyleButton(nil, true)
 		b.SelectedTexture:SetInside()
 		b.SelectedTexture:SetTexture(1, 1, 0, 0.1)
-
-		if i == 2 then
-			b:ClearAllPoints()
-			b:SetPoint("TOP", HonorFrame.BonusFrame["WorldPVP"..(i-1).."Button"], "BOTTOM", 0, -E.Border)
-		end
 	end
 
 
 	-->>>CONQUEST FRAME
 	ConquestFrame.Inset:StripTextures()
-	--ConquestFrame.Inset:SetTemplate("Transparent")
 	
 	--CapProgressBar_Update(ConquestFrame.ConquestBar, 0, 0, nil, nil, 1000, 2200);
 	ConquestPointsBarLeft:Kill()
@@ -173,5 +203,33 @@ local function LoadSkin()
 		S:HandleNextPrevButton(_G["PVPBannerFrameCustomization"..i.."LeftButton"])
 	end
 
+	PVPReadyDialog:StripTextures()
+	PVPReadyDialog:SetTemplate("Transparent")
+	S:HandleButton(PVPReadyDialogEnterBattleButton)
+	S:HandleButton(PVPReadyDialogLeaveQueueButton)
+	S:HandleCloseButton(PVPReadyDialogCloseButton)
+	PVPReadyDialogRoleIcon.texture:SetTexture("Interface\\LFGFrame\\UI-LFG-ICONS-ROLEBACKGROUNDS")
+	PVPReadyDialogRoleIcon.texture:SetAlpha(0.5)
+
+	hooksecurefunc("PVPReadyDialog_Display", function(self, index, displayName, isRated, queueType, gameType, role)
+		if role == "DAMAGER" then
+			PVPReadyDialogRoleIcon.texture:SetTexCoord(LFDQueueFrameRoleButtonDPS.background:GetTexCoord())
+		elseif role == "TANK" then
+			PVPReadyDialogRoleIcon.texture:SetTexCoord(LFDQueueFrameRoleButtonTank.background:GetTexCoord())
+		elseif role == "HEALER" then
+			PVPReadyDialogRoleIcon.texture:SetTexCoord(LFDQueueFrameRoleButtonHealer.background:GetTexCoord())
+		end
+
+		if queueType == "ARENA" then
+			self:SetHeight(100)
+		end
+
+		self.background:Hide()
+	end)
+
+
+
+
+	S:HandleButton(PVPBannerFrameCancelButton)
 end
 S:RegisterSkin('Blizzard_PVPUI', LoadSkin)
