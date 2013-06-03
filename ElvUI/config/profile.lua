@@ -1131,6 +1131,7 @@ P['unitframe'] = {
 			['groupsPerRowCol'] = 1,
 			['groupBy'] = 'GROUP',
 			['sortDir'] = 'ASC',
+			['rideWideSorting'] = false,
 			["showPlayer"] = true,
 			['healPrediction'] = false,
 			['colorOverride'] = 'USE_DEFAULT',
