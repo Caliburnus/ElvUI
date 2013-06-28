@@ -346,6 +346,7 @@ P['unitframe'] = {
 				['detachFromFrame'] = false,
 				['detachedWidth'] = 250,
 				['attachTextToPower'] = false,
+				['druidMana'] = true,
 			},
 			['name'] = {
 				['position'] = 'CENTER',
