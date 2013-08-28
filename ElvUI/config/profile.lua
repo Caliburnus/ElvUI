@@ -92,42 +92,56 @@ P["nameplate"] = {
 	['font'] = 'ElvUI Pixel',
 	['fontSize'] = 7,
 	['fontOutline'] = 'MONOCHROMEOUTLINE',
-	['auraFont'] = 'ElvUI Pixel',
-	['auraFontSize'] = 7,
-	['auraFontOutline'] = 'MONOCHROMEOUTLINE',
 	["smallPlates"] = true,
 	["comboPoints"] = true,
-	["classIcons"] = true,
-	["markHealers"] = true,
-	["width"] = 112,
-	["height"] = 7,
-	["cbheight"] = 5,
-	["showlevel"] = true,
-	["enhancethreat"] = true,
-	["combat"] = false,
-	['offtank'] = false,
-	["healthtext"] = '',
-	["trackauras"] = true,
-	["trackfilter"] = 'CCDebuffs',
-	['filterType'] = 'DEBUFFS',
-	['goodscale'] = 1,
-	['badscale'] = 1,
-	['bgMult'] = 0.15,
-	['nameXOffset'] = 0,
-	['nameYOffset'] = 0,
-	['nameJustifyH'] = 'CENTER',
-	["tappedcolor"] = {r = 0.6, g = 0.6, b = 0.6},
-	["offtankcolor"] = {r = 180/255, g = 118/255, b = 184/255},
-	["goodcolor"] = {r = 75/255,  g = 175/255, b = 76/255},
-	["badcolor"] = {r = 0.78, g = 0.25, b = 0.25},
-	["goodtransitioncolor"] = {r = 218/255, g = 197/255, b = 92/255},
-	["badtransitioncolor"] = {r = 240/255, g = 154/255, b = 17/255},
-	["friendlynpc"] = {r = 0.31, g = 0.45, b = 0.63},
-	["friendlyplayer"] = {r = 75/255,  g = 175/255, b = 76/255},
-	["neutral"] = { r = 218/255, g = 197/255, b = 92/255 },
-	["enemy"] = { r = 0.78, g = 0.25, b = 0.25 },
-	['lowHealthWarning'] = 'ALL',
-	['lowHealthWarningThreshold'] = .40,
+	['nonTargetAlpha'] = 0.25,
+	['combatHide'] = false,
+	['healthBar'] = {
+		['width'] = 108,
+		['height'] = 9,
+		['lowThreshold'] =  0.40,
+		['text'] = {
+			['enable'] = false,
+			['format'] = 'CURRENT',
+		}
+	},
+	['castBar'] = {
+		['height'] = 6,
+		['color'] = { r = 1,g = 208/255,b = 0 },
+		['noInterrupt'] = { r = 0.78, g = 0.25, b = 0.25 },
+	},
+	['raidHealIcon'] = {
+		["markHealers"] = true,
+		['xOffset'] = -4,
+		['yOffset'] = 6,
+		['size'] = 36,
+		['attachTo'] = 'LEFT',
+	},
+	['threat'] = {
+		['goodScale'] = 1,
+		['badScale'] = 1,
+		["goodColor"] = {r = 75/255,  g = 175/255, b = 76/255},
+		["badColor"] = {r = 0.78, g = 0.25, b = 0.25},
+		["goodTransitionColor"] = {r = 218/255, g = 197/255, b = 92/255},
+		["badTransitionColor"] = {r = 240/255, g = 154/255, b = 17/255},
+	},
+	['auras'] = {
+		['enable'] = true,
+		['font'] = 'ElvUI Pixel',
+		['fontSize'] = 7,
+		['fontOutline'] = 'MONOCHROMEOUTLINE',
+		['numAuras'] = 4,
+		['stretchTexture'] = true,
+		['additionalFilter'] = 'CCDebuffs',
+		['filterType'] = 'DEBUFFS'
+	},
+	['reactions'] = {
+		["tapped"] = {r = 0.6, g = 0.6, b = 0.6},
+		["friendlyNPC"] = {r = 0.31, g = 0.45, b = 0.63},
+		["friendlyPlayer"] = {r = 75/255,  g = 175/255, b = 76/255},
+		["neutral"] = { r = 218/255, g = 197/255, b = 92/255 },
+		["enemy"] = { r = 0.78, g = 0.25, b = 0.25 },
+	},
 };
 
 --Auras
@@ -135,6 +149,10 @@ P['auras'] = {
 	['font'] = 'ElvUI Pixel',
 	['fontSize'] = 10,
 	['fontOutline'] = 'MONOCHROMEOUTLINE',
+	['countYOffset'] = 0,
+	['countXOffset'] = 0,
+	['timeYOffset'] = 0,
+	['timeXOffset'] = 0,
 
 	['consolidatedBuffs'] = {
 		['enable'] = true,
@@ -145,21 +163,30 @@ P['auras'] = {
 		['fontOutline'] = 'MONOCHROMEOUTLINE',
 	},
 
-	['wrapAfter'] = 12,
 	['fadeThreshold'] = 5,
 	['buffs'] = {
+		['growthDirection'] = 'LEFT_DOWN',
+		['wrapAfter'] = 12,
+		['maxWraps'] = 3,
+		['horizontalSpacing'] = 6,
+		['verticalSpacing'] = 16,
 		['sortMethod'] = "TIME",
 		['sortDir'] = '-',
-		['maxWraps'] = 3,
 		['seperateOwn'] = 1,
+		['size'] = 32,
 	},
 	['debuffs'] = {
+		['growthDirection'] = 'LEFT_DOWN',
+		['wrapAfter'] = 12,
+		['maxWraps'] = 1,
+		['horizontalSpacing'] = 6,
+		['verticalSpacing'] = 16,
 		['sortMethod'] = "TIME",
 		['sortDir'] = '-',
-		['maxWraps'] = 1,
+		['seperateOwn'] = 1,
+		['size'] = 32,
 	},
 }
-
 --Chat
 P['chat'] = {
 	['lockPositions'] = true,
@@ -223,18 +250,23 @@ P['datatexts'] = {
 
 --Tooltip
 P['tooltip'] = {
-	['anchor'] = 'SMART',
-	['health'] = true,
-	['healthHeight'] = 5,
-	['ufhide'] = 'NONE',
-	['whostarget'] = true,
-	['combathide'] = false,
-	['titles'] = true,
-	['guildranks'] = true,
-	['talentSpec'] = true,
-	['count'] = true,
-	['spellid'] = true,
-	['style'] = 'none',
+	['cursorAnchor'] = false,
+	['targetInfo'] = true,
+	['playerTitles'] = true,
+	['guildRanks'] = true,
+	['inspectInfo'] = true,
+	['itemCount'] = true,
+	['spellID'] = true,
+	['visibility'] = {
+		['unitFrames'] = 'NONE',
+		['combat'] = false
+	},
+	['healthBar'] = {
+		['text'] = true,
+		['height'] = 7,
+		['font'] = 'ElvUI Pixel',
+		['fontSize'] = 10,
+	}
 }
 
 --UnitFrame
