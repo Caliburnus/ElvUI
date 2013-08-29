@@ -173,7 +173,6 @@ function E:UpdateMedia()
 	self["media"].combatFont = LSM:Fetch("font", self.db['general'].dmgfont)
 	self["media"].pixelFont = LSM:Fetch("font", self.db["general"].pixelfont)
 
-
 	--Textures
 	self["media"].blankTex = LSM:Fetch("background", "ElvUI Blank")
 	self["media"].normTex = LSM:Fetch("statusbar", self.private['general'].normTex)
@@ -562,10 +561,12 @@ function E:UpdateAll(ignoreInstall)
 	T:UpdatePosition()
 	T:ToggleEnable()
 
-	self:GetModule('Auras').db = self.db.auras
-	self:GetModule('Tooltip').db = self.db.tooltip
+	local A = E:GetModule('Auras')
+	A.db = self.db.auras
+	A:UpdateHeader(ElvUIPlayerBuffs)
+	A:UpdateHeader(ElvUIPlayerDebuffs)
 
-	E:GetModule('Auras'):UpdateAllHeaders()
+	self:GetModule('Tooltip').db = self.db.tooltip
 
 	if self.private.install_complete == nil or (self.private.install_complete and type(self.private.install_complete) == 'boolean') or (self.private.install_complete and type(tonumber(self.private.install_complete)) == 'number' and tonumber(self.private.install_complete) <= 3.83) then
 		if not ignoreInstall then
@@ -577,7 +578,7 @@ function E:UpdateAll(ignoreInstall)
 
 	self:UpdateBorderColors()
 	self:UpdateBackdropColors()
-	self:UpdateFrameTemplates()
+	--self:UpdateFrameTemplates()
 
 	local LO = E:GetModule('Layout')
 	LO:ToggleChatPanels()

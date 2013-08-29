@@ -118,6 +118,7 @@ P["nameplate"] = {
 		['attachTo'] = 'LEFT',
 	},
 	['threat'] = {
+		['enable'] = true,
 		['goodScale'] = 1,
 		['badScale'] = 1,
 		["goodColor"] = {r = 75/255,  g = 175/255, b = 76/255},
@@ -126,12 +127,12 @@ P["nameplate"] = {
 		["badTransitionColor"] = {r = 240/255, g = 154/255, b = 17/255},
 	},
 	['auras'] = {
-		['enable'] = true,
 		['font'] = 'ElvUI Pixel',
 		['fontSize'] = 7,
 		['fontOutline'] = 'MONOCHROMEOUTLINE',
 		['numAuras'] = 4,
 		['stretchTexture'] = true,
+		['showPersonal'] = true,
 		['additionalFilter'] = 'CCDebuffs',
 		['filterType'] = 'DEBUFFS'
 	},
