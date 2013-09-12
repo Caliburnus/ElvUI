@@ -380,6 +380,7 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 		local name, realm = UnitName(unit)
 		local guildName, guildRankName, _, guildRealm = GetGuildInfo(unit)
 		local pvpName = UnitPVPName(unit)
+		local relationship = UnitRealmRelationship(unit);
 		color = RAID_CLASS_COLORS[class]
 
 		if(self.db.playerTitles and pvpName) then
@@ -389,8 +390,10 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 		if(realm and realm ~= "") then
 			if(isShiftKeyDown) then
 				name = name.."-"..realm
-			else
+			elseif(relationship == LE_REALM_RELATION_COALESCED) then
 				name = name..FOREIGN_SERVER_LABEL
+			elseif(relationship == LE_REALM_RELATION_VIRTUAL) then
+				name = name..INTERACTIVE_SERVER_LABEL
 			end
 		end
 		GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", color.colorStr, name)
@@ -563,8 +566,25 @@ function TT:MODIFIER_STATE_CHANGED(event, key)
 	end
 end
 
-function TT:SetUnitAura(tt, ...)
-	local _, _, _, _, _, _, _, caster, _, _, id = UnitAura(...)
+function TT:SetUnitAura(tt, unit, index, filter)
+	local _, _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, index, filter)
+	if id and self.db.spellID then
+		if caster then
+			local name = UnitName(caster)
+			local _, class = UnitClass(caster)
+			local color = RAID_CLASS_COLORS[class]
+			tt:AddDoubleLine(("|cFFCA3C3C%s|r %d"):format(ID, id), format("|c%s%s|r", color.colorStr, name))
+		else
+			tt:AddLine(("|cFFCA3C3C%s|r %d"):format(ID, id))
+		end
+
+		tt:Show()
+	end	
+end
+
+function TT:SetConsolidatedUnitAura(tt, unit, index)
+	local name = GetRaidBuffTrayAuraInfo(index)
+	local _, _, _, _, _, _, _, caster, _, _, id = UnitAura(unit, name)
 	if id and self.db.spellID then
 		if caster then
 			local name = UnitName(caster)
@@ -649,6 +669,7 @@ function TT:Initialize()
 	self:SecureHook(GameTooltip, "SetUnitAura")
 	self:SecureHook(GameTooltip, "SetUnitBuff", "SetUnitAura")
 	self:SecureHook(GameTooltip, "SetUnitDebuff", "SetUnitAura")
+	self:SecureHook(GameTooltip, "SetUnitConsolidatedBuff", "SetConsolidatedUnitAura")
 	self:HookScript(GameTooltip, "OnTooltipSetSpell", "GameTooltip_OnTooltipSetSpell")
 	self:HookScript(GameTooltip, 'OnTooltipCleared', 'GameTooltip_OnTooltipCleared')
 	self:HookScript(GameTooltip, 'OnTooltipSetItem', 'GameTooltip_OnTooltipSetItem')

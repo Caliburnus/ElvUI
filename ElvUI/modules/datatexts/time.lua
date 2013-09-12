@@ -169,17 +169,11 @@ local int = 3
 function Update(self, t)
 	int = int - t
 
+	if int > 0 then return end
+
 	if enteredFrame then
 		OnEnter(self)
 	end
-
-	if GameTimeFrame.flashInvite then
-		E:Flash(self, 0.53)
-	else
-		E:StopFlash(self)
-	end
-
-	if int > 0 then return end
 
 	local Hr, Min, AmPm = CalculateTimeValues(false)
 
@@ -187,6 +181,12 @@ function Update(self, t)
 	if (Hr == curHr and Min == curMin and AmPm == curAmPm) and not (int < -15000) then
 		int = 5
 		return
+	end
+
+	if GameTimeFrame.flashInvite then
+		E:Flash(self, 0.53)
+	else
+		E:StopFlash(self)
 	end
 
 	curHr = Hr

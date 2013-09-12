@@ -391,7 +391,7 @@ G.unitframe.aurafilters['Blacklist'] = {
 	['type'] = 'Blacklist',
 	['spells'] = {
 		[SpellName(36032)] = Defaults(), -- Arcane Charge
-		[SpellName(76691)] = Defaults(), -- Vengeance
+		[SpellName(132365)] = Defaults(), -- Vengeance
 		[SpellName(8733)] = Defaults(), --Blessing of Blackfathom
 		[SpellName(57724)] = Defaults(), --Sated
 		[SpellName(25771)] = Defaults(), --forbearance
@@ -543,7 +543,53 @@ G.unitframe.aurafilters['RaidDebuffs'] = {
 			[SpellName(135000)] = Defaults(), --Decapitate
 			
 			--Ra-den
+		--Siege of Orgrimmar
+			--Immerseus
+				[SpellName(143436)] = Defaults(), -- Corrosive Blast
+				[SpellName(143579)] = Defaults(), --Sha Corruption(Heroic)
 			
+			--Fallen Protectors
+				[SpellName(147383)] = Defaults(), --Debilitation
+				
+			--Norushen
+				[SpellName(146124)] = Defaults(), --Self Doubt
+				[SpellName(144851)] = Defaults(), --Test of Confidence
+				
+			--Sha of Pride
+				[SpellName(144358)] = Defaults(), --Wounded Pride
+				[SpellName(144774)] = Defaults(), --Reaching Attacks
+				[SpellName(147207)] = Defaults(), --Weakened Resolve(Heroic)
+			
+			--Galakras
+			
+			--Iron Juggernaut
+			
+			--Kor'kron Dark Shaman
+				[SpellName(144215)] = Defaults(), --Froststorm Strike
+				[SpellName(143990)] = Defaults(), --Foul Geyser
+				[SpellName(144330)] = Defaults(), --Iron Prison(Heroic)
+				
+			--General Nazgrim
+				[SpellName(143494)] = Defaults(), --Sundering Blow
+				
+			--Malkorok
+				[SpellName(142990)] = Defaults(), --Fatal Strike
+				[SpellName(143919)] = Defaults(), --Languish(Heroic)
+				
+			--Thok the Bloodthirsty
+				[SpellName(143766)] = Defaults(), --Panic
+				[SpellName(143773)] = Defaults(), --Freezing Breath
+				[SpellName(146589)] = Defaults(), --Skeleton Key
+				[SpellName(143777)] = Defaults(), --Frozen Solid
+				
+			--Siegecrafter Blackfuse
+				[SpellName(143385)] = Defaults(), --Electrostatic Charge
+				
+			--Paragons of the Klaxxi
+				[SpellName(143974)] = Defaults(), --Shield Bash
+				
+			--Garrosh Hellscream
+				[SpellName(145183)] = Defaults(), --Gripping Despair
 	},
 }
 
@@ -590,7 +636,7 @@ G.unitframe.buffwatch = {
 		ClassBuff(1044, "BOTTOMRIGHT", {0.89, 0.45, 0}, true),	-- Hand of Freedom
 		ClassBuff(1038, "BOTTOMRIGHT", {0.93, 0.75, 0}, true),	-- Hand of Salvation
 		ClassBuff(6940, "BOTTOMRIGHT", {0.89, 0.1, 0.1}, true),	-- Hand of Sacrifice
-		ClassBuff(114039, "BOTTOMRIGHT", {0.64, 0.41, 0.72}, true), -- Hand of Purity
+		ClassBuff(114039, "BOTTOMRIGHT", {164/255, 105/255, 184/255}), -- Hand of Purity
 		ClassBuff(20925, 'TOPLEFT', {0.93, 0.75, 0}), -- Sacred Shield
 		ClassBuff(114163, 'BOTTOMLEFT', {0.87, 0.7, 0.03}), -- Eternal Flame
 	},
