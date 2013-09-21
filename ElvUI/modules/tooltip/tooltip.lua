@@ -36,20 +36,13 @@ local tooltips = {
 }
 
 local levelAdjust = {
-	["0"]=0,["1"]=8,
-	["373"]=4,["374"]=8,
-	["375"]=4,
-	["376"]=4,
-	["377"]=4,
-	["379"]=4,
-	["380"]=4,
-	["445"]=0,["446"]=4,["447"]=8,
-	["451"]=0,["452"]=8,
-	["453"]=0,["454"]=4,["455"]=8,
-	["456"]=0,["457"]=8,
-	["458"]=0,["459"]=4,["460"]=8,["461"]=12,["462"]=16,
-	["465"]=0,["466"]=4,["467"]=8,
-	["476"]=0, ["479"]=0,
+	["0"]=0,["1"]=8,["373"]=4,["374"]=8,["375"]=4,["376"]=4,
+	["377"]=4,["379"]=4,["380"]=4,["445"]=0,["446"]=4,["447"]=8,
+	["451"]=0,["452"]=8,["453"]=0,["454"]=4,["455"]=8,["456"]=0,
+	["457"]=8,["458"]=0,["459"]=4,["460"]=8,["461"]=12,["462"]=16,
+	["465"]=0,["466"]=4,["467"]=8,["468"]=0,["469"]=4,["470"]=8,
+	["471"]=12,["472"]=16,["491"]=0,["492"]=4,["493"]=8,["494"]=0,
+	["495"]=4,["496"]=8,["497"]=12,["498"]=16,
 }
 
 local classification = {
@@ -418,10 +411,11 @@ function TT:GameTooltip_OnTooltipSetUnit(tt)
 			local diffColor = GetQuestDifficultyColor(level)
 			local race, englishRace = UnitRace(unit)
 			local sex = UnitSex(unit)
-			if(englishRace == "Pandaren") then
-				race = select(2, UnitFactionGroup(unit)).." "..race
+			local _, factionGroup = UnitFactionGroup(unit)
+			if(factionGroup and englishRace == "Pandaren") then
+				race = factionGroup.." "..race
 			end
-			levelLine:SetFormattedText("|cff%02x%02x%02x%s|r %s %s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", gender[sex], race, color.colorStr, localeClass)
+			levelLine:SetFormattedText("|cff%02x%02x%02x%s|r %s %s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", gender[sex], race or '', color.colorStr, localeClass)
 		end
 
 		--High CPU usage, restricting it to shift key down only.
@@ -579,7 +573,7 @@ function TT:SetUnitAura(tt, unit, index, filter)
 		end
 
 		tt:Show()
-	end	
+	end
 end
 
 function TT:SetConsolidatedUnitAura(tt, unit, index)

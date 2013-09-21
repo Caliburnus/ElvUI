@@ -141,7 +141,7 @@ function DT:RegisterPanel(panel, numPoints, anchor, xOff, yOff)
 			panel.dataPanels[pointIndex].text:SetAllPoints()
 			panel.dataPanels[pointIndex].text:FontTemplate(E['media'].pixelFont, 10, 'OUTLINE')
 			panel.dataPanels[pointIndex].text:SetJustifyH("CENTER")
-			panel.dataPanels[pointIndex].text:SetJustifyV("middle")
+			panel.dataPanels[pointIndex].text:SetJustifyV("MIDDLE")
 		end
 
 		panel.dataPanels[pointIndex]:Point(DT:GetDataPanelPoint(panel, i, numPoints))
