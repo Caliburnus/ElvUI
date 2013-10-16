@@ -224,6 +224,7 @@ P['chat'] = {
 	['keywordSound'] = 'None',
 	['whisperSound'] = 'Whisper Alert',
 	['chatHistory'] = true,
+	['lfgIcons'] = true,
 	['timeStampFormat'] = 'NONE',
 	['keywords'] = '%MYNAME%, ElvUI',
 	['panelWidth'] = 412,

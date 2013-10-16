@@ -2,6 +2,9 @@ local E, L, V, P, G = unpack(select(2, ...)); --Inport: Engine, Locales, Private
 local M = E:NewModule('Minimap', 'AceHook-3.0', 'AceEvent-3.0', 'AceTimer-3.0');
 E.Minimap = M
 
+local Astrolabe = DongleStub("Astrolabe-1.0")
+local AstrolabeMapMonitor = DongleStub("AstrolabeMapMonitor")
+
 local gsub = string.gsub
 local upper = string.upper
 
@@ -36,6 +39,8 @@ local menuList = {
 			HideUIPanel(PlayerTalentFrame)
 		end
 	end},
+	{text = L["Farm Mode"],
+	func = FarmMode},
 	{text = TIMEMANAGER_TITLE,
 	func = function() ToggleFrame(TimeManagerFrame) end},
 	{text = ACHIEVEMENT_BUTTON,
@@ -180,10 +185,10 @@ function M:UpdateSettings()
 	end
 
 	if MMHolder then
-		MMHolder:Width((Minimap:GetWidth() + (E.PixelMode and 3 or 4)) + E.ConsolidatedBuffsWidth)
+		MMHolder:Width((Minimap:GetWidth() + (E.PixelMode and 2 or 4)) + E.ConsolidatedBuffsWidth)
 
 		if E.db.datatexts.minimapPanels then
-			MMHolder:Height(Minimap:GetHeight() + (E.PixelMode and 22 or 27))
+			MMHolder:Height(Minimap:GetHeight() + (E.PixelMode and 24 or 27))
 		else
 			MMHolder:Height(Minimap:GetHeight() + (E.PixelMode and 2 or 5))
 		end
@@ -347,6 +352,7 @@ function M:Initialize()
 	fm:SetMovable(true)
 	fm:SetScript("OnDragStart", function(self) self:StartMoving() end)
 	fm:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
+	AstrolabeMapMonitor:MonitorWorldMap(fm)
 	fm:Hide()
 	E.FrameLocks['FarmModeMap'] = true;
 
@@ -368,6 +374,7 @@ function M:Initialize()
 		if IsAddOnLoaded('GatherMate2') then
 			LibStub('AceAddon-3.0'):GetAddon('GatherMate2'):GetModule('Display'):ReparentMinimapPins(FarmModeMap)
 		end
+		Astrolabe:SetTargetMinimap(FarmModeMap)
 	end)
 
 	FarmModeMap:SetScript('OnHide', function()
@@ -386,6 +393,7 @@ function M:Initialize()
 		if IsAddOnLoaded('GatherMate2') then
 			LibStub('AceAddon-3.0'):GetAddon('GatherMate2'):GetModule('Display'):ReparentMinimapPins(Minimap)
 		end
+		Astrolabe:SetTargetMinimap(Minimap)
 	end)
 
 	UIParent:HookScript('OnShow', function()
